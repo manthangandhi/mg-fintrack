@@ -420,7 +420,7 @@ tbody tr:hover td{background:var(--sf2)}
 
   <div class="step"><div class="sn">STEP 03</div><div class="st">Add Apps Script</div><div class="sb">
     <code>Extensions → Apps Script</code>. Delete existing code. Paste this:
-<pre>const SHEET_ID = 'PASTE_YOUR_SHEET_ID_HERE';
+<pre>const SHEET_ID = '1DG2qyVWI-6aoNhJ9QCxS-tJ7SM5IhO8cNcuQ5hGahE0';
 function doGet(e){
   const p=e.parameter;
   const ss=SpreadsheetApp.openById(SHEET_ID);
@@ -541,7 +541,7 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 // ══════════════════════════════════════════════════
 // STEP 05: Paste your Apps Script URL below
 // ══════════════════════════════════════════════════
-const API = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+const API = 'https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4UO4PstibAn-jjC/exec';
 // ══════════════════════════════════════════════════
 
 const SK = 'mgft5';
@@ -1060,7 +1060,7 @@ window.addEventListener('load', () => {
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
   buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh);
 
-  if (!API.includes('https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4UO4PstibAn-jjC/exec')) doSync();
+  if (!API.includes('PASTE_YOUR_')) doSync();
   else {
     // Show setup hint
     const b = document.createElement('div');
