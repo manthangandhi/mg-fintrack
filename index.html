@@ -9,8 +9,6 @@
 :root[data-theme="light"]{--bg:#f4f3ef;--sf:#fff;--sf2:#eeedea;--bd:rgba(0,0,0,0.07);--bd2:rgba(0,0,0,0.14);--tx:#1a1a1a;--tx2:#666;--tx3:#bbb;--ac:#4a7a00;--red:#c0392b;--or:#a05500;--bl:#0055aa;--gr:#186e36;--pu:#6a2faa}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
-
-/* NAV */
 nav{display:flex;align-items:center;gap:4px;padding:10px 16px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--bg);z-index:100;flex-wrap:wrap}
 .logo{font-size:12px;font-weight:700;letter-spacing:.06em;margin-right:6px;white-space:nowrap}
 .logo em{color:var(--ac);font-style:normal}
@@ -21,32 +19,19 @@ nav{display:flex;align-items:center;gap:4px;padding:10px 16px;border-bottom:1px 
 .nav-r{display:flex;gap:5px;margin-left:auto}
 .ibtn{background:none;border:1px solid var(--bd2);color:var(--tx2);width:27px;height:27px;border-radius:4px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .1s;flex-shrink:0}
 .ibtn:hover{color:var(--tx);border-color:var(--tx2)}
-
-/* PAGES */
-.page{display:none;padding:16px;max-width:920px;margin:0 auto}
+.page{display:none;padding:16px;max-width:960px;margin:0 auto}
 .page.on{display:block}
-
-/* BANNER */
-.banner{background:var(--sf);border:1px solid var(--or);border-radius:6px;padding:9px 13px;margin-bottom:16px;font-size:12px;color:var(--or)}
-.banner a{color:var(--or);cursor:pointer;text-decoration:underline}
-.banner.hide{display:none}
-
-/* STATS */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:18px}
 .stat{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:13px}
 .sl{font-size:10px;color:var(--tx2);margin-bottom:5px;letter-spacing:.03em}
 .sv{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
 .ss{font-size:10px;color:var(--tx3);margin-top:2px}
-
-/* SECTION */
 .sec{margin-bottom:22px}
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;flex-wrap:wrap}
 .sti{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.07em;text-transform:uppercase}
 .btns{display:flex;gap:4px;flex-wrap:wrap}
 .sbtn{background:none;border:1px solid var(--bd2);color:var(--tx2);font-size:11px;padding:3px 9px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .1s;white-space:nowrap}
 .sbtn:hover{color:var(--ac);border-color:var(--ac)}
-
-/* TABLE */
 .tw{overflow-x:auto;border-radius:7px;border:1px solid var(--bd)}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{font-size:10px;font-weight:600;color:var(--tx2);text-align:left;padding:7px 10px;border-bottom:1px solid var(--bd);letter-spacing:.04em;text-transform:uppercase;background:var(--sf);white-space:nowrap}
@@ -56,51 +41,69 @@ tbody tr:hover td{background:var(--sf2)}
 .mono{font-variant-numeric:tabular-nums;font-size:11px}
 .dim{color:var(--tx2)}
 .erow td{color:var(--tx3);text-align:center;padding:24px;font-style:italic;font-size:12px}
-
-/* BADGE */
 .badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:20px;font-weight:500;white-space:nowrap}
 .br{background:rgba(255,91,91,.12);color:var(--red)}
 .bo{background:rgba(255,180,84,.12);color:var(--or)}
 .bg{background:rgba(110,232,154,.12);color:var(--gr)}
 .bb{background:rgba(91,200,255,.12);color:var(--bl)}
 .bp{background:rgba(185,126,255,.12);color:var(--pu)}
-
-/* PROGRESS */
 .pbar{height:3px;background:var(--bd2);border-radius:2px;overflow:hidden;margin-top:5px}
-.pfill{height:100%;border-radius:2px;transition:width .5s}
+.pfill{height:100%;border-radius:2px;transition:width .6s}
 
-/* OVERVIEW SPECIFICS */
-.ov2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
-@media(max-width:500px){.ov2{grid-template-columns:1fr}}
-.ovc{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:14px}
-.ovct{font-size:10px;color:var(--tx2);margin-bottom:6px;font-weight:600;letter-spacing:.04em}
-.ovbig{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
-.ovn{font-size:10px;color:var(--tx3);margin-top:3px}
-.ms{padding:9px 0;border-bottom:1px solid var(--bd);display:flex;gap:10px}
+/* OVERVIEW GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.card-t{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.big{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.card-note{font-size:10px;color:var(--tx3);margin-top:4px}
+
+/* DEBT BREAKDOWN BARS */
+.drow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.drow:last-child{border-bottom:none}
+.drow-lbl{color:var(--tx2);width:80px;flex-shrink:0}
+.drow-bar{flex:1;height:4px;background:var(--bd2);border-radius:2px;overflow:hidden}
+.drow-fill{height:100%;border-radius:2px;transition:width .6s}
+.drow-val{font-variant-numeric:tabular-nums;font-size:11px;font-weight:500;text-align:right;width:80px;flex-shrink:0}
+
+/* CASHFLOW ROWS */
+.cf-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.cf-row:last-child{border-bottom:none;padding-top:8px;font-weight:600;font-size:13px}
+.cf-row .lbl{color:var(--tx2)}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.cal-item{background:var(--sf2);border-radius:6px;padding:10px 12px;border-left:3px solid var(--bd2)}
+.cal-item.due-soon{border-left-color:var(--red)}
+.cal-item.due-week{border-left-color:var(--or)}
+.cal-item.due-month{border-left-color:var(--bl)}
+.cal-item.due-done{border-left-color:var(--gr);opacity:.6}
+.cal-date{font-size:10px;color:var(--tx2);margin-bottom:3px}
+.cal-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.cal-amt{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* PROJECTION CHART */
+.proj-wrap{overflow-x:auto}
+.proj-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px}
+.proj-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:36px}
+.proj-bar{width:100%;border-radius:3px 3px 0 0;transition:height .5s;cursor:default;position:relative}
+.proj-bar:hover .proj-tip{display:block}
+.proj-tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;padding:4px 8px;font-size:10px;white-space:nowrap;z-index:10;margin-bottom:4px}
+.proj-label{font-size:9px;color:var(--tx2);text-align:center;white-space:nowrap}
+
+/* MILESTONES */
+.ms{padding:8px 0;border-bottom:1px solid var(--bd);display:flex;gap:10px}
 .ms:last-child{border-bottom:none}
 .mdot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
 .mdate{font-size:12px;font-weight:500;margin-bottom:1px}
 .mdesc{font-size:11px;color:var(--tx2)}
 
-/* OVERVIEW DEBT BREAKDOWN */
-.debt-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}
-.debt-row:last-child{border-bottom:none}
-.debt-label{color:var(--tx2);font-size:12px}
-.debt-val{font-variant-numeric:tabular-nums;font-size:12px;font-weight:500}
-.debt-bar-wrap{flex:1;margin:0 12px;max-width:120px}
-
-/* CASHFLOW CARD */
-.cf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-@media(max-width:500px){.cf-grid{grid-template-columns:1fr}}
-.cf-item{background:var(--sf2);border-radius:5px;padding:10px 12px}
-.cf-label{font-size:10px;color:var(--tx2);margin-bottom:3px}
-.cf-val{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .15s}
 .overlay.on{opacity:1;pointer-events:all}
 .modal{background:var(--sf);border:1px solid var(--bd2);border-radius:10px;padding:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
-.mtitle{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--tx)}
+.mtitle{font-size:13px;font-weight:600;margin-bottom:16px}
 .fg{margin-bottom:11px}
 .fl{font-size:10px;color:var(--tx2);margin-bottom:4px;display:block;letter-spacing:.03em;text-transform:uppercase}
 .fi,.fs{width:100%;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-family:inherit;font-size:13px;padding:7px 9px;border-radius:5px;outline:none;transition:border-color .1s}
@@ -112,29 +115,21 @@ tbody tr:hover td{background:var(--sf2)}
 .bpri:hover{opacity:.88}
 .bgho{background:none;border:1px solid var(--bd2);color:var(--tx2);padding:8px 12px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit}
 .bgho:hover{color:var(--tx)}
-
-/* TOAST */
 .toast{position:fixed;bottom:18px;right:18px;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-size:12px;padding:9px 14px;border-radius:6px;z-index:300;transform:translateY(50px);opacity:0;transition:all .25s;pointer-events:none}
 .toast.on{transform:translateY(0);opacity:1}
 
-/* SETUP */
+/* SETUP/SETTINGS */
 .step{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:16px;margin-bottom:10px}
 .sn{font-size:10px;font-weight:600;color:var(--ac);letter-spacing:.08em;margin-bottom:4px}
 .st{font-size:14px;font-weight:600;margin-bottom:6px}
 .sb{font-size:12px;color:var(--tx2);line-height:1.9}
 .sb code{background:var(--sf2);color:var(--ac);padding:1px 5px;border-radius:3px;font-size:11px}
 .sb pre{background:var(--bg);border:1px solid var(--bd);border-radius:5px;padding:10px;margin:8px 0;font-size:10px;line-height:1.9;overflow-x:auto;color:var(--tx)}
-.urow{display:flex;gap:7px;margin-top:8px}
-.urow .fi{flex:1}
-.tres{margin-top:7px;font-size:11px}
-
-/* SETTINGS */
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--bd)}
-.setting-row:last-child{border-bottom:none}
-.setting-label{font-size:13px}
-.setting-sub{font-size:11px;color:var(--tx2);margin-top:2px}
-.setting-control{display:flex;gap:6px;align-items:center}
-
+.srow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--bd)}
+.srow:last-child{border-bottom:none}
+.srow-l{font-size:13px}
+.srow-sub{font-size:11px;color:var(--tx2);margin-top:2px}
+.srow-r{display:flex;gap:6px;align-items:center}
 @media(max-width:600px){nav{padding:8px 12px}.page{padding:12px}.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -143,104 +138,132 @@ tbody tr:hover td{background:var(--sf2)}
 <nav>
   <div class="logo">Fin<em>Track</em> · MG</div>
   <div class="tabs">
-    <button class="tab on"  onclick="go(this,'overview')">Overview</button>
-    <button class="tab"     onclick="go(this,'loans')">Loans</button>
-    <button class="tab"     onclick="go(this,'cc')">Cards</button>
-    <button class="tab"     onclick="go(this,'informal')">Informal</button>
-    <button class="tab"     onclick="go(this,'budget')">Budget</button>
-    <button class="tab"     onclick="go(this,'savings')">Savings</button>
-    <button class="tab"     onclick="go(this,'settings')">Settings</button>
-    <button class="tab"     onclick="go(this,'setup')">Setup</button>
+    <button class="tab on" onclick="go(this,'overview')">Overview</button>
+    <button class="tab"    onclick="go(this,'loans')">Loans</button>
+    <button class="tab"    onclick="go(this,'cc')">Cards</button>
+    <button class="tab"    onclick="go(this,'informal')">Informal</button>
+    <button class="tab"    onclick="go(this,'budget')">Budget</button>
+    <button class="tab"    onclick="go(this,'savings')">Savings</button>
+    <button class="tab"    onclick="go(this,'settings')">Settings</button>
+    <button class="tab"    onclick="go(this,'setup')">Setup</button>
   </div>
   <div class="nav-r">
     <button class="ibtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">☀</button>
-    <button class="ibtn" id="sbtn" onclick="doSync()"      title="Sync with Sheet">↻</button>
+    <button class="ibtn" id="sbtn" onclick="doSync()" title="Sync">↻</button>
   </div>
 </nav>
-
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════
-     OVERVIEW
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ OVERVIEW ═══════════════════ -->
 <div class="page on" id="page-overview">
-  <div class="banner" id="banner">⚠ Sheet not connected. <a onclick="go(document.querySelectorAll('.tab')[7],'setup')">Setup →</a></div>
 
-  <!-- Top stats row -->
   <div class="stats">
     <div class="stat"><div class="sl">Total debt</div><div class="sv" id="ov-debt" style="color:var(--red)">—</div><div class="ss">all categories</div></div>
     <div class="stat"><div class="sl">Monthly EMIs</div><div class="sv" id="ov-emi" style="color:var(--or)">—</div><div class="ss">fixed outflow</div></div>
     <div class="stat"><div class="sl">Net take-home</div><div class="sv" id="ov-inc" style="color:var(--ac)">—</div><div class="ss">TR salary</div></div>
     <div class="stat"><div class="sl">Free cash</div><div class="sv" id="ov-free" style="color:var(--gr)">—</div><div class="ss">after all EMIs</div></div>
+    <div class="stat"><div class="sl">Net worth</div><div class="sv" id="ov-nw" style="color:var(--pu)">—</div><div class="ss">assets − liabilities</div></div>
   </div>
 
-  <!-- Two big cards: AMEX + Savings -->
-  <div class="ov2">
-    <div class="ovc">
-      <div class="ovct">AMEX OUTSTANDING</div>
-      <div class="ovbig" id="ov-amex" style="color:var(--red)">—</div>
+  <!-- Row 1: AMEX + Savings + Net worth breakdown -->
+  <div class="g3">
+    <div class="card">
+      <div class="card-t">AMEX Outstanding</div>
+      <div class="big" id="ov-amex" style="color:var(--red)">—</div>
       <div class="pbar"><div class="pfill" id="ov-amex-p" style="background:var(--red);width:100%"></div></div>
-      <div class="ovn" id="ov-amex-sub">Target: clear by Nov 2026</div>
+      <div class="card-note" id="ov-amex-note">Target: clear by Nov 2026</div>
     </div>
-    <div class="ovc">
-      <div class="ovct">EMERGENCY FUND</div>
-      <div class="ovbig" id="ov-sav" style="color:var(--ac)">₹0</div>
+    <div class="card">
+      <div class="card-t">Emergency Fund</div>
+      <div class="big" id="ov-sav" style="color:var(--ac)">₹0</div>
       <div class="pbar"><div class="pfill" id="ov-sav-p" style="background:var(--ac);width:0%"></div></div>
-      <div class="ovn" id="ov-sav-sub">Target: ₹2,00,000</div>
+      <div class="card-note" id="ov-sav-note">Target: ₹2,00,000</div>
     </div>
-  </div>
-
-  <!-- Debt breakdown + cashflow side by side -->
-  <div class="ov2">
-    <div class="ovc">
-      <div class="ovct">DEBT BREAKDOWN</div>
-      <div id="ov-breakdown">
-        <div class="debt-row"><span class="debt-label">Bank loans</span><div class="debt-bar-wrap"><div class="pbar"><div class="pfill" id="br-bank" style="background:var(--red);width:0%"></div></div></div><span class="debt-val" id="ov-bank-debt">—</span></div>
-        <div class="debt-row"><span class="debt-label">Credit cards</span><div class="debt-bar-wrap"><div class="pbar"><div class="pfill" id="br-cc" style="background:var(--or);width:0%"></div></div></div><span class="debt-val" id="ov-cc-debt">—</span></div>
-        <div class="debt-row"><span class="debt-label">Informal</span><div class="debt-bar-wrap"><div class="pbar"><div class="pfill" id="br-inf" style="background:var(--pu);width:0%"></div></div></div><span class="debt-val" id="ov-inf-debt">—</span></div>
-      </div>
-    </div>
-    <div class="ovc">
-      <div class="ovct">THIS MONTH CASHFLOW</div>
-      <div class="cf-grid">
-        <div class="cf-item"><div class="cf-label">Income</div><div class="cf-val" id="cf-inc" style="color:var(--gr)">—</div></div>
-        <div class="cf-item"><div class="cf-label">Bank EMIs</div><div class="cf-val" id="cf-emi" style="color:var(--red)">—</div></div>
-        <div class="cf-item"><div class="cf-label">Household est.</div><div class="cf-val" style="color:var(--or)">₹40,000</div></div>
-        <div class="cf-item"><div class="cf-label">Available</div><div class="cf-val" id="cf-avail" style="color:var(--ac)">—</div></div>
+    <div class="card">
+      <div class="card-t">Net Worth</div>
+      <div class="big" id="ov-nw2" style="color:var(--pu)">—</div>
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span class="dim">Assets</span><span id="ov-assets" style="color:var(--gr)">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span class="dim">Liabilities</span><span id="ov-liab" style="color:var(--red)">—</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Milestones -->
+  <!-- Row 2: Debt breakdown + Cashflow -->
+  <div class="g2">
+    <div class="card">
+      <div class="card-t">Debt Breakdown</div>
+      <div id="ov-dbreak">
+        <div class="drow"><span class="drow-lbl">Bank loans</span><div class="drow-bar"><div class="drow-fill" id="db-bank" style="background:var(--red);width:0%"></div></div><span class="drow-val" id="dv-bank">—</span></div>
+        <div class="drow"><span class="drow-lbl">Credit cards</span><div class="drow-bar"><div class="drow-fill" id="db-cc" style="background:var(--or);width:0%"></div></div><span class="drow-val" id="dv-cc">—</span></div>
+        <div class="drow"><span class="drow-lbl">Informal</span><div class="drow-bar"><div class="drow-fill" id="db-inf" style="background:var(--pu);width:0%"></div></div><span class="drow-val" id="dv-inf">—</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-t">This Month Cashflow</div>
+      <div id="ov-cf">
+        <div class="cf-row"><span class="lbl">TR take-home</span><span id="cf-inc" style="color:var(--gr)">—</span></div>
+        <div class="cf-row"><span class="lbl">Bank EMIs</span><span id="cf-emi" style="color:var(--red)">—</span></div>
+        <div class="cf-row"><span class="lbl">Household est.</span><span id="cf-hh" style="color:var(--or)">—</span></div>
+        <div class="cf-row"><span class="lbl">Parth Shah</span><span style="color:var(--or)">−₹13,000</span></div>
+        <div class="cf-row"><span class="lbl">Available for AMEX/debts</span><span id="cf-avail" style="color:var(--ac)">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Upcoming EMI Calendar -->
   <div class="sec">
-    <div class="sh"><div class="sti">Upcoming milestones</div></div>
-    <div id="milestones">
-      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Jul 2026</div><div class="mdesc">CC Smart EMI #1 ends — +₹21,221/mo freed</div></div></div>
-      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Aug 2026</div><div class="mdesc">CC Smart EMI #2 ends — +₹9,647/mo freed</div></div></div>
-      <div class="ms"><div class="mdot" style="background:var(--gr)"></div><div><div class="mdate">Sep 2026</div><div class="mdesc">All CC Smart EMIs done — +₹42,210/mo freed permanently</div></div></div>
-      <div class="ms"><div class="mdot" style="background:var(--ac)"></div><div><div class="mdate">Nov 2026</div><div class="mdesc">AMEX cleared (target) — interest savings ~₹14k/mo</div></div></div>
-      <div class="ms"><div class="mdot" style="background:var(--bl)"></div><div><div class="mdate">Dec 2026</div><div class="mdesc">Start aggressively clearing informal debts — Arpit, Dhawal, Dhruvil</div></div></div>
+    <div class="sh"><div class="sti">Upcoming EMIs this month</div></div>
+    <div class="cal-grid" id="ov-calendar">
+      <div style="color:var(--tx3);font-size:12px;font-style:italic">Sync to load calendar.</div>
+    </div>
+  </div>
+
+  <!-- Row 4: Payoff projection chart -->
+  <div class="sec">
+    <div class="sh"><div class="sti">Debt payoff projection (12 months)</div></div>
+    <div class="card" style="padding:16px">
+      <div class="proj-wrap">
+        <div class="proj-chart" id="ov-proj-chart">
+          <div style="color:var(--tx3);font-size:12px;font-style:italic;align-self:center">Sync to load projection.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2)"><div style="width:10px;height:10px;border-radius:2px;background:var(--red)"></div>Bank loans</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2)"><div style="width:10px;height:10px;border-radius:2px;background:var(--or)"></div>CC outstanding</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2)"><div style="width:10px;height:10px;border-radius:2px;background:var(--pu)"></div>Informal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 5: Milestones -->
+  <div class="sec">
+    <div class="sh"><div class="sti">Milestones</div></div>
+    <div id="ov-milestones">
+      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Jul 2026</div><div class="mdesc">CC Smart EMI #1 ends → +₹21,221/mo freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Aug 2026</div><div class="mdesc">CC Smart EMI #2 ends → +₹9,647/mo freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--gr)"></div><div><div class="mdate">Sep 2026</div><div class="mdesc">All CC Smart EMIs done → +₹42,210/mo permanently freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--ac)"></div><div><div class="mdate">Nov 2026</div><div class="mdesc">AMEX cleared (target) — ~₹14k/mo interest gone</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--bl)"></div><div><div class="mdate">Dec 2026</div><div class="mdesc">Start clearing informal debts — Arpit ₹2.25L, Dhawal ₹80k</div></div></div>
       <div class="ms"><div class="mdot" style="background:var(--pu)"></div><div><div class="mdate">Feb 2030</div><div class="mdesc">HDFC Personal Loan fully paid</div></div></div>
     </div>
   </div>
 
-  <!-- Recent activity -->
+  <!-- Row 6: Recent activity -->
   <div class="sec">
     <div class="sh"><div class="sti">Recent activity</div></div>
     <div class="tw"><table><thead><tr><th>Date</th><th>What</th><th>Amount</th><th>Note</th></tr></thead>
-    <tbody id="ov-activity"><tr class="erow"><td colspan="4">Sync to see recent payments & transactions.</td></tr></tbody></table></div>
+    <tbody id="ov-activity"><tr class="erow"><td colspan="4">Sync to load.</td></tr></tbody></table></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     LOANS
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ LOANS ═══════════════════ -->
 <div class="page" id="page-loans">
   <div class="stats">
     <div class="stat"><div class="sl">Total outstanding</div><div class="sv" id="l-total" style="color:var(--red)">—</div></div>
     <div class="stat"><div class="sl">Monthly EMIs</div><div class="sv" id="l-emi" style="color:var(--or)">—</div></div>
     <div class="stat"><div class="sl">Active loans</div><div class="sv" id="l-count">—</div></div>
-    <div class="stat"><div class="sl">Total interest left</div><div class="sv" id="l-int" style="color:var(--tx2)">—</div><div class="ss">est. remaining</div></div>
+    <div class="stat"><div class="sl">Est. interest left</div><div class="sv" id="l-int" style="color:var(--tx2)">—</div></div>
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">Loans & Smart EMIs</div><div class="btns">
@@ -248,7 +271,7 @@ tbody tr:hover td{background:var(--sf2)}
       <button class="sbtn" onclick="openM('m-logpay')">+ log EMI payment</button>
     </div></div>
     <div class="tw"><table><thead><tr><th>Name</th><th>Type</th><th>EMI/mo</th><th>Outstanding</th><th>Rate</th><th>Ends</th><th>Remaining</th></tr></thead>
-    <tbody id="l-tbody"><tr class="erow"><td colspan="7">No loans added. Click "+ add loan" to begin.</td></tr></tbody></table></div>
+    <tbody id="l-tbody"><tr class="erow"><td colspan="7">No loans added. Click "+ add loan".</td></tr></tbody></table></div>
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">EMI payment log</div></div>
@@ -257,27 +280,21 @@ tbody tr:hover td{background:var(--sf2)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     CARDS
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ CARDS ═══════════════════ -->
 <div class="page" id="page-cc">
   <div class="stats">
     <div class="stat"><div class="sl">Total outstanding</div><div class="sv" id="cc-total" style="color:var(--red)">—</div></div>
-    <div class="stat"><div class="sl">Est. interest/mo</div><div class="sv" id="cc-int" style="color:var(--red)">—</div><div class="ss">at current balances</div></div>
+    <div class="stat"><div class="sl">Est. interest/mo</div><div class="sv" id="cc-int" style="color:var(--red)">—</div></div>
     <div class="stat"><div class="sl">Next bill due</div><div class="sv" id="cc-due" style="color:var(--or)">—</div></div>
     <div class="stat"><div class="sl">Cards tracked</div><div class="sv" id="cc-count">—</div></div>
   </div>
-
-  <!-- Cards master list -->
   <div class="sec">
-    <div class="sh"><div class="sti">Cards (master)</div><button class="sbtn" onclick="openM('m-addcc')">+ add card</button></div>
-    <div class="tw"><table><thead><tr><th>Card name</th><th>Interest rate</th><th>Last bill</th><th>Due date</th><th>Paid since bill</th><th>Outstanding</th></tr></thead>
-    <tbody id="cc-tbody"><tr class="erow"><td colspan="6">No cards added. Click "+ add card" to register a card.</td></tr></tbody></table></div>
+    <div class="sh"><div class="sti">Cards (master list)</div><button class="sbtn" onclick="openM('m-addcc')">+ add card</button></div>
+    <div class="tw"><table><thead><tr><th>Card name</th><th>Rate/mo</th><th>Last bill</th><th>Due date</th><th>Paid since bill</th><th>Outstanding</th></tr></thead>
+    <tbody id="cc-tbody"><tr class="erow"><td colspan="6">No cards yet. Click "+ add card".</td></tr></tbody></table></div>
   </div>
-
-  <!-- Log bill / payment buttons -->
   <div class="sec">
-    <div class="sh"><div class="sti">Bills & payments</div><div class="btns">
+    <div class="sh"><div class="sti">Bills & payments log</div><div class="btns">
       <button class="sbtn" onclick="openM('m-logbill')">+ log monthly bill</button>
       <button class="sbtn" onclick="openM('m-logccpay')">+ log payment</button>
     </div></div>
@@ -286,9 +303,7 @@ tbody tr:hover td{background:var(--sf2)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     INFORMAL
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ INFORMAL ═══════════════════ -->
 <div class="page" id="page-informal">
   <div class="stats">
     <div class="stat"><div class="sl">Total owed</div><div class="sv" id="inf-total" style="color:var(--red)">—</div><div class="ss">excl. Hemil (parked)</div></div>
@@ -299,7 +314,7 @@ tbody tr:hover td{background:var(--sf2)}
   <div class="sec">
     <div class="sh"><div class="sti">Outstanding per person</div></div>
     <div class="tw"><table><thead><tr><th>Person</th><th>Total received</th><th>Total paid back</th><th>Outstanding</th><th>Priority</th></tr></thead>
-    <tbody id="infs-tbody"><tr class="erow"><td colspan="5">Sync to load from your Transactions sheet.</td></tr></tbody></table></div>
+    <tbody id="infs-tbody"><tr class="erow"><td colspan="5">Sync to load from Transactions sheet.</td></tr></tbody></table></div>
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">Transaction log</div><button class="sbtn" onclick="openM('m-inftx')">+ log transaction</button></div>
@@ -308,14 +323,12 @@ tbody tr:hover td{background:var(--sf2)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     BUDGET
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ BUDGET ═══════════════════ -->
 <div class="page" id="page-budget">
   <div class="stats">
-    <div class="stat"><div class="sl">Net take-home</div><div class="sv" id="b-inc" style="color:var(--ac)">—</div></div>
+    <div class="stat"><div class="sl">Take-home</div><div class="sv" id="b-inc" style="color:var(--ac)">—</div></div>
     <div class="stat"><div class="sl">Fixed EMIs</div><div class="sv" id="b-emi" style="color:var(--red)">—</div></div>
-    <div class="stat"><div class="sl">Household est.</div><div class="sv" style="color:var(--or)">₹40,000</div></div>
+    <div class="stat"><div class="sl">Household est.</div><div class="sv" id="b-hh" style="color:var(--or)">—</div></div>
     <div class="stat"><div class="sl">Buffer remaining</div><div class="sv" id="b-left" style="color:var(--gr)">—</div><div class="ss">AMEX + informal + jar</div></div>
   </div>
   <div class="sec">
@@ -330,9 +343,7 @@ tbody tr:hover td{background:var(--sf2)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SAVINGS
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ SAVINGS ═══════════════════ -->
 <div class="page" id="page-savings">
   <div class="stats">
     <div class="stat"><div class="sl">Jar total</div><div class="sv" id="sv-total" style="color:var(--ac)">₹0</div></div>
@@ -351,85 +362,64 @@ tbody tr:hover td{background:var(--sf2)}
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SETTINGS
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ SETTINGS ═══════════════════ -->
 <div class="page" id="page-settings">
-  <div class="sec">
-    <div class="sh"><div class="sti">Preferences</div></div>
-    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:4px 16px">
-
-      <div class="setting-row">
-        <div><div class="setting-label">Emergency fund target</div><div class="setting-sub">Current: <span id="set-ef-display">₹2,00,000</span></div></div>
-        <div class="setting-control">
-          <input class="fi" id="set-ef" type="number" style="width:140px" placeholder="200000"/>
-          <button class="sbtn" onclick="saveEF()">Save</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div><div class="setting-label">Monthly income (take-home)</div><div class="setting-sub">Current: <span id="set-inc-display">₹2,51,683</span></div></div>
-        <div class="setting-control">
-          <input class="fi" id="set-inc" type="number" style="width:140px" placeholder="251683"/>
-          <button class="sbtn" onclick="saveInc()">Save</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div><div class="setting-label">Household monthly estimate</div><div class="setting-sub">Current: <span id="set-hh-display">₹40,000</span></div></div>
-        <div class="setting-control">
-          <input class="fi" id="set-hh" type="number" style="width:140px" placeholder="40000"/>
-          <button class="sbtn" onclick="saveHH()">Save</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div><div class="setting-label">Theme</div><div class="setting-sub">Dark or light mode</div></div>
-        <div class="setting-control">
-          <button class="sbtn" onclick="toggleTheme()">Toggle ☀/☾</button>
-        </div>
-      </div>
-
-      <div class="setting-row">
-        <div><div class="setting-label">Clear local cache</div><div class="setting-sub">Wipe locally stored data (not Sheet)</div></div>
-        <div class="setting-control">
-          <button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Clear</button>
-        </div>
-      </div>
-
+  <div style="background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:4px 16px;margin-bottom:16px">
+    <div class="srow">
+      <div><div class="srow-l">Emergency fund target</div><div class="srow-sub">Current: <b id="s-ef-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-ef" type="number" style="width:120px" placeholder="200000"/><button class="sbtn" onclick="saveSetting('ef',+document.getElementById('s-ef').value||200000,'Emergency fund target updated')">Save</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Monthly net take-home</div><div class="srow-sub">Current: <b id="s-inc-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-inc" type="number" style="width:120px" placeholder="251683"/><button class="sbtn" onclick="saveSetting('inc',+document.getElementById('s-inc').value||251683,'Income updated')">Save</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Household monthly estimate</div><div class="srow-sub">Current: <b id="s-hh-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Other assets (car value, savings, gold est.)</div><div class="srow-sub">Current: <b id="s-assets-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-assets" type="number" style="width:120px" placeholder="500000"/><button class="sbtn" onclick="saveSetting('assets',+document.getElementById('s-assets').value||0,'Assets updated')">Save</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Theme</div><div class="srow-sub">Dark / light mode</div></div>
+      <div class="srow-r"><button class="sbtn" onclick="toggleTheme()">Toggle ☀ / ☾</button></div>
+    </div>
+    <div class="srow">
+      <div><div class="srow-l">Clear local cache</div><div class="srow-sub">Wipes device-only storage — Sheet data stays safe</div></div>
+      <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Clear</button></div>
     </div>
   </div>
-
-  <div class="sec" style="margin-top:8px">
-    <div class="sh"><div class="sti">Sheet connection</div></div>
-    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:16px">
-      <div style="font-size:12px;color:var(--tx2);margin-bottom:8px">Apps Script URL</div>
-      <div class="urow">
-        <input class="fi" id="s2-url" placeholder="https://script.google.com/macros/s/.../exec"/>
-        <button class="bpri" onclick="saveUrl2()">Save & Test</button>
-      </div>
-      <div class="tres" id="s2-res"></div>
-    </div>
+  <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
+    <b style="color:var(--tx)">Settings sync</b><br>
+    All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
+    <b style="color:var(--tx)">Apps Script URL</b> is hardcoded in this file — edit line 1 of the &lt;script&gt; section to change it.
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     SETUP
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ SETUP ═══════════════════ -->
 <div class="page" id="page-setup">
-  <div class="step"><div class="sn">STEP 01</div><div class="st">Use your existing Google Sheet</div><div class="sb">Open the Sheet where your informal debt transactions live. Make sure it has a tab called <code>Transactions</code>. Then add these new tabs:<br><br><code>Cards</code> · <code>Loans</code> · <code>CCBills</code> · <code>Payments</code> · <code>Income</code> · <code>Savings</code></div></div>
+  <div class="step"><div class="sn">STEP 01</div><div class="st">Add new tabs to your existing Google Sheet</div><div class="sb">
+    Keep your existing <code>Transactions</code> tab. Add these new tabs:<br><br>
+    <code>Config</code> · <code>Cards</code> · <code>Loans</code> · <code>CCBills</code> · <code>Payments</code> · <code>Income</code> · <code>Savings</code>
+  </div></div>
 
   <div class="step"><div class="sn">STEP 02</div><div class="st">Add header rows to each new tab</div><div class="sb">
+    <b>Config:</b> <code>Key | Value</code> (then add rows: ef | 200000, inc | 251683, hh | 40000, prop | 6000000, assets | 0)<br>
     <b>Cards:</b> <code>Name | Rate | Notes</code><br>
     <b>Loans:</b> <code>Name | Type | EMI | Rate | StartDate | Installments | Notes</code><br>
     <b>CCBills:</b> <code>Date | CardName | BillAmount | DueDate | Notes</code><br>
     <b>Payments:</b> <code>Date | LoanOrCard | Amount | Notes</code><br>
     <b>Income:</b> <code>Month | Amount | Source | Notes</code><br>
-    <b>Savings:</b> <code>Date | Amount | Notes</code><br><br>
-    Your existing <b>Transactions</b> tab stays exactly as-is: <code>Date | Paid/Received | Particulars | ReceivedAmount | PaidAmount | Remarks</code>
+    <b>Savings:</b> <code>Date | Amount | Notes</code>
   </div></div>
 
-  <div class="step"><div class="sn">STEP 03</div><div class="st">Add Apps Script</div><div class="sb">Go to <code>Extensions → Apps Script</code>. Delete existing code. Paste:
+  <div class="step"><div class="sn">STEP 03</div><div class="st">Add Apps Script</div><div class="sb">
+    <code>Extensions → Apps Script</code>. Delete existing code. Paste this:
 <pre>const SHEET_ID = 'PASTE_YOUR_SHEET_ID_HERE';
 function doGet(e){
   const p=e.parameter;
@@ -445,176 +435,139 @@ function doGet(e){
     sh.appendRow(JSON.parse(p.row));
     return j({ok:true});
   }
-  return j({error:'unknown action'});
+  if(p.action==='upsertConfig'){
+    const sh=ss.getSheetByName('Config');
+    const key=p.key, val=p.value;
+    const data=sh.getDataRange().getValues();
+    for(let i=1;i<data.length;i++){
+      if(data[i][0]===key){ sh.getRange(i+1,2).setValue(val); return j({ok:true}); }
+    }
+    sh.appendRow([key,val]);
+    return j({ok:true});
+  }
+  return j({error:'unknown'});
 }
 function doPost(e){return doGet(e);}
-function j(o){
-  return ContentService
-    .createTextOutput(JSON.stringify(o))
-    .setMimeType(ContentService.MimeType.JSON);
-}</pre>
+function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}</pre>
     Replace <code>PASTE_YOUR_SHEET_ID_HERE</code> with the ID from your Sheet URL (between <code>/d/</code> and <code>/edit</code>).
   </div></div>
 
   <div class="step"><div class="sn">STEP 04</div><div class="st">Deploy as Web App</div><div class="sb">
-    <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy</code><br>
-    Authorize → copy the URL → paste below:
-    <div class="urow"><input class="fi" id="api-url" placeholder="https://script.google.com/macros/s/.../exec"/><button class="bpri" onclick="saveUrl()">Save & Test</button></div>
-    <div class="tres" id="tres"></div>
+    <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy → Authorize → Copy URL</code>
   </div></div>
 
-  <div class="step"><div class="sn">STEP 05</div><div class="st">Host on GitHub Pages (free, public repo)</div><div class="sb">
-    1. Create new GitHub repo e.g. <code>mg-fintrack</code> — set to <b>Public</b><br>
-    2. Upload this <code>index.html</code><br>
-    3. <code>Settings → Pages → Source: Deploy from branch → main → / (root) → Save</code><br>
-    4. Wait ~2 min → your URL: <code>https://yourusername.github.io/mg-fintrack/</code><br><br>
-    Bookmark on phone + laptop. Your Sheet URL is stored in browser localStorage so connect once per device.
+  <div class="step"><div class="sn">STEP 05</div><div class="st">Hardcode your URL into this file — one time only</div><div class="sb">
+    Open <code>index.html</code> in any text editor. Find line 1 of the &lt;script&gt; section:<br><br>
+    <code>const API = 'PASTE_YOUR_URL_HERE';</code><br><br>
+    Replace <code>PASTE_YOUR_URL_HERE</code> with your Apps Script URL. Save. Push to GitHub. <b>Done — every device uses the same file, same URL, no setup per device.</b>
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
+    1. New GitHub repo e.g. <code>mg-fintrack</code> → set <b>Public</b><br>
+    2. Upload <code>index.html</code><br>
+    3. <code>Settings → Pages → Source: main branch → / (root) → Save</code><br>
+    4. Wait ~2 min → URL: <code>https://yourusername.github.io/mg-fintrack/</code><br>
+    5. Bookmark on every device. Settings sync from Sheet automatically.
   </div></div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODALS
-══════════════════════════════════════════ -->
+<!-- ═══════════════════ MODALS ═══════════════════ -->
 
-<!-- Add Loan -->
 <div class="overlay" id="m-addloan"><div class="modal">
   <div class="mtitle">Add loan / Smart EMI</div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Loan name</label><input class="fi" id="ln" placeholder="HDFC Personal Loan"/></div>
-    <div class="fg"><label class="fl">Type</label><select class="fs" id="lt"><option>Personal Loan</option><option>Auto Loan</option><option>Home Loan</option><option>CC Smart EMI</option><option>Other</option></select></div>
-  </div>
-  <div class="f2">
-    <div class="fg"><label class="fl">EMI amount (₹)</label><input class="fi" type="number" id="lemi" placeholder="31808"/></div>
-    <div class="fg"><label class="fl">Interest rate (%/yr)</label><input class="fi" type="number" id="lrate" step="0.01" placeholder="10.9"/></div>
-  </div>
-  <div class="f2">
-    <div class="fg"><label class="fl">First EMI date</label><input class="fi" type="date" id="lstart"/></div>
-    <div class="fg"><label class="fl">Total installments</label><input class="fi" type="number" id="ltenure" placeholder="60"/></div>
-  </div>
-  <div class="fg"><label class="fl">Notes (optional)</label><input class="fi" id="lnotes" placeholder="Agr# 159607347"/></div>
+  <div class="f2"><div class="fg"><label class="fl">Name</label><input class="fi" id="ln" placeholder="HDFC Personal Loan"/></div><div class="fg"><label class="fl">Type</label><select class="fs" id="lt"><option>Personal Loan</option><option>Auto Loan</option><option>Home Loan</option><option>CC Smart EMI</option><option>Other</option></select></div></div>
+  <div class="f2"><div class="fg"><label class="fl">EMI (₹)</label><input class="fi" type="number" id="lemi" placeholder="31808"/></div><div class="fg"><label class="fl">Rate (%/yr)</label><input class="fi" type="number" id="lrate" step="0.01" placeholder="10.9"/></div></div>
+  <div class="f2"><div class="fg"><label class="fl">First EMI date</label><input class="fi" type="date" id="lstart"/></div><div class="fg"><label class="fl">Total installments</label><input class="fi" type="number" id="ltenure" placeholder="60"/></div></div>
+  <div class="fg"><label class="fl">Notes</label><input class="fi" id="lnotes" placeholder="Agr# 159607347"/></div>
   <div class="ma"><button class="bpri" onclick="addLoan()">Save loan</button><button class="bgho" onclick="closeM('m-addloan')">Cancel</button></div>
 </div></div>
 
-<!-- Log EMI Payment -->
 <div class="overlay" id="m-logpay"><div class="modal">
   <div class="mtitle">Log EMI payment</div>
   <div class="fg"><label class="fl">Loan</label><select class="fs" id="py-loan"></select></div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="py-date"/></div>
-    <div class="fg"><label class="fl">Amount paid (₹)</label><input class="fi" type="number" id="py-amt" placeholder="31808"/></div>
-  </div>
+  <div class="f2"><div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="py-date"/></div><div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="py-amt"/></div></div>
   <div class="fg"><label class="fl">Notes</label><input class="fi" id="py-notes" placeholder="EMI Jun 2026"/></div>
   <div class="ma"><button class="bpri" onclick="logPay()">Save</button><button class="bgho" onclick="closeM('m-logpay')">Cancel</button></div>
 </div></div>
 
-<!-- Add Card (master record only) -->
 <div class="overlay" id="m-addcc"><div class="modal">
   <div class="mtitle">Add credit card</div>
   <div class="fg"><label class="fl">Card name</label><input class="fi" id="ccn" placeholder="AMEX Gold"/></div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Monthly interest rate (%)</label><input class="fi" type="number" id="ccr" placeholder="3.5" step="0.1"/></div>
-    <div class="fg"><label class="fl">Notes (optional)</label><input class="fi" id="ccnotes" placeholder="Visa Regalia / Gold etc."/></div>
-  </div>
-  <div style="font-size:11px;color:var(--tx2);margin-top:4px">After adding the card, use "log monthly bill" each month to record your statement.</div>
+  <div class="f2"><div class="fg"><label class="fl">Monthly interest (%)</label><input class="fi" type="number" id="ccr" placeholder="3.5" step="0.1"/></div><div class="fg"><label class="fl">Notes</label><input class="fi" id="ccno" placeholder="Visa / Amex etc."/></div></div>
+  <div style="font-size:11px;color:var(--tx2);margin-top:2px">After adding, use "+ log monthly bill" each month to record your statement.</div>
   <div class="ma"><button class="bpri" onclick="addCard()">Add card</button><button class="bgho" onclick="closeM('m-addcc')">Cancel</button></div>
 </div></div>
 
-<!-- Log Monthly Bill -->
 <div class="overlay" id="m-logbill"><div class="modal">
   <div class="mtitle">Log monthly CC bill</div>
   <div class="fg"><label class="fl">Card</label><select class="fs" id="bl-card"></select></div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Statement date</label><input class="fi" type="date" id="bl-date"/></div>
-    <div class="fg"><label class="fl">Total amount due (₹)</label><input class="fi" type="number" id="bl-amt" placeholder="308263"/></div>
-  </div>
+  <div class="f2"><div class="fg"><label class="fl">Statement date</label><input class="fi" type="date" id="bl-date"/></div><div class="fg"><label class="fl">Total amount due (₹)</label><input class="fi" type="number" id="bl-amt" placeholder="308263"/></div></div>
   <div class="fg"><label class="fl">Payment due date</label><input class="fi" type="date" id="bl-due"/></div>
   <div class="fg"><label class="fl">Notes</label><input class="fi" id="bl-notes" placeholder="May 2026 statement"/></div>
   <div class="ma"><button class="bpri" onclick="logBill()">Save bill</button><button class="bgho" onclick="closeM('m-logbill')">Cancel</button></div>
 </div></div>
 
-<!-- Log CC Payment -->
 <div class="overlay" id="m-logccpay"><div class="modal">
   <div class="mtitle">Log CC payment</div>
   <div class="fg"><label class="fl">Card</label><select class="fs" id="cp-card"></select></div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="cp-date"/></div>
-    <div class="fg"><label class="fl">Amount paid (₹)</label><input class="fi" type="number" id="cp-amt" placeholder="30000"/></div>
-  </div>
-  <div class="fg"><label class="fl">Notes</label><input class="fi" id="cp-notes" placeholder="Minimum / partial / full payment"/></div>
+  <div class="f2"><div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="cp-date"/></div><div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="cp-amt"/></div></div>
+  <div class="fg"><label class="fl">Notes</label><input class="fi" id="cp-notes" placeholder="Minimum / partial / full"/></div>
   <div class="ma"><button class="bpri" onclick="logCCPay()">Save</button><button class="bgho" onclick="closeM('m-logccpay')">Cancel</button></div>
 </div></div>
 
-<!-- Log Informal Transaction -->
 <div class="overlay" id="m-inftx"><div class="modal">
   <div class="mtitle">Log informal transaction</div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Person</label><input class="fi" id="it-person" list="it-dl"/><datalist id="it-dl"></datalist></div>
-    <div class="fg"><label class="fl">Direction</label><select class="fs" id="it-dir"><option value="Received">Received (they gave you)</option><option value="Paid">Paid (you paid them)</option></select></div>
-  </div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="it-date"/></div>
-    <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="it-amt"/></div>
-  </div>
+  <div class="f2"><div class="fg"><label class="fl">Person</label><input class="fi" id="it-person" list="it-dl"/><datalist id="it-dl"></datalist></div><div class="fg"><label class="fl">Direction</label><select class="fs" id="it-dir"><option value="Received">Received (they gave you)</option><option value="Paid">Paid (you paid them)</option></select></div></div>
+  <div class="f2"><div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="it-date"/></div><div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="it-amt"/></div></div>
   <div class="fg"><label class="fl">Remarks</label><input class="fi" id="it-rem"/></div>
   <div class="ma"><button class="bpri" onclick="logInfTx()">Save</button><button class="bgho" onclick="closeM('m-inftx')">Cancel</button></div>
 </div></div>
 
-<!-- Log Income -->
 <div class="overlay" id="m-income"><div class="modal">
   <div class="mtitle">Log income</div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Month</label><input class="fi" type="month" id="ic-month"/></div>
-    <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="ic-amt" placeholder="251683"/></div>
-  </div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Source</label><input class="fi" id="ic-src" placeholder="Thomson Reuters"/></div>
-    <div class="fg"><label class="fl">Notes</label><input class="fi" id="ic-notes"/></div>
-  </div>
+  <div class="f2"><div class="fg"><label class="fl">Month</label><input class="fi" type="month" id="ic-month"/></div><div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="ic-amt" placeholder="251683"/></div></div>
+  <div class="f2"><div class="fg"><label class="fl">Source</label><input class="fi" id="ic-src" placeholder="Thomson Reuters"/></div><div class="fg"><label class="fl">Notes</label><input class="fi" id="ic-notes"/></div></div>
   <div class="ma"><button class="bpri" onclick="logIncome()">Save</button><button class="bgho" onclick="closeM('m-income')">Cancel</button></div>
 </div></div>
 
-<!-- Add Savings -->
 <div class="overlay" id="m-sav"><div class="modal">
   <div class="mtitle">Add to savings jar</div>
-  <div class="f2">
-    <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="sv-date"/></div>
-    <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="sv-amt"/></div>
-  </div>
+  <div class="f2"><div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="sv-date"/></div><div class="fg"><label class="fl">Amount (₹)</label><input class="fi" type="number" id="sv-amt"/></div></div>
   <div class="fg"><label class="fl">Notes</label><input class="fi" id="sv-notes" placeholder="₹500 note from wallet"/></div>
   <div class="ma"><button class="bpri" onclick="logSav()">Save</button><button class="bgho" onclick="closeM('m-sav')">Cancel</button></div>
 </div></div>
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
 <script>
-// ── CONFIG & STATE ───────────────────────────────────────
-const SK = 'mgft4';
+// ══════════════════════════════════════════════════
+// STEP 05: Paste your Apps Script URL below
+// ══════════════════════════════════════════════════
+const API = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+// ══════════════════════════════════════════════════
+
+const SK = 'mgft5';
 let C = JSON.parse(localStorage.getItem(SK) || '{}');
-// C.url, C.theme, C.ef (emergency fund target), C.inc (income), C.hh (household)
-let D = {}; // fetched sheet data: D['Loans'], D['Cards'], D['CCBills'], D['Payments'], D['Income'], D['Savings'], D['Transactions']
+// C.theme only stored locally — everything else comes from Config sheet
+let D = {}; // sheet data cache
+// Runtime config — loaded from Config sheet on sync
+let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 
-const save = () => localStorage.setItem(SK, JSON.stringify(C));
-const INR  = n => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
-const td   = () => new Date().toISOString().split('T')[0];
-const EF   = () => C.ef   || 200000;
-const INC  = () => C.inc  || 251683;
-const HH   = () => C.hh   || 40000;
+const save  = () => localStorage.setItem(SK, JSON.stringify(C));
+const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
+const td    = () => new Date().toISOString().split('T')[0];
+const curMonth = () => { const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0'); };
 
-// ── TOAST ────────────────────────────────────────────────
+// ── TOAST ────────────────────────────────────────
 function toast(m) {
   const el = document.getElementById('toast');
-  el.textContent = m;
-  el.className = 'toast on';
+  el.textContent = m; el.className = 'toast on';
   setTimeout(() => el.className = 'toast', 2800);
 }
 
-// ── THEME ────────────────────────────────────────────────
+// ── THEME ────────────────────────────────────────
 function toggleTheme() {
   const h = document.documentElement;
   const nt = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  h.setAttribute('data-theme', nt);
-  C.theme = nt; save();
+  h.setAttribute('data-theme', nt); C.theme = nt; save();
   document.getElementById('tbtn').textContent = nt === 'dark' ? '☀' : '☾';
 }
 if (C.theme) {
@@ -622,599 +575,499 @@ if (C.theme) {
   document.getElementById('tbtn').textContent = C.theme === 'dark' ? '☀' : '☾';
 }
 
-// ── NAV ──────────────────────────────────────────────────
+// ── NAV ──────────────────────────────────────────
 function go(el, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
-  document.getElementById('page-' + id).classList.add('on');
+  document.getElementById('page-'+id).classList.add('on');
   el.classList.add('on');
-  const renders = { loans: rLoans, cc: rCC, informal: rInformal, budget: rBudget, savings: rSavings, settings: rSettings };
-  if (renders[id]) renders[id]();
+  const map = { loans:rLoans, cc:rCC, informal:rInformal, budget:rBudget, savings:rSavings, settings:rSettings };
+  if (map[id]) map[id]();
 }
 
-// ── MODALS ───────────────────────────────────────────────
+// ── MODALS ───────────────────────────────────────
 function openM(id) {
-  // Clear all inputs in this modal first
-  const modal = document.getElementById(id);
-  modal.querySelectorAll('.fi').forEach(i => {
-    if (i.type === 'date') i.value = td();
-    else if (i.type === 'month') { const n = new Date(); i.value = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0'); }
-    else if (i.tagName === 'SELECT') {}
-    else i.value = '';
+  const m = document.getElementById(id);
+  // Clear all inputs
+  m.querySelectorAll('.fi').forEach(i => {
+    if      (i.type === 'date')  i.value = td();
+    else if (i.type === 'month') i.value = curMonth();
+    else                         i.value = '';
   });
-  // Reset selects to first option
-  modal.querySelectorAll('.fs').forEach(s => s.selectedIndex = 0);
-
-  // Populate dynamic selects
-  if (id === 'm-logpay') fillLoanSel();
+  m.querySelectorAll('.fs').forEach(s => s.selectedIndex = 0);
+  if (id === 'm-logpay')  fillLoanSel();
   if (id === 'm-logbill' || id === 'm-logccpay') fillCardSels();
-
-  modal.classList.add('on');
+  m.classList.add('on');
 }
 function closeM(id) { document.getElementById(id).classList.remove('on'); }
 document.querySelectorAll('.overlay').forEach(o =>
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('on'); })
 );
 
-// ── API ──────────────────────────────────────────────────
+// ── API ──────────────────────────────────────────
 async function apicall(params) {
-  if (!C.url) { toast('Connect Sheet in Setup first'); return null; }
+  if (!API || API.includes('PASTE_YOUR')) {
+    toast('API URL not set — edit index.html and paste your Apps Script URL');
+    return null;
+  }
   try {
-    const r = await fetch(C.url + '?' + new URLSearchParams(params));
+    const r = await fetch(API + '?' + new URLSearchParams(params));
     return await r.json();
-  } catch(e) { toast('Connection error — check URL'); return null; }
+  } catch(e) { toast('Connection error — check your URL'); return null; }
 }
 
+// ── SYNC ─────────────────────────────────────────
 async function doSync() {
-  if (!C.url) { toast('Go to Setup and connect your Sheet first'); return; }
+  if (API.includes('PASTE_YOUR')) { toast('Paste your Apps Script URL into index.html first (Setup Step 05)'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
-  const tabs = ['Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
+  const tabs = ['Config','Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
   for (const t of tabs) {
-    const r = await apicall({ action: 'read', tab: t });
+    const r = await apicall({ action:'read', tab:t });
     if (r && r.data) D[t] = r.data;
   }
+  // Load config from sheet — overrides defaults
+  if (D['Config']) {
+    D['Config'].slice(1).forEach(row => {
+      if (row[0] && row[1] !== '') CFG[row[0]] = isNaN(+row[1]) ? row[1] : +row[1];
+    });
+  }
   btn.textContent = '↻';
-  rOverview(); rLoans(); rCC(); rInformal(); rBudget(); rSavings();
+  rOverview(); rLoans(); rCC(); rInformal(); rBudget(); rSavings(); rSettings();
   toast('Synced ✓');
 }
 
-// ── SETTINGS ─────────────────────────────────────────────
-function rSettings() {
-  document.getElementById('set-ef-display').textContent  = INR(EF());
-  document.getElementById('set-inc-display').textContent = INR(INC());
-  document.getElementById('set-hh-display').textContent  = INR(HH());
-  document.getElementById('set-ef').value  = EF();
-  document.getElementById('set-inc').value = INC();
-  document.getElementById('set-hh').value  = HH();
-  if (C.url) {
-    document.getElementById('s2-url').value = C.url;
-  }
+// ── SETTINGS ─────────────────────────────────────
+async function saveSetting(key, val, msg) {
+  CFG[key] = val;
+  const r = await apicall({ action:'upsertConfig', key, value: val });
+  if (r && r.ok) { toast(msg + ' ✓'); rSettings(); rOverview(); rBudget(); rSavings(); }
 }
-function saveEF()  { C.ef  = +document.getElementById('set-ef').value  || 200000; save(); rSettings(); rSavings(); rOverview(); toast('Emergency fund target updated ✓'); }
-function saveInc() { C.inc = +document.getElementById('set-inc').value || 251683; save(); rSettings(); rBudget();  rOverview(); toast('Income updated ✓'); }
-function saveHH()  { C.hh  = +document.getElementById('set-hh').value  || 40000;  save(); rSettings(); rBudget();  rOverview(); toast('Household estimate updated ✓'); }
+function rSettings() {
+  const map = { ef:'s-ef-d', inc:'s-inc-d', hh:'s-hh-d', prop:'s-prop-d', assets:'s-assets-d' };
+  Object.entries(map).forEach(([k,id]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = INR(CFG[k]);
+  });
+  ['ef','inc','hh','prop','assets'].forEach(k => {
+    const el = document.getElementById('s-'+k);
+    if (el) el.value = CFG[k] || '';
+  });
+}
 function clearCache() {
-  if (!confirm('Clear all local settings? (Sheet data stays safe)')) return;
+  if (!confirm('Clear device-only cache? Config will reload from Sheet on next sync.')) return;
   localStorage.removeItem(SK); C = {}; location.reload();
 }
 
-// ── LOANS ────────────────────────────────────────────────
+// ── LOANS ─────────────────────────────────────────
 function getLoans() {
-  const rows = (D['Loans'] || []).slice(1).filter(r => r[0]);
-  const pmts = (D['Payments'] || []).slice(1).filter(r => r[0]);
+  const rows = (D['Loans']||[]).slice(1).filter(r => r[0]);
+  const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
   return rows.map(r => {
-    const name = r[0], type = r[1], emi = +r[2]||0, rate = +r[3]||0, tenure = +r[5]||0;
+    const name=r[0], type=r[1], emi=+r[2]||0, rate=+r[3]||0, tenure=+r[5]||0;
     const start = r[4] ? new Date(r[4]) : null;
     let elapsed = 0;
-    if (start) {
-      const now = new Date();
-      elapsed = Math.max(0, (now.getFullYear()-start.getFullYear())*12 + (now.getMonth()-start.getMonth()));
-    }
+    if (start) { const n=new Date(); elapsed=Math.max(0,(n.getFullYear()-start.getFullYear())*12+(n.getMonth()-start.getMonth())); }
     const remaining = Math.max(0, tenure - elapsed);
-    const endDate = start ? new Date(start.getFullYear(), start.getMonth() + tenure, start.getDate()) : null;
+    const endDate = start ? new Date(start.getFullYear(), start.getMonth()+tenure, start.getDate()) : null;
     const endStr = endDate ? endDate.toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '—';
+    // EMI due day — derive from StartDate day
+    const dueDay = start ? start.getDate() : 7;
     const outstanding = emi * remaining;
-    const paid = pmts.filter(p => p[1] === name).reduce((s,p) => s + (+p[2]||0), 0);
-    return { name, type, emi, rate, tenure, remaining, outstanding, endStr, paid };
+    return { name, type, emi, rate, tenure, remaining, outstanding, endStr, dueDay };
   });
 }
 
 function rLoans() {
   const loans = getLoans();
   const tb = document.getElementById('l-tbody');
-  if (!loans.length) {
-    tb.innerHTML = '<tr class="erow"><td colspan="7">No loans added yet. Click "+ add loan".</td></tr>';
-  } else {
-    tb.innerHTML = loans.map(l => `<tr>
-      <td style="font-weight:500">${l.name}</td>
-      <td><span class="badge bb">${l.type}</span></td>
-      <td class="mono">${INR(l.emi)}</td>
-      <td class="mono" style="color:var(--red)">${INR(l.outstanding)}</td>
-      <td class="dim">${l.rate}%</td>
-      <td class="dim">${l.endStr}</td>
-      <td><span class="badge ${l.remaining<=6?'bg':l.remaining<=12?'bo':'br'}">${l.remaining} left</span></td>
-    </tr>`).join('');
-  }
-  const tot    = loans.reduce((s,l) => s + l.outstanding, 0);
-  const totEmi = loans.reduce((s,l) => s + l.emi, 0);
-  const totInt = loans.reduce((s,l) => s + (l.emi * l.remaining - l.outstanding * (1 - l.rate/100/12 * l.remaining)), 0);
+  tb.innerHTML = loans.length
+    ? loans.map(l => `<tr>
+        <td style="font-weight:500">${l.name}</td>
+        <td><span class="badge bb">${l.type}</span></td>
+        <td class="mono">${INR(l.emi)}</td>
+        <td class="mono" style="color:var(--red)">${INR(l.outstanding)}</td>
+        <td class="dim">${l.rate}%</td>
+        <td class="dim">${l.endStr}</td>
+        <td><span class="badge ${l.remaining<=6?'bg':l.remaining<=12?'bo':'br'}">${l.remaining} left</span></td>
+      </tr>`).join('')
+    : '<tr class="erow"><td colspan="7">No loans yet. Click "+ add loan".</td></tr>';
+
+  const tot=loans.reduce((s,l)=>s+l.outstanding,0);
+  const totEmi=loans.reduce((s,l)=>s+l.emi,0);
+  const totInt=loans.reduce((s,l)=>s+(l.emi*l.remaining-l.outstanding),0);
   document.getElementById('l-total').textContent = INR(tot);
   document.getElementById('l-emi').textContent   = INR(totEmi);
   document.getElementById('l-count').textContent  = loans.length;
-  document.getElementById('l-int').textContent    = INR(Math.max(0, totEmi * loans.reduce((s,l) => s+l.remaining,0) - tot));
+  document.getElementById('l-int').textContent    = INR(Math.max(0,totInt));
 
-  const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
+  const pmts = (D['Payments']||[]).slice(1).filter(r=>r[0]);
   const ptb  = document.getElementById('lp-tbody');
-  if (!pmts.length) {
-    ptb.innerHTML = '<tr class="erow"><td colspan="4">No payments logged yet.</td></tr>';
-  } else {
-    ptb.innerHTML = [...pmts].reverse().map(r => `<tr>
-      <td class="dim">${r[0]}</td>
-      <td style="font-weight:500">${r[1]}</td>
-      <td class="mono" style="color:var(--gr)">${INR(r[2])}</td>
-      <td class="dim">${r[3]||''}</td>
-    </tr>`).join('');
-  }
+  ptb.innerHTML = pmts.length
+    ? [...pmts].reverse().map(r=>`<tr><td class="dim">${r[0]}</td><td style="font-weight:500">${r[1]}</td><td class="mono" style="color:var(--gr)">${INR(r[2])}</td><td class="dim">${r[3]||''}</td></tr>`).join('')
+    : '<tr class="erow"><td colspan="4">No payments yet.</td></tr>';
 }
 
 function fillLoanSel() {
   const s = document.getElementById('py-loan');
   const loans = getLoans();
-  s.innerHTML = loans.length
-    ? loans.map(l => `<option value="${l.name}">${l.name}</option>`).join('')
-    : '<option>No loans added yet</option>';
+  s.innerHTML = loans.length ? loans.map(l=>`<option value="${l.name}">${l.name}</option>`).join('') : '<option>No loans added</option>';
 }
 
 async function addLoan() {
-  const row = [
-    document.getElementById('ln').value,
-    document.getElementById('lt').value,
-    document.getElementById('lemi').value,
-    document.getElementById('lrate').value,
-    document.getElementById('lstart').value,
-    document.getElementById('ltenure').value,
-    document.getElementById('lnotes').value,
-  ];
-  if (!row[0] || !row[2]) { toast('Loan name and EMI are required'); return; }
-  const r = await apicall({ action:'append', tab:'Loans', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Loan added ✓'); closeM('m-addloan'); doSync(); }
+  const row = [document.getElementById('ln').value, document.getElementById('lt').value, document.getElementById('lemi').value, document.getElementById('lrate').value, document.getElementById('lstart').value, document.getElementById('ltenure').value, document.getElementById('lnotes').value];
+  if (!row[0]||!row[2]) { toast('Name and EMI required'); return; }
+  const r = await apicall({action:'append',tab:'Loans',row:JSON.stringify(row)});
+  if (r&&r.ok) { toast('Loan added ✓'); closeM('m-addloan'); doSync(); }
 }
 
 async function logPay() {
-  const row = [
-    document.getElementById('py-date').value,
-    document.getElementById('py-loan').value,
-    document.getElementById('py-amt').value,
-    document.getElementById('py-notes').value,
-  ];
+  const row = [document.getElementById('py-date').value, document.getElementById('py-loan').value, document.getElementById('py-amt').value, document.getElementById('py-notes').value];
   if (!row[2]) { toast('Enter amount paid'); return; }
-  const r = await apicall({ action:'append', tab:'Payments', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Payment logged ✓'); closeM('m-logpay'); doSync(); }
+  const r = await apicall({action:'append',tab:'Payments',row:JSON.stringify(row)});
+  if (r&&r.ok) { toast('Payment logged ✓'); closeM('m-logpay'); doSync(); }
 }
 
-// ── CARDS ────────────────────────────────────────────────
+// ── CARDS ─────────────────────────────────────────
 function getCardMaster() {
-  // From Cards tab: Name | Rate | Notes
-  return (D['Cards']||[]).slice(1).filter(r => r[0]).map(r => ({
-    name: r[0], rate: +r[1]||3.5, notes: r[2]||''
-  }));
+  return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:+r[1]||3.5,notes:r[2]||''}));
 }
-
 function getCards() {
   const masters = getCardMaster();
-  const bills   = (D['CCBills']||[]).slice(1).filter(r => r[0] && r[1] && +r[2] > 0);
-  const pmts    = (D['Payments']||[]).slice(1).filter(r => r[0]);
-  const loanNames = new Set(getLoans().map(l => l.name));
-
+  const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0);
+  const pmts    = (D['Payments']||[]).slice(1).filter(r=>r[0]);
+  const loanNames = new Set(getLoans().map(l=>l.name));
   return masters.map(m => {
-    const myBills    = bills.filter(b => b[1] === m.name);
-    const lastBill   = myBills.length ? myBills[myBills.length-1] : null;
-    const lastBillAmt  = lastBill ? +lastBill[2] : 0;
-    const lastBillDate = lastBill ? lastBill[0]  : '—';
-    const dueDate      = lastBill ? lastBill[3]  : '—';
-    const lastBillTs   = lastBill ? new Date(lastBill[0]).getTime() : 0;
-
-    const paidAfter = pmts
-      .filter(p => p[1] === m.name && !loanNames.has(p[1]) && new Date(p[0]).getTime() >= lastBillTs)
-      .reduce((s,p) => s + (+p[2]||0), 0);
-
-    const outstanding = Math.max(0, lastBillAmt - paidAfter);
-    return { ...m, lastBillAmt, lastBillDate, dueDate, paidAfter, outstanding };
+    const myBills   = bills.filter(b=>b[1]===m.name);
+    const lastBill  = myBills.length ? myBills[myBills.length-1] : null;
+    const lastAmt   = lastBill ? +lastBill[2] : 0;
+    const lastDate  = lastBill ? lastBill[0]  : '—';
+    const dueDate   = lastBill ? lastBill[3]  : '—';
+    const lastTs    = lastBill ? new Date(lastBill[0]).getTime() : 0;
+    const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+(+p[2]||0),0);
+    const outstanding = Math.max(0, lastAmt - paid);
+    return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
   });
 }
-
 function fillCardSels() {
-  const cards = getCardMaster();
-  const names = cards.length ? cards.map(c => c.name) : [];
+  const names = getCardMaster().map(c=>c.name);
   ['bl-card','cp-card'].forEach(id => {
     const s = document.getElementById(id);
-    if (!s) return;
-    s.innerHTML = names.length
-      ? names.map(n => `<option value="${n}">${n}</option>`).join('')
-      : '<option value="">No cards added yet</option>';
+    if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
   });
 }
-
 function rCC() {
   const cards = getCards();
   const tb = document.getElementById('cc-tbody');
-
   if (!cards.length) {
-    tb.innerHTML = '<tr class="erow"><td colspan="6">No cards yet. Click "+ add card" to register a card master record.</td></tr>';
-    document.getElementById('cc-total').textContent = '—';
-    document.getElementById('cc-int').textContent   = '—';
-    document.getElementById('cc-due').textContent   = '—';
-    document.getElementById('cc-count').textContent = '0';
+    tb.innerHTML='<tr class="erow"><td colspan="6">No cards. Click "+ add card".</td></tr>';
+    ['cc-total','cc-int','cc-due'].forEach(id=>document.getElementById(id).textContent='—');
+    document.getElementById('cc-count').textContent='0';
   } else {
-    tb.innerHTML = cards.map(c => `<tr>
-      <td style="font-weight:500">${c.name}</td>
-      <td class="dim">${c.rate}%/mo</td>
-      <td class="mono">${INR(c.lastBillAmt)}</td>
-      <td class="dim" style="color:var(--or)">${c.dueDate}</td>
-      <td class="mono" style="color:var(--gr)">${INR(c.paidAfter)}</td>
+    tb.innerHTML = cards.map(c=>`<tr>
+      <td style="font-weight:500">${c.name}</td><td class="dim">${c.rate}%/mo</td>
+      <td class="mono">${INR(c.lastAmt)}</td><td class="dim" style="color:var(--or)">${c.dueDate}</td>
+      <td class="mono" style="color:var(--gr)">${INR(c.paid)}</td>
       <td class="mono" style="color:var(--red);font-weight:600">${INR(c.outstanding)}</td>
     </tr>`).join('');
-
-    const totOut = cards.reduce((s,c) => s + c.outstanding, 0);
-    const totInt = cards.reduce((s,c) => s + (c.outstanding * c.rate / 100), 0);
-    const soon   = cards.filter(c => c.dueDate && c.dueDate !== '—').sort((a,b) => new Date(a.dueDate)-new Date(b.dueDate))[0];
-    document.getElementById('cc-total').textContent = INR(totOut);
-    document.getElementById('cc-int').textContent   = INR(totInt);
-    document.getElementById('cc-due').textContent   = soon ? soon.dueDate : '—';
-    document.getElementById('cc-count').textContent = cards.length;
+    const tot=cards.reduce((s,c)=>s+c.outstanding,0);
+    const int=cards.reduce((s,c)=>s+(c.outstanding*c.rate/100),0);
+    const soon=cards.filter(c=>c.dueDate&&c.dueDate!=='—').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate))[0];
+    document.getElementById('cc-total').textContent=INR(tot);
+    document.getElementById('cc-int').textContent=INR(int);
+    document.getElementById('cc-due').textContent=soon?soon.dueDate:'—';
+    document.getElementById('cc-count').textContent=cards.length;
   }
-
-  // Merged bill + payment log
-  const loanNames = new Set(getLoans().map(l => l.name));
-  const allE = [
-    ...(D['CCBills']||[]).slice(1).filter(r => r[0] && r[1] && +r[2] > 0).map(r => ({ date:r[0], card:r[1], type:'Bill', amt:+r[2], notes:r[4]||'' })),
-    ...(D['Payments']||[]).slice(1).filter(r => r[0] && r[1] && !loanNames.has(r[1])).map(r => ({ date:r[0], card:r[1], type:'Payment', amt:+r[2], notes:r[3]||'' }))
-  ].sort((a,b) => new Date(b.date) - new Date(a.date));
-
-  const ltb = document.getElementById('ccl-tbody');
-  ltb.innerHTML = allE.length
-    ? allE.map(e => `<tr>
-        <td class="dim">${e.date}</td>
-        <td style="font-weight:500">${e.card}</td>
-        <td><span class="badge ${e.type==='Bill'?'bo':'bg'}">${e.type}</span></td>
-        <td class="mono" style="color:${e.type==='Bill'?'var(--or)':'var(--gr)'}">${INR(e.amt)}</td>
-        <td class="dim">${e.notes}</td>
-      </tr>`).join('')
-    : '<tr class="erow"><td colspan="5">No bill or payment entries yet.</td></tr>';
+  const loanNames=new Set(getLoans().map(l=>l.name));
+  const all=[
+    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0).map(r=>({date:r[0],card:r[1],type:'Bill',amt:+r[2],notes:r[4]||''})),
+    ...(D['Payments']||[]).slice(1).filter(r=>r[0]&&r[1]&&!loanNames.has(r[1])).map(r=>({date:r[0],card:r[1],type:'Payment',amt:+r[2],notes:r[3]||''}))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const ltb=document.getElementById('ccl-tbody');
+  ltb.innerHTML=all.length ? all.map(e=>`<tr><td class="dim">${e.date}</td><td style="font-weight:500">${e.card}</td><td><span class="badge ${e.type==='Bill'?'bo':'bg'}">${e.type}</span></td><td class="mono" style="color:${e.type==='Bill'?'var(--or)':'var(--gr)'}">${INR(e.amt)}</td><td class="dim">${e.notes}</td></tr>`).join('') : '<tr class="erow"><td colspan="5">No entries yet.</td></tr>';
 }
-
 async function addCard() {
-  const name  = document.getElementById('ccn').value.trim();
-  const rate  = document.getElementById('ccr').value  || '3.5';
-  const notes = document.getElementById('ccnotes').value;
-  if (!name) { toast('Card name is required'); return; }
-  const r = await apicall({ action:'append', tab:'Cards', row: JSON.stringify([name, rate, notes]) });
-  if (r && r.ok) { toast('Card added ✓'); closeM('m-addcc'); doSync(); }
+  const name=document.getElementById('ccn').value.trim(), rate=document.getElementById('ccr').value||'3.5', notes=document.getElementById('ccno').value;
+  if (!name) { toast('Card name required'); return; }
+  const r=await apicall({action:'append',tab:'Cards',row:JSON.stringify([name,rate,notes])});
+  if (r&&r.ok) { toast('Card added ✓'); closeM('m-addcc'); doSync(); }
 }
-
 async function logBill() {
-  const row = [
-    document.getElementById('bl-date').value,
-    document.getElementById('bl-card').value,
-    document.getElementById('bl-amt').value,
-    document.getElementById('bl-due').value,
-    document.getElementById('bl-notes').value,
-  ];
+  const row=[document.getElementById('bl-date').value,document.getElementById('bl-card').value,document.getElementById('bl-amt').value,document.getElementById('bl-due').value,document.getElementById('bl-notes').value];
   if (!row[1]) { toast('Select a card'); return; }
   if (!row[2]) { toast('Enter bill amount'); return; }
-  const r = await apicall({ action:'append', tab:'CCBills', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Bill logged ✓'); closeM('m-logbill'); doSync(); }
+  const r=await apicall({action:'append',tab:'CCBills',row:JSON.stringify(row)});
+  if (r&&r.ok) { toast('Bill logged ✓'); closeM('m-logbill'); doSync(); }
 }
-
 async function logCCPay() {
-  const row = [
-    document.getElementById('cp-date').value,
-    document.getElementById('cp-card').value,
-    document.getElementById('cp-amt').value,
-    document.getElementById('cp-notes').value,
-  ];
+  const row=[document.getElementById('cp-date').value,document.getElementById('cp-card').value,document.getElementById('cp-amt').value,document.getElementById('cp-notes').value];
   if (!row[1]) { toast('Select a card'); return; }
-  if (!row[2]) { toast('Enter amount paid'); return; }
-  const r = await apicall({ action:'append', tab:'Payments', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Payment logged ✓'); closeM('m-logccpay'); doSync(); }
+  if (!row[2]) { toast('Enter amount'); return; }
+  const r=await apicall({action:'append',tab:'Payments',row:JSON.stringify(row)});
+  if (r&&r.ok) { toast('Payment logged ✓'); closeM('m-logccpay'); doSync(); }
 }
 
-// ── INFORMAL ─────────────────────────────────────────────
+// ── INFORMAL ──────────────────────────────────────
 function rInformal() {
-  const rows = (D['Transactions']||[]).slice(1).filter(r => r[0] || r[2]);
+  const rows=(D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
+  const ltb=document.getElementById('infl-tbody');
+  ltb.innerHTML=rows.length
+    ? [...rows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
+    : '<tr class="erow"><td colspan="5">No transactions.</td></tr>';
 
-  // Transaction log (newest first)
-  const ltb = document.getElementById('infl-tbody');
-  ltb.innerHTML = rows.length
-    ? [...rows].reverse().map(r => `<tr>
-        <td class="dim">${r[0]||''}</td>
-        <td style="font-weight:500">${r[2]||''}</td>
-        <td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td>
-        <td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td>
-        <td class="dim" style="font-size:11px">${r[5]||''}</td>
-      </tr>`).join('')
-    : '<tr class="erow"><td colspan="5">No transactions in Transactions sheet.</td></tr>';
+  const people={};
+  rows.forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]={rcv:0,paid:0}; if(r[1]==='Received') people[n].rcv+=+r[3]||0; if(r[1]==='Paid') people[n].paid+=+r[4]||0; });
+  const entries=Object.entries(people);
+  let totalOwed=0, topP='', topA=0;
+  const stb=document.getElementById('infs-tbody');
+  stb.innerHTML=entries.length ? entries.map(([name,d])=>{
+    const out=d.rcv-d.paid;
+    if(out>0){totalOwed+=out; if(out>topA){topA=out;topP=name;}}
+    const [bc,bl]=out>100000?['br','High']:out>40000?['bo','Medium']:out<=0?['bg','Settled']:['bb','Low'];
+    const outStyle=out>0?'color:var(--or);font-weight:600':'color:var(--gr)';
+    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.rcv)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${out>0?INR(out):'settled'}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
+  }).join('') : '<tr class="erow"><td colspan="5">No data.</td></tr>';
 
-  // Summary per person
-  const people = {};
-  rows.forEach(r => {
-    const n = r[2]; if (!n || n==='Total') return;
-    if (!people[n]) people[n] = { rcv:0, paid:0 };
-    if (r[1]==='Received') people[n].rcv  += +r[3]||0;
-    if (r[1]==='Paid')     people[n].paid += +r[4]||0;
-  });
-
-  const entries = Object.entries(people);
-  const stb = document.getElementById('infs-tbody');
-  let totalOwed = 0, topPerson = '', topAmt = 0;
-
-  stb.innerHTML = entries.length ? entries.map(([name, d]) => {
-    const out = d.rcv - d.paid;
-    if (out > 0) { totalOwed += out; if (out > topAmt) { topAmt = out; topPerson = name; } }
-    const [bc, bl] = out > 100000 ? ['br','High'] : out > 40000 ? ['bo','Medium'] : out <= 0 ? ['bg','Settled'] : ['bb','Low'];
-    const outStyle = out > 0 ? 'color:var(--or);font-weight:600' : 'color:var(--gr)';
-    const outVal   = out > 0 ? INR(out) : 'settled';
-    return `<tr>
-      <td style="font-weight:500">${name}</td>
-      <td class="mono" style="color:var(--gr)">${INR(d.rcv)}</td>
-      <td class="mono" style="color:var(--red)">${INR(d.paid)}</td>
-      <td class="mono" style="${outStyle}">${outVal}</td>
-      <td><span class="badge ${bc}">${bl}</span></td>
-    </tr>`;
-  }).join('') : '<tr class="erow"><td colspan="5">No data loaded.</td></tr>';
-
-  document.getElementById('inf-total').textContent = INR(totalOwed);
-  document.getElementById('inf-count').textContent = entries.filter(([,d]) => d.rcv - d.paid > 0).length;
-  document.getElementById('inf-top').textContent   = topPerson ? topPerson + ' · ' + INR(topAmt) : '—';
-  document.getElementById('it-dl').innerHTML = entries.map(([n]) => `<option value="${n}">`).join('');
+  document.getElementById('inf-total').textContent=INR(totalOwed);
+  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.rcv-d.paid>0).length;
+  document.getElementById('inf-top').textContent=topP?topP+' · '+INR(topA):'—';
+  document.getElementById('it-dl').innerHTML=entries.map(([n])=>`<option value="${n}">`).join('');
 }
-
 async function logInfTx() {
-  const dir    = document.getElementById('it-dir').value;
-  const name   = document.getElementById('it-person').value.trim();
-  const date   = document.getElementById('it-date').value;
-  const amt    = document.getElementById('it-amt').value;
-  const rem    = document.getElementById('it-rem').value;
-  if (!name || !amt) { toast('Person and amount are required'); return; }
-  // Match existing sheet structure: Date | Paid/Received | Particulars | ReceivedAmount | PaidAmount | Remarks
-  const row = dir === 'Received'
-    ? [date, 'Received', name, amt, '', rem]
-    : [date, 'Paid',     name, '',  amt, rem];
-  const r = await apicall({ action:'append', tab:'Transactions', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Transaction logged ✓'); closeM('m-inftx'); doSync(); }
+  const dir=document.getElementById('it-dir').value, name=document.getElementById('it-person').value.trim(), date=document.getElementById('it-date').value, amt=document.getElementById('it-amt').value, rem=document.getElementById('it-rem').value;
+  if(!name||!amt){toast('Person and amount required');return;}
+  const row=dir==='Received'?[date,'Received',name,amt,'',rem]:[date,'Paid',name,'',amt,rem];
+  const r=await apicall({action:'append',tab:'Transactions',row:JSON.stringify(row)});
+  if(r&&r.ok){toast('Transaction logged ✓');closeM('m-inftx');doSync();}
 }
 
-// ── BUDGET ───────────────────────────────────────────────
+// ── BUDGET ────────────────────────────────────────
 function rBudget() {
-  const inc    = INC();
-  const loans  = getLoans();
-  const totEmi = loans.reduce((s,l) => s + l.emi, 0);
-  const house  = HH();
-  const parth  = 13000;
-  const left   = inc - totEmi - house - parth;
-
-  document.getElementById('b-inc').textContent  = INR(inc);
-  document.getElementById('b-emi').textContent  = INR(totEmi);
-  document.getElementById('b-left').textContent = INR(Math.max(0,left));
-
-  const tb = document.getElementById('b-tbody');
-  tb.innerHTML = [
-    ...loans.map(l => `<tr>
-      <td>${l.name}</td>
-      <td class="mono" style="color:var(--red)">${INR(l.emi)}</td>
-      <td><span class="badge br">Fixed EMI</span></td>
-      <td class="dim">${l.type==='Home Loan'?'10th of month':'7th of month'}</td>
-    </tr>`),
+  const inc=CFG.inc, loans=getLoans(), totEmi=loans.reduce((s,l)=>s+l.emi,0), house=CFG.hh, parth=13000, left=inc-totEmi-house-parth;
+  document.getElementById('b-inc').textContent=INR(inc);
+  document.getElementById('b-emi').textContent=INR(totEmi);
+  document.getElementById('b-hh').textContent=INR(house);
+  document.getElementById('b-left').textContent=INR(Math.max(0,left));
+  const tb=document.getElementById('b-tbody');
+  tb.innerHTML=[
+    ...loans.map(l=>`<tr><td>${l.name}</td><td class="mono" style="color:var(--red)">${INR(l.emi)}</td><td><span class="badge br">Fixed EMI</span></td><td class="dim">${l.type==='Home Loan'?'10th':'7th'} of month</td></tr>`),
     `<tr><td>Household + fuel + misc</td><td class="mono" style="color:var(--or)">${INR(house)}</td><td><span class="badge bo">Variable</span></td><td class="dim">Estimate</td></tr>`,
     `<tr><td>Parth Shah repayment</td><td class="mono">₹13,000</td><td><span class="badge bb">Ongoing</span></td><td class="dim">Till cleared</td></tr>`,
-    `<tr style="border-top:1px solid var(--bd2)">
-      <td style="font-weight:600">Buffer (AMEX + informal + jar)</td>
-      <td class="mono" style="color:var(--ac);font-weight:600">${INR(Math.max(0,left))}</td>
-      <td></td><td></td>
-    </tr>`
+    `<tr style="border-top:1px solid var(--bd2)"><td style="font-weight:600">Buffer (AMEX + informal + jar)</td><td class="mono" style="color:var(--ac);font-weight:600">${INR(Math.max(0,left))}</td><td></td><td></td></tr>`
   ].join('');
-
-  const irows = (D['Income']||[]).slice(1).filter(r => r[0]);
-  const itb   = document.getElementById('bi-tbody');
-  itb.innerHTML = irows.length
-    ? [...irows].reverse().map(r => `<tr>
-        <td class="dim">${r[0]}</td>
-        <td class="mono" style="color:var(--gr)">${INR(r[1])}</td>
-        <td>${r[2]||''}</td>
-        <td class="dim">${r[3]||''}</td>
-      </tr>`).join('')
-    : '<tr class="erow"><td colspan="4">No income logged yet.</td></tr>';
+  const irows=(D['Income']||[]).slice(1).filter(r=>r[0]);
+  const itb=document.getElementById('bi-tbody');
+  itb.innerHTML=irows.length ? [...irows].reverse().map(r=>`<tr><td class="dim">${r[0]}</td><td class="mono" style="color:var(--gr)">${INR(r[1])}</td><td>${r[2]||''}</td><td class="dim">${r[3]||''}</td></tr>`).join('') : '<tr class="erow"><td colspan="4">No income logged.</td></tr>';
 }
-
 async function logIncome() {
-  const row = [
-    document.getElementById('ic-month').value,
-    document.getElementById('ic-amt').value,
-    document.getElementById('ic-src').value,
-    document.getElementById('ic-notes').value,
-  ];
-  if (!row[1]) { toast('Enter amount'); return; }
-  const r = await apicall({ action:'append', tab:'Income', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Income logged ✓'); closeM('m-income'); doSync(); }
+  const row=[document.getElementById('ic-month').value,document.getElementById('ic-amt').value,document.getElementById('ic-src').value,document.getElementById('ic-notes').value];
+  if(!row[1]){toast('Enter amount');return;}
+  const r=await apicall({action:'append',tab:'Income',row:JSON.stringify(row)});
+  if(r&&r.ok){toast('Income logged ✓');closeM('m-income');doSync();}
 }
 
-// ── SAVINGS ──────────────────────────────────────────────
+// ── SAVINGS ──────────────────────────────────────
 function rSavings() {
-  const rows = (D['Savings']||[]).slice(1).filter(r => r[0]);
-  let run = 0;
-  const tb = document.getElementById('sv-tbody');
-
-  tb.innerHTML = rows.length
-    ? rows.map(r => {
-        run += +r[1]||0;
-        return `<tr>
-          <td class="dim">${r[0]}</td>
-          <td class="mono" style="color:var(--gr)">${INR(r[1])}</td>
-          <td class="mono" style="color:var(--ac)">${INR(run)}</td>
-          <td class="dim">${r[2]||''}</td>
-        </tr>`;
-      }).join('')
-    : '<tr class="erow"><td colspan="4">Start filling the jar!</td></tr>';
-
-  const target = EF();
-  const pct    = Math.min(100, (run / target) * 100);
-  document.getElementById('sv-total').textContent  = INR(run);
-  document.getElementById('sv-target').textContent = INR(target);
-  document.getElementById('sv-pct').textContent    = pct.toFixed(1) + '%';
-  document.getElementById('sv-prog').style.width   = pct + '%';
-  document.getElementById('sv-bl').textContent     = INR(run);
-  document.getElementById('sv-tl').textContent     = INR(target);
-  document.getElementById('ov-sav').textContent    = INR(run);
-  document.getElementById('ov-sav-p').style.width  = pct + '%';
-  document.getElementById('ov-sav-sub').textContent = 'Target: ' + INR(target);
-
-  if (rows.length >= 2) {
-    const avg = run / rows.length;
-    const eta = avg > 0 ? Math.ceil((target - run) / avg) : 0;
-    document.getElementById('sv-eta').textContent = eta > 0 ? eta + ' mo' : 'Reached!';
-  }
+  const rows=(D['Savings']||[]).slice(1).filter(r=>r[0]);
+  let run=0;
+  const tb=document.getElementById('sv-tbody');
+  tb.innerHTML=rows.length ? rows.map(r=>{run+=+r[1]||0;return`<tr><td class="dim">${r[0]}</td><td class="mono" style="color:var(--gr)">${INR(r[1])}</td><td class="mono" style="color:var(--ac)">${INR(run)}</td><td class="dim">${r[2]||''}</td></tr>`;}).join('') : '<tr class="erow"><td colspan="4">Start filling the jar!</td></tr>';
+  const target=CFG.ef, pct=Math.min(100,(run/target)*100);
+  document.getElementById('sv-total').textContent=INR(run);
+  document.getElementById('sv-target').textContent=INR(target);
+  document.getElementById('sv-pct').textContent=pct.toFixed(1)+'%';
+  document.getElementById('sv-prog').style.width=pct+'%';
+  document.getElementById('sv-bl').textContent=INR(run);
+  document.getElementById('sv-tl').textContent=INR(target);
+  document.getElementById('ov-sav').textContent=INR(run);
+  document.getElementById('ov-sav-p').style.width=pct+'%';
+  document.getElementById('ov-sav-note').textContent='Target: '+INR(target);
+  if(rows.length>=2){const avg=run/rows.length; const eta=avg>0?Math.ceil((target-run)/avg):0; document.getElementById('sv-eta').textContent=eta>0?eta+' mo':'Reached!';}
 }
-
 async function logSav() {
-  const row = [
-    document.getElementById('sv-date').value,
-    document.getElementById('sv-amt').value,
-    document.getElementById('sv-notes').value,
-  ];
-  if (!row[1]) { toast('Enter amount'); return; }
-  const r = await apicall({ action:'append', tab:'Savings', row: JSON.stringify(row) });
-  if (r && r.ok) { toast('Saved ✓'); closeM('m-sav'); doSync(); }
+  const row=[document.getElementById('sv-date').value,document.getElementById('sv-amt').value,document.getElementById('sv-notes').value];
+  if(!row[1]){toast('Enter amount');return;}
+  const r=await apicall({action:'append',tab:'Savings',row:JSON.stringify(row)});
+  if(r&&r.ok){toast('Saved ✓');closeM('m-sav');doSync();}
 }
 
-// ── OVERVIEW ─────────────────────────────────────────────
+// ── OVERVIEW ──────────────────────────────────────
 function rOverview() {
-  const inc      = INC();
   const loans    = getLoans();
   const cards    = getCards();
-  const loanTot  = loans.reduce((s,l) => s + l.outstanding, 0);
-  const totEmi   = loans.reduce((s,l) => s + l.emi, 0);
-  const ccTot    = cards.reduce((s,c) => s + c.outstanding, 0);
+  const loanTot  = loans.reduce((s,l)=>s+l.outstanding,0);
+  const totEmi   = loans.reduce((s,l)=>s+l.emi,0);
+  const ccTot    = cards.reduce((s,c)=>s+c.outstanding,0);
+  const inc      = CFG.inc;
+  const house    = CFG.hh;
 
-  // Informal total
-  const people = {};
-  (D['Transactions']||[]).slice(1).forEach(r => {
-    const n = r[2]; if (!n || n==='Total') return;
-    if (!people[n]) people[n] = 0;
-    if (r[1]==='Received') people[n] += +r[3]||0;
-    if (r[1]==='Paid')     people[n] -= +r[4]||0;
-  });
-  let infTot = 0;
-  Object.values(people).forEach(v => { if (v > 0) infTot += v; });
+  // Informal total from Transactions
+  const people={};
+  (D['Transactions']||[]).slice(1).forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]=0; if(r[1]==='Received') people[n]+=+r[3]||0; if(r[1]==='Paid') people[n]-=+r[4]||0; });
+  let infTot=0; Object.values(people).forEach(v=>{ if(v>0) infTot+=v; });
 
-  const totalDebt = loanTot + ccTot + infTot;
-  const free      = inc - totEmi;
+  const totalDebt=loanTot+ccTot+infTot;
+  const free=inc-totEmi;
 
+  // Savings running total
+  let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=+r[1]||0);
+
+  // Net worth
+  const assets = CFG.assets + savRun; // other assets + savings jar
+  const liab   = totalDebt;
+  const nw     = assets - liab;
+
+  // Top stats
   document.getElementById('ov-debt').textContent = INR(totalDebt);
   document.getElementById('ov-emi').textContent  = INR(totEmi);
   document.getElementById('ov-inc').textContent  = INR(inc);
   document.getElementById('ov-free').textContent = INR(free);
+  document.getElementById('ov-nw').textContent   = INR(nw);
+  document.getElementById('ov-nw2').textContent  = INR(nw);
+  document.getElementById('ov-assets').textContent = INR(assets);
+  document.getElementById('ov-liab').textContent   = INR(liab);
+
+  // AMEX card
+  const amex=cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
+  const amexBal = amex ? amex.outstanding : ccTot;
+  document.getElementById('ov-amex').textContent=INR(amexBal);
+  document.getElementById('ov-amex-p').style.width=Math.min(100,(amexBal/403424)*100)+'%';
+
+  // Debt breakdown bars
+  document.getElementById('dv-bank').textContent=INR(loanTot);
+  document.getElementById('dv-cc').textContent=INR(ccTot);
+  document.getElementById('dv-inf').textContent=INR(infTot);
+  if(totalDebt>0) {
+    document.getElementById('db-bank').style.width=Math.max(2,loanTot/totalDebt*100)+'%';
+    document.getElementById('db-cc').style.width=Math.max(2,ccTot/totalDebt*100)+'%';
+    document.getElementById('db-inf').style.width=Math.max(2,infTot/totalDebt*100)+'%';
+  }
 
   // Cashflow
   document.getElementById('cf-inc').textContent   = INR(inc);
-  document.getElementById('cf-emi').textContent   = INR(totEmi);
-  document.getElementById('cf-avail').textContent = INR(Math.max(0, free - HH()));
+  document.getElementById('cf-emi').textContent   = '−'+INR(totEmi);
+  document.getElementById('cf-hh').textContent    = '−'+INR(house);
+  document.getElementById('cf-avail').textContent = INR(Math.max(0,free-house-13000));
 
-  // Debt breakdown with proportional bars
-  document.getElementById('ov-bank-debt').textContent = INR(loanTot);
-  document.getElementById('ov-cc-debt').textContent   = INR(ccTot);
-  document.getElementById('ov-inf-debt').textContent  = INR(infTot);
-  if (totalDebt > 0) {
-    document.getElementById('br-bank').style.width = Math.max(2, loanTot/totalDebt*100) + '%';
-    document.getElementById('br-cc').style.width   = Math.max(2, ccTot/totalDebt*100) + '%';
-    document.getElementById('br-inf').style.width  = Math.max(2, infTot/totalDebt*100) + '%';
+  // EMI Calendar
+  const now = new Date();
+  const calItems = [];
+  loans.forEach(l => {
+    // Due this month on dueDay
+    const dueDate = new Date(now.getFullYear(), now.getMonth(), l.dueDay);
+    const diff = Math.ceil((dueDate-now)/(1000*60*60*24));
+    let cls='due-month';
+    if(diff<0) cls='due-done';
+    else if(diff<=3) cls='due-soon';
+    else if(diff<=7) cls='due-week';
+    const label = diff<0?'Paid/overdue':diff===0?'Due today':'Due in '+diff+' days';
+    calItems.push({ name:l.name, amt:l.emi, dateStr:l.dueDay+'th', label, cls, diff });
+  });
+  cards.forEach(c => {
+    if(!c.dueDate||c.dueDate==='—') return;
+    const dueDate=new Date(c.dueDate);
+    const diff=Math.ceil((dueDate-now)/(1000*60*60*24));
+    let cls='due-month';
+    if(diff<0) cls='due-done';
+    else if(diff<=3) cls='due-soon';
+    else if(diff<=7) cls='due-week';
+    const label=diff<0?'Overdue':diff===0?'Due today':'Due in '+diff+' days';
+    calItems.push({ name:c.name+' bill', amt:c.outstanding, dateStr:c.dueDate, label, cls, diff });
+  });
+  calItems.sort((a,b)=>a.diff-b.diff);
+  const cal=document.getElementById('ov-calendar');
+  cal.innerHTML = calItems.length ? calItems.map(item=>`
+    <div class="cal-item ${item.cls}">
+      <div class="cal-date">${item.dateStr} · ${item.label}</div>
+      <div class="cal-name">${item.name}</div>
+      <div class="cal-amt" style="color:${item.cls==='due-soon'?'var(--red)':item.cls==='due-week'?'var(--or)':item.cls==='due-done'?'var(--tx3)':'var(--tx)'}">${INR(item.amt)}</div>
+    </div>`).join('')
+    : '<div style="color:var(--tx3);font-size:12px;font-style:italic">No loans added yet.</div>';
+
+  // Payoff projection — 12 months
+  buildProjection(loanTot, ccTot, infTot, totEmi, inc, house);
+
+  // Recent activity
+  const loanNames=new Set(loans.map(l=>l.name));
+  const activity=[
+    ...(D['Payments']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:r[1],amt:+r[2],note:r[3]||'',col:'var(--red)'})),
+    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&+r[2]>0).map(r=>({date:r[0],what:r[1]+' statement',amt:+r[2],note:'Due: '+r[3],col:'var(--or)'})),
+    ...(D['Savings']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:'Savings jar',amt:+r[1],note:r[2]||'',col:'var(--ac)'})),
+    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r=>({date:r[0],what:r[2]+' ('+r[1]+')',amt:+(r[1]==='Received'?r[3]:r[4])||0,note:r[5]||'',col:r[1]==='Paid'?'var(--red)':'var(--gr)'}))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
+
+  const atb=document.getElementById('ov-activity');
+  atb.innerHTML=activity.length
+    ? activity.map(a=>`<tr><td class="dim">${a.date}</td><td style="font-weight:500">${a.what}</td><td class="mono" style="color:${a.col}">${INR(a.amt)}</td><td class="dim">${a.note}</td></tr>`).join('')
+    : '<tr class="erow"><td colspan="4">Sync to see activity.</td></tr>';
+}
+
+// ── PROJECTION CHART ──────────────────────────────
+function buildProjection(loanTot, ccTot, infTot, totEmi, inc, house) {
+  const months=['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+  // CC Smart EMI reductions per month (from known schedule)
+  const ccEmiReductions = [0,0,21221,9647,11342,0,0,0,0,0,0,0]; // Jul,Aug,Sep EMIs end
+  // Monthly free cash to pay off CC & informal
+  let bank=loanTot, cc=ccTot, inf=infTot;
+  let freeEmi=totEmi;
+  const points=[];
+  for(let i=0;i<12;i++){
+    freeEmi -= ccEmiReductions[i]||0; // as CC EMIs end, freed money
+    const buffer=Math.max(0,inc-freeEmi-house-13000);
+    // Priority: AMEX first, then informal
+    const amexPay=Math.min(cc, i<2?Math.min(buffer,30000):i<5?Math.min(buffer,50000):buffer*0.7);
+    cc=Math.max(0,cc-amexPay);
+    if(cc<=0){const rem=buffer-amexPay; inf=Math.max(0,inf-rem*0.5);}
+    bank=Math.max(0,bank-freeEmi*0.6); // approximate principal reduction
+    points.push({label:months[i], bank, cc, inf, total:bank+cc+inf});
   }
-
-  // AMEX card
-  const amex = cards.find(c => c.name.toLowerCase().includes('amex') || c.name.toLowerCase().includes('american'));
-  if (amex) {
-    document.getElementById('ov-amex').textContent = INR(amex.outstanding);
-    const origAmt = 403424;
-    const pct = Math.min(100, (amex.outstanding / origAmt) * 100);
-    document.getElementById('ov-amex-p').style.width = pct + '%';
-  } else if (ccTot > 0) {
-    document.getElementById('ov-amex').textContent = INR(ccTot);
-  }
-
-  // Recent activity (last 8 entries across payments + transactions)
-  const loanNames = new Set(loans.map(l => l.name));
-  const activity = [
-    ...(D['Payments']||[]).slice(1).filter(r=>r[0]).map(r => ({ date:r[0], what:r[1], amt:+r[2], note:r[3]||'', color:'var(--red)' })),
-    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&+r[2]>0).map(r => ({ date:r[0], what:r[1]+' bill', amt:+r[2], note:'Due: '+r[3], color:'var(--or)' })),
-    ...(D['Savings']||[]).slice(1).filter(r=>r[0]).map(r => ({ date:r[0], what:'Savings', amt:+r[1], note:r[2]||'', color:'var(--ac)' })),
-    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r => ({ date:r[0], what:r[2]+' ('+(r[1]||'')+')', amt:+(r[1]==='Received'?r[3]:r[4])||0, note:r[5]||'', color:r[1]==='Paid'?'var(--red)':'var(--gr)' })),
-  ].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,8);
-
-  const atb = document.getElementById('ov-activity');
-  atb.innerHTML = activity.length
-    ? activity.map(a => `<tr>
-        <td class="dim">${a.date}</td>
-        <td style="font-weight:500">${a.what}</td>
-        <td class="mono" style="color:${a.color}">${INR(a.amt)}</td>
-        <td class="dim">${a.note}</td>
-      </tr>`).join('')
-    : '<tr class="erow"><td colspan="4">Sync to see recent activity.</td></tr>';
+  const maxVal=points[0].total||1;
+  const chartH=110;
+  const chart=document.getElementById('ov-proj-chart');
+  chart.innerHTML=points.map(p=>{
+    const bH=Math.round((p.bank/maxVal)*chartH);
+    const cH=Math.round((p.cc/maxVal)*chartH);
+    const iH=Math.round((p.inf/maxVal)*chartH);
+    const totH=bH+cH+iH;
+    return `<div class="proj-bar-wrap">
+      <div style="display:flex;flex-direction:column;align-items:stretch;height:${totH}px;width:100%;border-radius:3px 3px 0 0;overflow:hidden;position:relative">
+        <div class="proj-bar" style="background:var(--red);height:${bH}px;border-radius:0;position:relative">
+          <div class="proj-tip">${p.label}: Bank ${INR(Math.round(p.bank))}</div>
+        </div>
+        <div class="proj-bar" style="background:var(--or);height:${cH}px;border-radius:0">
+          <div class="proj-tip">CC ${INR(Math.round(p.cc))}</div>
+        </div>
+        <div class="proj-bar" style="background:var(--pu);height:${iH}px;border-radius:0">
+          <div class="proj-tip">Informal ${INR(Math.round(p.inf))}</div>
+        </div>
+      </div>
+      <div class="proj-label">${p.label}</div>
+    </div>`;
+  }).join('');
 }
 
-// ── SETUP ────────────────────────────────────────────────
-function saveUrl() {
-  const url = document.getElementById('api-url').value.trim();
-  if (!url) { toast('Enter the URL first'); return; }
-  C.url = url; save();
-  const res = document.getElementById('tres');
-  res.style.color = 'var(--or)';
-  res.textContent = 'Testing connection…';
-  fetch(url + '?action=read&tab=Savings')
-    .then(r => r.json())
-    .then(() => {
-      res.style.color = 'var(--gr)';
-      res.textContent = '✓ Connected! Hit ↻ in the top-right to sync your data.';
-      document.getElementById('banner').classList.add('hide');
-      toast('Sheet connected ✓');
-      doSync();
-    })
-    .catch(() => {
-      res.style.color = 'var(--red)';
-      res.textContent = '✗ Could not connect. Check URL and make sure deployment is set to "Anyone".';
-    });
-}
-
-function saveUrl2() {
-  const url = document.getElementById('s2-url').value.trim();
-  if (!url) return;
-  C.url = url; save();
-  const res = document.getElementById('s2-res');
-  res.style.color = 'var(--or)';
-  res.textContent = 'Testing…';
-  fetch(url + '?action=read&tab=Savings')
-    .then(r => r.json())
-    .then(() => { res.style.color='var(--gr)'; res.textContent='✓ Connected!'; document.getElementById('banner').classList.add('hide'); doSync(); })
-    .catch(() => { res.style.color='var(--red)'; res.textContent='✗ Failed. Check URL.'; });
-}
-
-// ── INIT ─────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────
 window.addEventListener('load', () => {
-  if (C.url) {
-    document.getElementById('api-url').value = C.url;
-    document.getElementById('banner').classList.add('hide');
-    doSync();
-  } else {
-    // Show defaults so overview isn't blank
-    document.getElementById('ov-inc').textContent  = INR(INC());
-    document.getElementById('ov-emi').textContent  = INR(131955);
-    document.getElementById('ov-free').textContent = INR(INC()-131955);
-    document.getElementById('cf-inc').textContent  = INR(INC());
-    document.getElementById('cf-emi').textContent  = INR(131955);
-    document.getElementById('cf-avail').textContent = INR(INC()-131955-HH());
+  // Show defaults immediately so overview isn't blank
+  document.getElementById('ov-inc').textContent  = INR(CFG.inc);
+  document.getElementById('ov-emi').textContent  = INR(131955);
+  document.getElementById('ov-free').textContent = INR(CFG.inc - 131955);
+  document.getElementById('cf-inc').textContent  = INR(CFG.inc);
+  document.getElementById('cf-emi').textContent  = '−'+INR(131955);
+  document.getElementById('cf-hh').textContent   = '−'+INR(CFG.hh);
+  document.getElementById('cf-avail').textContent= INR(CFG.inc-131955-CFG.hh-13000);
+  document.getElementById('ov-sav-note').textContent = 'Target: '+INR(CFG.ef);
+  document.getElementById('sv-target').textContent   = INR(CFG.ef);
+  buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh);
+
+  if (!API.includes('https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4UO4PstibAn-jjC/exec')) doSync();
+  else {
+    // Show setup hint
+    const b = document.createElement('div');
+    b.className = 'banner';
+    b.innerHTML = '⚠ Apps Script URL not set. Open <b>index.html</b>, find <code>PASTE_YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your URL. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
+    document.getElementById('page-overview').prepend(b);
   }
-  // Set savings target display
-  document.getElementById('sv-target').textContent = INR(EF());
-  document.getElementById('ov-sav-sub').textContent = 'Target: ' + INR(EF());
 });
 </script>
 </body>
