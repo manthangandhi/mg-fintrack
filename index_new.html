@@ -243,7 +243,6 @@ tbody tr:hover td{background:var(--sf2)}
         <div class="cf-row"><span class="lbl">TR take-home</span><span id="cf-inc" style="color:var(--gr)">—</span></div>
         <div class="cf-row"><span class="lbl">Bank EMIs</span><span id="cf-emi" style="color:var(--red)">—</span></div>
         <div class="cf-row"><span class="lbl">Household est.</span><span id="cf-hh" style="color:var(--or)">—</span></div>
-        <div class="cf-row"><span class="lbl">Parth Shah repayment</span><span id="cf-parth" style="color:var(--or)">−₹13,000</span></div>
         <div class="cf-row"><span class="lbl">Available for AMEX/debts</span><span id="cf-avail" style="color:var(--ac)">—</span></div>
       </div>
     </div>
@@ -425,10 +424,7 @@ tbody tr:hover td{background:var(--sf2)}
       <div><div class="srow-l">Household monthly estimate</div><div class="srow-sub">Current: <b id="s-hh-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
     </div>
-    <div class="srow">
-      <div><div class="srow-l">Parth Shah repayment</div><div class="srow-sub">Current: <b id="s-pr-d">—</b></div></div>
-      <div class="srow-r"><input class="fi" id="s-pr" type="number" style="width:120px" placeholder="0"/><button class="sbtn" onclick="saveSetting('pr',+document.getElementById('s-pr').value||0,'Repayment updated')">Save</button></div>
-    </div>
+    <!-- Parth Shah repayment setting removed: informal debts are tracked via Transactions only -->
     <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
@@ -599,7 +595,7 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 let API = ''; // no persistent browser storage for Apps Script URL
 let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
-let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0, pr: 0 };
+let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 
 const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
 const localDateString = (d = new Date()) => {
@@ -723,12 +719,12 @@ async function saveSetting(key, val, msg) {
   if (r && r.ok) { toast(msg + ' ✓'); rSettings(); rOverview(); rBudget(); rSavings(); }
 }
 function rSettings() {
-  const map = { ef:'s-ef-d', inc:'s-inc-d', hh:'s-hh-d', pr:'s-pr-d', prop:'s-prop-d', assets:'s-assets-d' };
+  const map = { ef:'s-ef-d', inc:'s-inc-d', hh:'s-hh-d', prop:'s-prop-d', assets:'s-assets-d' };
   Object.entries(map).forEach(([k,id]) => {
     const el = document.getElementById(id);
     if (el) el.textContent = INR(CFG[k]);
   });
-  ['ef','inc','hh','pr','prop','assets'].forEach(k => {
+  ['ef','inc','hh','prop','assets'].forEach(k => {
     const el = document.getElementById('s-'+k);
     if (el) el.value = CFG[k] || '';
   });
@@ -958,8 +954,7 @@ function rBudget() {
   const loans = getLoans();
   const totEmi = loans.reduce((s,l)=>s+l.emi,0);
   const house = CFG.hh;
-  const parth = CFG.pr || 0;
-  const left = inc - totEmi - house - parth;
+  const left = inc - totEmi - house;
   document.getElementById('b-inc').textContent = INR(inc);
   document.getElementById('b-emi').textContent = INR(totEmi);
   document.getElementById('b-hh').textContent = INR(house);
@@ -968,7 +963,6 @@ function rBudget() {
   tb.innerHTML=[
     ...loans.map(l=>`<tr><td>${l.name}</td><td class="mono" style="color:var(--red)">${INR(l.emi)}</td><td><span class="badge br">Fixed EMI</span></td><td class="dim">${l.type==='Home Loan'?'10th':'7th'} of month</td></tr>`),
     `<tr><td>Household + fuel + misc</td><td class="mono" style="color:var(--or)">${INR(house)}</td><td><span class="badge bo">Variable</span></td><td class="dim">Estimate</td></tr>`,
-    `<tr><td>Parth Shah repayment</td><td class="mono" style="color:var(--or)">${INR(parth)}</td><td><span class="badge bb">Ongoing</span></td><td class="dim">Till cleared</td></tr>`,
     `<tr style="border-top:1px solid var(--bd2)"><td style="font-weight:600">Buffer (AMEX + informal + jar)</td><td class="mono" style="color:var(--ac);font-weight:600">${INR(Math.max(0,left))}</td><td></td><td></td></tr>`
   ].join('');
   const irows=(D['Income']||[]).slice(1).filter(r=>r[0]);
@@ -1049,8 +1043,7 @@ function rOverview() {
   const liab   = totalDebt;
   const nw     = assets - liab;
 
-  const parth = CFG.pr || 0;
-  const buffer = free - house - parth;
+  const buffer = free - house;
   const debtRatio = totalDebt / Math.max(inc,1);
   const bufferRatio = buffer / Math.max(inc,1);
   const healthScore = Math.max(0, Math.min(100, Math.round(70 - debtRatio * 20 + bufferRatio * 15)));
@@ -1149,8 +1142,7 @@ function rOverview() {
   document.getElementById('cf-inc').textContent   = INR(inc);
   document.getElementById('cf-emi').textContent   = '−'+INR(totEmi);
   document.getElementById('cf-hh').textContent    = '−'+INR(house);
-  document.getElementById('cf-parth').textContent = '−'+INR(parth);
-  document.getElementById('cf-avail').textContent = INR(Math.max(0, free - house - parth));
+  document.getElementById('cf-avail').textContent = INR(Math.max(0, free - house));
 
   // EMI Calendar
   const now = new Date();
@@ -1188,7 +1180,7 @@ function rOverview() {
     : '<div style="color:var(--tx3);font-size:12px;font-style:italic">No loans added yet.</div>';
 
   // Payoff projection — 12 months
-  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, CFG.pr || 0);
+  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house);
 
   // Recent activity
   const loanNames=new Set(loans.map(l=>l.name));
@@ -1206,14 +1198,14 @@ function rOverview() {
 }
 
 // ── PROJECTION CHART ──────────────────────────────
-function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, parth) {
+function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house) {
   const months=[];
   const now=new Date();
   for (let i=0;i<12;i++) {
     const d=new Date(now.getFullYear(), now.getMonth()+i, 1);
     months.push(d.toLocaleDateString('en-IN',{month:'short'}));
   }
-  const paymentBudget = Math.max(0, inc - house - parth - totEmi);
+  const paymentBudget = Math.max(0, inc - house - totEmi);
   let bank=loanTot, cc=ccTot, inf=infPayable;
   const points=[];
   for (let i=0;i<12;i++) {
@@ -1262,7 +1254,6 @@ window.addEventListener('load', () => {
   document.getElementById('cf-inc').textContent  = INR(CFG.inc);
   document.getElementById('cf-emi').textContent  = '—';
   document.getElementById('cf-hh').textContent   = '−'+INR(CFG.hh);
-  document.getElementById('cf-parth').textContent = '−'+INR(CFG.pr || 0);
   document.getElementById('cf-avail').textContent= '—';
   document.getElementById('ov-sav-note').textContent = 'Target: '+INR(CFG.ef);
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
