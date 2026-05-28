@@ -27,6 +27,23 @@ jobs:
             echo "${{ secrets.APPS_SCRIPT_URL }}" > site/apps-script-url.txt
           fi
 
+      - name: Debug: print environment and site files
+        run: |
+          echo "=== Debug: GitHub Actions environment ==="
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          echo "Runner info: $(uname -a)"
+          echo "-- repo root contents --"
+          ls -la || true
+          echo "-- site/ contents --"
+          ls -la site || true
+          if [ -n "${{ secrets.APPS_SCRIPT_URL }}" ]; then
+            echo "APPS_SCRIPT_URL is set (value hidden)"
+          else
+            echo "APPS_SCRIPT_URL is NOT set"
+          fi
+          echo "=== End debug ==="
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
         with:
