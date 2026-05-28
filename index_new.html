@@ -164,6 +164,30 @@ tbody tr:hover td{background:var(--sf2)}
     <div class="stat"><div class="sl">Free cash</div><div class="sv" id="ov-free" style="color:var(--gr)">—</div><div class="ss">after all EMIs</div></div>
     <div class="stat"><div class="sl">Net worth</div><div class="sv" id="ov-nw" style="color:var(--pu)">—</div><div class="ss">assets − liabilities</div></div>
   </div>
+  <div class="ss" id="ov-sync" style="margin-bottom:14px">Last sync: never</div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-t">Cash health</div>
+      <div class="big" id="ov-health" style="color:var(--gr)">—</div>
+      <div class="card-note" id="ov-health-note">Balance vs income</div>
+    </div>
+    <div class="card">
+      <div class="card-t">Collect</div>
+      <div class="big" id="ov-recv" style="color:var(--ac)">—</div>
+      <div class="card-note" id="ov-recv-note">Top receivable</div>
+    </div>
+    <div class="card">
+      <div class="card-t">Pay</div>
+      <div class="big" id="ov-pay" style="color:var(--red)">—</div>
+      <div class="card-note" id="ov-pay-note">Top payable</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;padding:16px">
+    <div class="card-t">Top action</div>
+    <div class="big" id="ov-action" style="color:var(--or)">—</div>
+    <div class="card-note" id="ov-action-note">Focus for this month</div>
+  </div>
 
   <!-- Row 1: AMEX + Savings + Net worth breakdown -->
   <div class="g3">
@@ -205,7 +229,7 @@ tbody tr:hover td{background:var(--sf2)}
         <div class="cf-row"><span class="lbl">TR take-home</span><span id="cf-inc" style="color:var(--gr)">—</span></div>
         <div class="cf-row"><span class="lbl">Bank EMIs</span><span id="cf-emi" style="color:var(--red)">—</span></div>
         <div class="cf-row"><span class="lbl">Household est.</span><span id="cf-hh" style="color:var(--or)">—</span></div>
-        <div class="cf-row"><span class="lbl">Parth Shah</span><span style="color:var(--or)">−₹13,000</span></div>
+        <div class="cf-row"><span class="lbl">Parth Shah repayment</span><span id="cf-parth" style="color:var(--or)">−₹13,000</span></div>
         <div class="cf-row"><span class="lbl">Available for AMEX/debts</span><span id="cf-avail" style="color:var(--ac)">—</span></div>
       </div>
     </div>
@@ -378,6 +402,10 @@ tbody tr:hover td{background:var(--sf2)}
       <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
     </div>
     <div class="srow">
+      <div><div class="srow-l">Parth Shah repayment</div><div class="srow-sub">Current: <b id="s-pr-d">—</b></div></div>
+      <div class="srow-r"><input class="fi" id="s-pr" type="number" style="width:120px" placeholder="13000"/><button class="sbtn" onclick="saveSetting('pr',+document.getElementById('s-pr').value||13000,'Repayment updated')">Save</button></div>
+    </div>
+    <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
     </div>
@@ -386,18 +414,30 @@ tbody tr:hover td{background:var(--sf2)}
       <div class="srow-r"><input class="fi" id="s-assets" type="number" style="width:120px" placeholder="500000"/><button class="sbtn" onclick="saveSetting('assets',+document.getElementById('s-assets').value||0,'Assets updated')">Save</button></div>
     </div>
     <div class="srow">
+      <div><div class="srow-l">Apps Script URL</div><div class="srow-sub">Paste your Google Apps Script web app URL here.</div></div>
+      <div class="srow-r"><input class="fi" id="s-api" type="text" style="width:280px" placeholder="https://script.google.com/.../exec" /><button class="sbtn" onclick="saveApiUrl()">Save</button></div>
+    </div>
+    <div class="srow" style="flex-wrap:wrap;align-items:flex-start;gap:10px">
+      <div style="flex:1 1 100%"><div class="srow-l">Local keys / notes</div><div class="srow-sub">Paste any local keys, sheet IDs, or private notes. Stored only in browser storage.</div></div>
+      <div class="srow-r" style="flex:1 1 100%"><textarea class="fi" id="s-local-keys" style="width:100%;min-height:70px"></textarea></div>
+    </div>
+    <div class="srow">
+      <div></div>
+      <div class="srow-r"><button class="sbtn" onclick="saveLocalKeys()">Save local keys</button></div>
+    </div>
+    <div class="srow">
       <div><div class="srow-l">Theme</div><div class="srow-sub">Dark / light mode</div></div>
       <div class="srow-r"><button class="sbtn" onclick="toggleTheme()">Toggle ☀ / ☾</button></div>
     </div>
     <div class="srow">
-      <div><div class="srow-l">Clear local cache</div><div class="srow-sub">Wipes device-only storage — Sheet data stays safe</div></div>
-      <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Clear</button></div>
+      <div><div class="srow-l">Refresh sheet settings</div><div class="srow-sub">Reloads the page and re-fetches Config from the sheet.</div></div>
+      <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Reload</button></div>
     </div>
   </div>
   <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
     <b style="color:var(--tx)">Settings sync</b><br>
     All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
-    <b style="color:var(--tx)">Apps Script URL</b> is hardcoded in this file — edit line 1 of the &lt;script&gt; section to change it.
+    <b style="color:var(--tx)">Apps Script URL</b> is now stored in Settings and used from browser storage first. If you need to edit the file directly, use the <b>Settings</b> tab instead.
   </div>
 </div>
 
@@ -449,17 +489,16 @@ function doGet(e){
 }
 function doPost(e){return doGet(e);}
 function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}</pre>
-    Replace <code>PASTE_YOUR_SHEET_ID_HERE</code> with the ID from your Sheet URL (between <code>/d/</code> and <code>/edit</code>).
+    Replace the <code>SHEET_ID</code> constant with your own Sheet ID from the URL (between <code>/d/</code> and <code>/edit</code>).
   </div></div>
 
   <div class="step"><div class="sn">STEP 04</div><div class="st">Deploy as Web App</div><div class="sb">
     <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy → Authorize → Copy URL</code>
   </div></div>
 
-  <div class="step"><div class="sn">STEP 05</div><div class="st">Hardcode your URL into this file — one time only</div><div class="sb">
-    Open <code>index.html</code> in any text editor. Find line 1 of the &lt;script&gt; section:<br><br>
-    <code>const API = 'PASTE_YOUR_URL_HERE';</code><br><br>
-    Replace <code>PASTE_YOUR_URL_HERE</code> with your Apps Script URL. Save. Push to GitHub. <b>Done — every device uses the same file, same URL, no setup per device.</b>
+  <div class="step"><div class="sn">STEP 05</div><div class="st">Save your Apps Script URL in Settings</div><div class="sb">
+    Open the <b>Settings</b> tab and paste your Apps Script web app URL into the Apps Script URL field.<br><br>
+    Save it there. This value is stored locally in your browser and used by the app on this device.
   </div></div>
 
   <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
@@ -539,22 +578,51 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 
 <script>
 // ══════════════════════════════════════════════════
-// STEP 05: Paste your Apps Script URL below
+// STEP 05: Paste your Apps Script URL below or save it in Settings
 // ══════════════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4UO4PstibAn-jjC/exec';
-// ══════════════════════════════════════════════════
-
+const DEFAULT_API = 'https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4O4PstibAn-jjC/exec';
 const SK = 'mgft5';
 let C = JSON.parse(localStorage.getItem(SK) || '{}');
-// C.theme only stored locally — everything else comes from Config sheet
+let API = C.api || DEFAULT_API;
+// C.theme and C.api are stored locally — everything else comes from Config sheet
 let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
-let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
+let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0, pr: 13000 };
 
 const save  = () => localStorage.setItem(SK, JSON.stringify(C));
 const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
-const td    = () => new Date().toISOString().split('T')[0];
-const curMonth = () => { const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0'); };
+const localDateString = (d = new Date()) => {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().split('T')[0];
+};
+const td    = () => localDateString();
+const curMonth = () => {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return `${local.getFullYear()}-${String(local.getMonth()+1).padStart(2,'0')}`;
+};
+const parseDateLocal = s => {
+  if (!s) return null;
+  const [y,m,d] = String(s).split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+function setApiUrl(url) {
+  API = url ? url.trim() : DEFAULT_API;
+  if (url) C.api = url.trim(); else delete C.api;
+  save();
+  rSettings();
+}
+function saveApiUrl() {
+  const url = document.getElementById('s-api').value.trim();
+  if (!url) { toast('Enter Apps Script URL'); return; }
+  setApiUrl(url);
+  toast('Apps Script URL saved ✓');
+}
+function saveLocalKeys() {
+  C.localKeys = document.getElementById('s-local-keys').value;
+  save();
+  toast('Local keys saved ✓');
+}
 
 // ── TOAST ────────────────────────────────────────
 function toast(m) {
@@ -567,12 +635,8 @@ function toast(m) {
 function toggleTheme() {
   const h = document.documentElement;
   const nt = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  h.setAttribute('data-theme', nt); C.theme = nt; save();
+  h.setAttribute('data-theme', nt);
   document.getElementById('tbtn').textContent = nt === 'dark' ? '☀' : '☾';
-}
-if (C.theme) {
-  document.documentElement.setAttribute('data-theme', C.theme);
-  document.getElementById('tbtn').textContent = C.theme === 'dark' ? '☀' : '☾';
 }
 
 // ── NAV ──────────────────────────────────────────
@@ -607,7 +671,7 @@ document.querySelectorAll('.overlay').forEach(o =>
 // ── API ──────────────────────────────────────────
 async function apicall(params) {
   if (!API || API.includes('PASTE_YOUR')) {
-    toast('API URL not set — edit index.html and paste your Apps Script URL');
+    toast('API URL not set — save it in Settings or edit index.html');
     return null;
   }
   try {
@@ -618,7 +682,7 @@ async function apicall(params) {
 
 // ── SYNC ─────────────────────────────────────────
 async function doSync() {
-  if (API.includes('PASTE_YOUR')) { toast('Paste your Apps Script URL into index.html first (Setup Step 05)'); return; }
+  if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first (Setup Step 05)'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
   const tabs = ['Config','Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
@@ -633,6 +697,7 @@ async function doSync() {
     });
   }
   btn.textContent = '↻';
+  lastSyncAt = new Date().toLocaleString('en-IN', { hour12:false });
   rOverview(); rLoans(); rCC(); rInformal(); rBudget(); rSavings(); rSettings();
   toast('Synced ✓');
 }
@@ -644,15 +709,19 @@ async function saveSetting(key, val, msg) {
   if (r && r.ok) { toast(msg + ' ✓'); rSettings(); rOverview(); rBudget(); rSavings(); }
 }
 function rSettings() {
-  const map = { ef:'s-ef-d', inc:'s-inc-d', hh:'s-hh-d', prop:'s-prop-d', assets:'s-assets-d' };
+  const map = { ef:'s-ef-d', inc:'s-inc-d', hh:'s-hh-d', pr:'s-pr-d', prop:'s-prop-d', assets:'s-assets-d' };
   Object.entries(map).forEach(([k,id]) => {
     const el = document.getElementById(id);
     if (el) el.textContent = INR(CFG[k]);
   });
-  ['ef','inc','hh','prop','assets'].forEach(k => {
+  ['ef','inc','hh','pr','prop','assets'].forEach(k => {
     const el = document.getElementById('s-'+k);
     if (el) el.value = CFG[k] || '';
   });
+  const apiEl = document.getElementById('s-api');
+  if (apiEl) apiEl.value = C.api || API || '';
+  const keysEl = document.getElementById('s-local-keys');
+  if (keysEl) keysEl.value = C.localKeys || '';
 }
 function clearCache() {
   if (!confirm('Clear device-only cache? Config will reload from Sheet on next sync.')) return;
@@ -665,7 +734,7 @@ function getLoans() {
   const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
   return rows.map(r => {
     const name=r[0], type=r[1], emi=+r[2]||0, rate=+r[3]||0, tenure=+r[5]||0;
-    const start = r[4] ? new Date(r[4]) : null;
+    const start = r[4] ? parseDateLocal(r[4]) : null;
     let elapsed = 0;
     if (start) { const n=new Date(); elapsed=Math.max(0,(n.getFullYear()-start.getFullYear())*12+(n.getMonth()-start.getMonth())); }
     const remaining = Math.max(0, tenure - elapsed);
@@ -732,6 +801,13 @@ async function logPay() {
 function getCardMaster() {
   return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:+r[1]||3.5,notes:r[2]||''}));
 }
+function fillCardSels() {
+  const names = getCardMaster().map(c=>c.name);
+  ['bl-card','cp-card'].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
+  });
+}
 function getCards() {
   const masters = getCardMaster();
   const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0);
@@ -743,17 +819,10 @@ function getCards() {
     const lastAmt   = lastBill ? +lastBill[2] : 0;
     const lastDate  = lastBill ? lastBill[0]  : '—';
     const dueDate   = lastBill ? lastBill[3]  : '—';
-    const lastTs    = lastBill ? new Date(lastBill[0]).getTime() : 0;
+    const lastTs    = lastBill ? (parseDateLocal(lastBill[0])||new Date(0)).getTime() : 0;
     const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+(+p[2]||0),0);
     const outstanding = Math.max(0, lastAmt - paid);
     return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
-  });
-}
-function fillCardSels() {
-  const names = getCardMaster().map(c=>c.name);
-  ['bl-card','cp-card'].forEach(id => {
-    const s = document.getElementById(id);
-    if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
   });
 }
 function rCC() {
@@ -816,20 +885,36 @@ function rInformal() {
     : '<tr class="erow"><td colspan="5">No transactions.</td></tr>';
 
   const people={};
-  rows.forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]={rcv:0,paid:0}; if(r[1]==='Received') people[n].rcv+=+r[3]||0; if(r[1]==='Paid') people[n].paid+=+r[4]||0; });
-  const entries=Object.entries(people);
-  let totalOwed=0, topP='', topA=0;
-  const stb=document.getElementById('infs-tbody');
-  stb.innerHTML=entries.length ? entries.map(([name,d])=>{
-    const out=d.rcv-d.paid;
-    if(out>0){totalOwed+=out; if(out>topA){topA=out;topP=name;}}
-    const [bc,bl]=out>100000?['br','High']:out>40000?['bo','Medium']:out<=0?['bg','Settled']:['bb','Low'];
-    const outStyle=out>0?'color:var(--or);font-weight:600':'color:var(--gr)';
-    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.rcv)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${out>0?INR(out):'settled'}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
+  rows.forEach(r=>{
+    const n = (r[2]||'').trim();
+    if(!n||n==='Total') return;
+    if(!people[n]) people[n] = { received:0, paid:0 };
+    if (r[1] === 'Received') people[n].received += +r[3] || 0;
+    else if (r[1] === 'Paid') people[n].paid += +r[4] || 0;
+  });
+  const entries = Object.entries(people);
+  let totalOwed = 0, topP = '', topA = 0;
+  const stb = document.getElementById('infs-tbody');
+  stb.innerHTML = entries.length ? entries.map(([name,d])=>{
+    const balance = d.paid - d.received;
+    if (balance > 0) {
+      totalOwed += balance;
+      if (balance > topA) { topA = balance; topP = name; }
+    }
+    const abs = Math.abs(balance);
+    let bc='bb', bl='Low';
+    if (balance > 100000) [bc,bl]=['br','High'];
+    else if (balance > 40000) [bc,bl]=['bo','Medium'];
+    else if (balance > 0) [bc,bl]=['bb','Collect'];
+    else if (balance < 0) [bc,bl]=['bg','Pay'];
+    else [bc,bl]=['bg','Settled'];
+    const outText = balance > 0 ? INR(abs) : balance < 0 ? 'You owe ' + INR(abs) : 'Settled';
+    const outStyle = balance > 0 ? 'color:var(--or);font-weight:600' : balance < 0 ? 'color:var(--bl);font-weight:600' : 'color:var(--gr)';
+    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.received)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
   }).join('') : '<tr class="erow"><td colspan="5">No data.</td></tr>';
 
   document.getElementById('inf-total').textContent=INR(totalOwed);
-  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.rcv-d.paid>0).length;
+  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.paid-d.received>0).length;
   document.getElementById('inf-top').textContent=topP?topP+' · '+INR(topA):'—';
   document.getElementById('it-dl').innerHTML=entries.map(([n])=>`<option value="${n}">`).join('');
 }
@@ -843,16 +928,21 @@ async function logInfTx() {
 
 // ── BUDGET ────────────────────────────────────────
 function rBudget() {
-  const inc=CFG.inc, loans=getLoans(), totEmi=loans.reduce((s,l)=>s+l.emi,0), house=CFG.hh, parth=13000, left=inc-totEmi-house-parth;
-  document.getElementById('b-inc').textContent=INR(inc);
-  document.getElementById('b-emi').textContent=INR(totEmi);
-  document.getElementById('b-hh').textContent=INR(house);
-  document.getElementById('b-left').textContent=INR(Math.max(0,left));
-  const tb=document.getElementById('b-tbody');
+  const inc = CFG.inc;
+  const loans = getLoans();
+  const totEmi = loans.reduce((s,l)=>s+l.emi,0);
+  const house = CFG.hh;
+  const parth = CFG.pr || 13000;
+  const left = inc - totEmi - house - parth;
+  document.getElementById('b-inc').textContent = INR(inc);
+  document.getElementById('b-emi').textContent = INR(totEmi);
+  document.getElementById('b-hh').textContent = INR(house);
+  document.getElementById('b-left').textContent = INR(Math.max(0,left));
+  const tb = document.getElementById('b-tbody');
   tb.innerHTML=[
     ...loans.map(l=>`<tr><td>${l.name}</td><td class="mono" style="color:var(--red)">${INR(l.emi)}</td><td><span class="badge br">Fixed EMI</span></td><td class="dim">${l.type==='Home Loan'?'10th':'7th'} of month</td></tr>`),
     `<tr><td>Household + fuel + misc</td><td class="mono" style="color:var(--or)">${INR(house)}</td><td><span class="badge bo">Variable</span></td><td class="dim">Estimate</td></tr>`,
-    `<tr><td>Parth Shah repayment</td><td class="mono">₹13,000</td><td><span class="badge bb">Ongoing</span></td><td class="dim">Till cleared</td></tr>`,
+    `<tr><td>Parth Shah repayment</td><td class="mono" style="color:var(--or)">${INR(parth)}</td><td><span class="badge bb">Ongoing</span></td><td class="dim">Till cleared</td></tr>`,
     `<tr style="border-top:1px solid var(--bd2)"><td style="font-weight:600">Buffer (AMEX + informal + jar)</td><td class="mono" style="color:var(--ac);font-weight:600">${INR(Math.max(0,left))}</td><td></td><td></td></tr>`
   ].join('');
   const irows=(D['Income']||[]).slice(1).filter(r=>r[0]);
@@ -901,21 +991,71 @@ function rOverview() {
   const inc      = CFG.inc;
   const house    = CFG.hh;
 
-  // Informal total from Transactions
-  const people={};
-  (D['Transactions']||[]).slice(1).forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]=0; if(r[1]==='Received') people[n]+=+r[3]||0; if(r[1]==='Paid') people[n]-=+r[4]||0; });
-  let infTot=0; Object.values(people).forEach(v=>{ if(v>0) infTot+=v; });
+  const totals = {};
+  (D['Transactions']||[]).slice(1).forEach(r=>{
+    const n=(r[2]||'').trim();
+    if(!n||n==='Total') return;
+    if(!totals[n]) totals[n]=0;
+    if(r[1]==='Received') totals[n] -= +r[3]||0;
+    else if(r[1]==='Paid') totals[n] += +r[4]||0;
+  });
+  let infPayable=0, infReceivable=0, topCollect='', topPay='';
+  Object.entries(totals).forEach(([name,v])=>{
+    if (v > 0) {
+      infReceivable += v;
+      if (!topCollect || v > totals[topCollect]) topCollect = name;
+    } else if (v < 0) {
+      infPayable += Math.abs(v);
+      if (!topPay || Math.abs(v) > Math.abs(totals[topPay])) topPay = name;
+    }
+  });
 
-  const totalDebt=loanTot+ccTot+infTot;
-  const free=inc-totEmi;
+  const totalDebt = loanTot + ccTot + infPayable;
+  const free = inc - totEmi;
 
   // Savings running total
   let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=+r[1]||0);
 
   // Net worth
-  const assets = CFG.assets + savRun; // other assets + savings jar
+  const assets = CFG.assets + savRun + infReceivable; // other assets + savings jar + receivables
   const liab   = totalDebt;
   const nw     = assets - liab;
+
+  const buffer = free - house - (CFG.pr || 13000);
+  const debtRatio = totalDebt / Math.max(inc,1);
+  const bufferRatio = buffer / Math.max(inc,1);
+  const healthScore = Math.max(0, Math.min(100, Math.round(70 - debtRatio * 20 + bufferRatio * 15)));
+  const healthLabel = healthScore >= 80 ? 'Strong' : healthScore >= 60 ? 'Stable' : healthScore >= 40 ? 'Watch' : 'Weak';
+  const bestCollect = topCollect ? `Collect ${INR(infReceivable)} from ${topCollect}` : '';
+  const bestPay = topPay ? `Pay ${INR(infPayable)} to ${topPay}` : '';
+  let actionText = 'Stay disciplined: track inflow and debt.';
+  let actionNote = 'Sync regularly for accurate insights.';
+  if (buffer < 0) {
+    actionText = `Reduce monthly spend by ₹${Math.abs(buffer).toLocaleString('en-IN')}`;
+    actionNote = 'Your fixed-outflow buffer is negative; improve cash flow first.';
+  } else if (infReceivable > 0 && infPayable === 0) {
+    actionText = bestCollect || `Collect ₹${INR(infReceivable)}`;
+    actionNote = 'Focus on collecting loans receivable before new payments.';
+  } else if (infPayable > 0 && buffer > 0) {
+    actionText = bestPay || `Pay ₹${INR(infPayable)}`;
+    actionNote = 'Use available cash to clear informal payables quickly.';
+  } else if (infReceivable > 0) {
+    actionText = bestCollect;
+    actionNote = 'Collect receivables to improve your cash buffer.';
+  } else if (ccTot > 0) {
+    actionText = `Pay ${INR(ccTot)} card outstanding`;
+    actionNote = 'Reduce high-cost credit card balances first.';
+  }
+
+  document.getElementById('ov-health').textContent = `${healthScore}%`;
+  document.getElementById('ov-health-note').textContent = healthLabel;
+  document.getElementById('ov-recv').textContent = INR(infReceivable);
+  document.getElementById('ov-recv-note').textContent = infReceivable > 0 ? `Top collect: ${topCollect}` : 'No receivables';
+  document.getElementById('ov-pay').textContent = INR(infPayable);
+  document.getElementById('ov-pay-note').textContent = infPayable > 0 ? `Top pay: ${topPay}` : 'No payables';
+  document.getElementById('ov-action').textContent = actionText;
+  document.getElementById('ov-action-note').textContent = actionNote;
+  document.getElementById('ov-sync').textContent = lastSyncAt ? `Last sync: ${lastSyncAt}` : 'Last sync: never';
 
   // Top stats
   document.getElementById('ov-debt').textContent = INR(totalDebt);
@@ -936,18 +1076,20 @@ function rOverview() {
   // Debt breakdown bars
   document.getElementById('dv-bank').textContent=INR(loanTot);
   document.getElementById('dv-cc').textContent=INR(ccTot);
-  document.getElementById('dv-inf').textContent=INR(infTot);
+  document.getElementById('dv-inf').textContent=INR(infPayable);
   if(totalDebt>0) {
     document.getElementById('db-bank').style.width=Math.max(2,loanTot/totalDebt*100)+'%';
     document.getElementById('db-cc').style.width=Math.max(2,ccTot/totalDebt*100)+'%';
-    document.getElementById('db-inf').style.width=Math.max(2,infTot/totalDebt*100)+'%';
+    document.getElementById('db-inf').style.width=Math.max(2,infPayable/totalDebt*100)+'%';
   }
 
   // Cashflow
+  const parth = CFG.pr || 13000;
   document.getElementById('cf-inc').textContent   = INR(inc);
   document.getElementById('cf-emi').textContent   = '−'+INR(totEmi);
   document.getElementById('cf-hh').textContent    = '−'+INR(house);
-  document.getElementById('cf-avail').textContent = INR(Math.max(0,free-house-13000));
+  document.getElementById('cf-parth').textContent = '−'+INR(parth);
+  document.getElementById('cf-avail').textContent = INR(Math.max(0, free - house - parth));
 
   // EMI Calendar
   const now = new Date();
@@ -985,7 +1127,7 @@ function rOverview() {
     : '<div style="color:var(--tx3);font-size:12px;font-style:italic">No loans added yet.</div>';
 
   // Payoff projection — 12 months
-  buildProjection(loanTot, ccTot, infTot, totEmi, inc, house);
+  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, CFG.pr || 13000);
 
   // Recent activity
   const loanNames=new Set(loans.map(l=>l.name));
@@ -1003,17 +1145,17 @@ function rOverview() {
 }
 
 // ── PROJECTION CHART ──────────────────────────────
-function buildProjection(loanTot, ccTot, infTot, totEmi, inc, house) {
+function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, parth) {
   const months=['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
   // CC Smart EMI reductions per month (from known schedule)
   const ccEmiReductions = [0,0,21221,9647,11342,0,0,0,0,0,0,0]; // Jul,Aug,Sep EMIs end
   // Monthly free cash to pay off CC & informal
-  let bank=loanTot, cc=ccTot, inf=infTot;
+  let bank=loanTot, cc=ccTot, inf=infPayable;
   let freeEmi=totEmi;
   const points=[];
   for(let i=0;i<12;i++){
     freeEmi -= ccEmiReductions[i]||0; // as CC EMIs end, freed money
-    const buffer=Math.max(0,inc-freeEmi-house-13000);
+    const buffer=Math.max(0,inc-freeEmi-house-(parth||13000));
     // Priority: AMEX first, then informal
     const amexPay=Math.min(cc, i<2?Math.min(buffer,30000):i<5?Math.min(buffer,50000):buffer*0.7);
     cc=Math.max(0,cc-amexPay);
@@ -1055,17 +1197,19 @@ window.addEventListener('load', () => {
   document.getElementById('cf-inc').textContent  = INR(CFG.inc);
   document.getElementById('cf-emi').textContent  = '−'+INR(131955);
   document.getElementById('cf-hh').textContent   = '−'+INR(CFG.hh);
-  document.getElementById('cf-avail').textContent= INR(CFG.inc-131955-CFG.hh-13000);
+  document.getElementById('cf-parth').textContent = '−'+INR(CFG.pr || 13000);
+  document.getElementById('cf-avail').textContent= INR(CFG.inc-131955-CFG.hh-(CFG.pr||13000));
   document.getElementById('ov-sav-note').textContent = 'Target: '+INR(CFG.ef);
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
-  buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh);
+  rSettings();
+  buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh, CFG.pr || 13000);
 
   if (!API.includes('PASTE_YOUR_')) doSync();
   else {
     // Show setup hint
     const b = document.createElement('div');
     b.className = 'banner';
-    b.innerHTML = '⚠ Apps Script URL not set. Open <b>index.html</b>, find <code>PASTE_YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your URL. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
+    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
     document.getElementById('page-overview').prepend(b);
   }
 });
