@@ -350,7 +350,17 @@ tbody tr:hover td{background:var(--sf2)}
     <div class="stat"><div class="sl">Highest priority</div><div class="sv" id="inf-top" style="color:var(--or);font-size:13px">—</div></div>
   </div>
   <div class="sec">
-    <div class="sh"><div class="sti">Outstanding per person</div></div>
+    <div class="sh">
+      <div class="sti">Outstanding per person</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input class="fi" id="if-name" type="text" placeholder="Filter name" style="width:150px" oninput="rInformal()" />
+        <select class="fs" id="if-type" onchange="rInformal()">
+          <option value="">All</option>
+          <option value="receivable">Receivable</option>
+          <option value="payable">Payable</option>
+        </select>
+      </div>
+    </div>
     <div class="tw"><table><thead><tr><th>Person</th><th>Total received</th><th>Total paid back</th><th>Outstanding</th><th>Priority</th></tr></thead>
     <tbody id="infs-tbody"><tr class="erow"><td colspan="5">Sync to load from Transactions sheet.</td></tr></tbody></table></div>
   </div>
@@ -417,7 +427,7 @@ tbody tr:hover td{background:var(--sf2)}
     </div>
     <div class="srow">
       <div><div class="srow-l">Parth Shah repayment</div><div class="srow-sub">Current: <b id="s-pr-d">—</b></div></div>
-      <div class="srow-r"><input class="fi" id="s-pr" type="number" style="width:120px" placeholder="13000"/><button class="sbtn" onclick="saveSetting('pr',+document.getElementById('s-pr').value||13000,'Repayment updated')">Save</button></div>
+      <div class="srow-r"><input class="fi" id="s-pr" type="number" style="width:120px" placeholder="0"/><button class="sbtn" onclick="saveSetting('pr',+document.getElementById('s-pr').value||0,'Repayment updated')">Save</button></div>
     </div>
     <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
@@ -504,7 +514,7 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 
   <div class="step"><div class="sn">STEP 05</div><div class="st">Save your Apps Script URL in Settings</div><div class="sb">
     Open the <b>Settings</b> tab and paste your Apps Script web app URL into the Apps Script URL field.<br><br>
-    Save it there. This value is stored locally in your browser and used by the app on this device.
+    Save it there. This value is kept for the current browser session only and is not persisted across devices.
   </div></div>
 
   <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
@@ -586,11 +596,10 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 // ══════════════════════════════════════════════════
 // STEP 05: Paste your Apps Script URL below or save it in Settings
 // ══════════════════════════════════════════════════
-const DEFAULT_API = 'https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4O4PstibAn-jjC/exec';
-let API = DEFAULT_API; // no persistent browser storage for Apps Script URL
+let API = ''; // no persistent browser storage for Apps Script URL
 let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
-let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0, pr: 13000 };
+let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0, pr: 0 };
 
 const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
 const localDateString = (d = new Date()) => {
@@ -609,7 +618,7 @@ const parseDateLocal = s => {
   return new Date(y, m - 1, d);
 };
 function setApiUrl(url) {
-  API = url ? url.trim() : DEFAULT_API;
+  API = url ? url.trim() : '';
   rSettings();
 }
 function saveApiUrl() {
@@ -617,6 +626,7 @@ function saveApiUrl() {
   if (!url) { toast('Enter Apps Script URL'); return; }
   setApiUrl(url);
   toast('Apps Script URL set for this session ✓');
+  doSync();
 }
 
 // ── TOAST ────────────────────────────────────────
@@ -879,21 +889,37 @@ async function logCCPay() {
 
 // ── INFORMAL ──────────────────────────────────────
 function rInformal() {
-  const rows=(D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
-  const ltb=document.getElementById('infl-tbody');
-  ltb.innerHTML=rows.length
-    ? [...rows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
-    : '<tr class="erow"><td colspan="5">No transactions.</td></tr>';
+  const filterName = (document.getElementById('if-name')?.value || '').trim().toLowerCase();
+  const filterType = document.getElementById('if-type')?.value;
+  const rows = (D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
+  const ltb = document.getElementById('infl-tbody');
+  const logRows = rows.filter(r => {
+    const name = (r[2]||'').trim();
+    if (!name) return false;
+    if (filterName && !name.toLowerCase().includes(filterName)) return false;
+    if (filterType === 'receivable' && r[1] !== 'Received') return false;
+    if (filterType === 'payable' && r[1] !== 'Paid') return false;
+    return true;
+  });
+  ltb.innerHTML = logRows.length
+    ? [...logRows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
+    : '<tr class="erow"><td colspan="5">No transactions match filter.</td></tr>';
 
-  const people={};
+  const people = {};
   rows.forEach(r=>{
     const n = (r[2]||'').trim();
-    if(!n||n==='Total') return;
-    if(!people[n]) people[n] = { received:0, paid:0 };
+    if (!n || n === 'Total') return;
+    if (!people[n]) people[n] = { received:0, paid:0 };
     if (r[1] === 'Received') people[n].received += +r[3] || 0;
     else if (r[1] === 'Paid') people[n].paid += +r[4] || 0;
   });
-  const entries = Object.entries(people);
+  const entries = Object.entries(people).filter(([name,d]) => {
+    const balance = d.paid - d.received;
+    if (filterName && !name.toLowerCase().includes(filterName)) return false;
+    if (filterType === 'receivable' && balance <= 0) return false;
+    if (filterType === 'payable' && balance >= 0) return false;
+    return true;
+  });
   let totalOwed = 0, topP = '', topA = 0, topBalance = 0;
   const stb = document.getElementById('infs-tbody');
   stb.innerHTML = entries.length ? entries.map(([name,d])=>{
@@ -915,8 +941,9 @@ function rInformal() {
   document.getElementById('inf-total').textContent=INR(totalOwed);
   document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.paid-d.received>0).length;
   document.getElementById('inf-top').textContent=topP ? `${topP} · ${topBalance>0? 'Collect ' + INR(topA) : 'Pay ' + INR(topA)}` : '—';
-  document.getElementById('it-dl').innerHTML=entries.map(([n])=>`<option value="${n}">`).join('');
+  document.getElementById('it-dl').innerHTML=Object.entries(people).map(([n])=>`<option value="${n}">`).join('');
 }
+
 async function logInfTx() {
   const dir=document.getElementById('it-dir').value, name=document.getElementById('it-person').value.trim(), date=document.getElementById('it-date').value, amt=document.getElementById('it-amt').value, rem=document.getElementById('it-rem').value;
   if(!name||!amt){toast('Person and amount required');return;}
@@ -931,7 +958,7 @@ function rBudget() {
   const loans = getLoans();
   const totEmi = loans.reduce((s,l)=>s+l.emi,0);
   const house = CFG.hh;
-  const parth = CFG.pr || 13000;
+  const parth = CFG.pr || 0;
   const left = inc - totEmi - house - parth;
   document.getElementById('b-inc').textContent = INR(inc);
   document.getElementById('b-emi').textContent = INR(totEmi);
@@ -1022,7 +1049,8 @@ function rOverview() {
   const liab   = totalDebt;
   const nw     = assets - liab;
 
-  const buffer = free - house - (CFG.pr || 13000);
+  const parth = CFG.pr || 0;
+  const buffer = free - house - parth;
   const debtRatio = totalDebt / Math.max(inc,1);
   const bufferRatio = buffer / Math.max(inc,1);
   const healthScore = Math.max(0, Math.min(100, Math.round(70 - debtRatio * 20 + bufferRatio * 15)));
@@ -1101,10 +1129,11 @@ function rOverview() {
   document.getElementById('ov-liab').textContent   = INR(liab);
 
   // AMEX card
-  const amex=cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
+  const amex = cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
   const amexBal = amex ? amex.outstanding : ccTot;
-  document.getElementById('ov-amex').textContent=INR(amexBal);
-  document.getElementById('ov-amex-p').style.width=Math.min(100,(amexBal/403424)*100)+'%';
+  const amexBase = Math.max(ccTot, amexBal, 1);
+  document.getElementById('ov-amex').textContent = INR(amexBal);
+  document.getElementById('ov-amex-p').style.width = Math.min(100, (amexBal/amexBase)*100)+'%';
 
   // Debt breakdown bars
   document.getElementById('dv-bank').textContent=INR(loanTot);
@@ -1117,7 +1146,6 @@ function rOverview() {
   }
 
   // Cashflow
-  const parth = CFG.pr || 13000;
   document.getElementById('cf-inc').textContent   = INR(inc);
   document.getElementById('cf-emi').textContent   = '−'+INR(totEmi);
   document.getElementById('cf-hh').textContent    = '−'+INR(house);
@@ -1160,7 +1188,7 @@ function rOverview() {
     : '<div style="color:var(--tx3);font-size:12px;font-style:italic">No loans added yet.</div>';
 
   // Payoff projection — 12 months
-  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, CFG.pr || 13000);
+  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, CFG.pr || 0);
 
   // Recent activity
   const loanNames=new Set(loans.map(l=>l.name));
@@ -1179,31 +1207,35 @@ function rOverview() {
 
 // ── PROJECTION CHART ──────────────────────────────
 function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, parth) {
-  const months=['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
-  // CC Smart EMI reductions per month (from known schedule)
-  const ccEmiReductions = [0,0,21221,9647,11342,0,0,0,0,0,0,0]; // Jul,Aug,Sep EMIs end
-  // Monthly free cash to pay off CC & informal
-  let bank=loanTot, cc=ccTot, inf=infPayable;
-  let freeEmi=totEmi;
-  const points=[];
-  for(let i=0;i<12;i++){
-    freeEmi -= ccEmiReductions[i]||0; // as CC EMIs end, freed money
-    const buffer=Math.max(0,inc-freeEmi-house-(parth||13000));
-    // Priority: AMEX first, then informal
-    const amexPay=Math.min(cc, i<2?Math.min(buffer,30000):i<5?Math.min(buffer,50000):buffer*0.7);
-    cc=Math.max(0,cc-amexPay);
-    if(cc<=0){const rem=buffer-amexPay; inf=Math.max(0,inf-rem*0.5);}
-    bank=Math.max(0,bank-freeEmi*0.6); // approximate principal reduction
-    points.push({label:months[i], bank, cc, inf, total:bank+cc+inf});
+  const months=[];
+  const now=new Date();
+  for (let i=0;i<12;i++) {
+    const d=new Date(now.getFullYear(), now.getMonth()+i, 1);
+    months.push(d.toLocaleDateString('en-IN',{month:'short'}));
   }
-  const maxVal=points[0].total||1;
-  const chartH=110;
-  const chart=document.getElementById('ov-proj-chart');
-  chart.innerHTML=points.map(p=>{
-    const bH=Math.round((p.bank/maxVal)*chartH);
-    const cH=Math.round((p.cc/maxVal)*chartH);
-    const iH=Math.round((p.inf/maxVal)*chartH);
-    const totH=bH+cH+iH;
+  const paymentBudget = Math.max(0, inc - house - parth - totEmi);
+  let bank=loanTot, cc=ccTot, inf=infPayable;
+  const points=[];
+  for (let i=0;i<12;i++) {
+    let available = paymentBudget;
+    const cardPay = Math.min(cc, available);
+    cc = Math.max(0, cc - cardPay);
+    available -= cardPay;
+    const informalPay = Math.min(inf, available);
+    inf = Math.max(0, inf - informalPay);
+    available -= informalPay;
+    const bankPay = Math.min(bank, available);
+    bank = Math.max(0, bank - bankPay);
+    points.push({label:months[i], bank, cc, inf, total: bank + cc + inf});
+  }
+  const maxVal = points.reduce((m,p) => Math.max(m, p.total), 0) || 1;
+  const chartH = 110;
+  const chart = document.getElementById('ov-proj-chart');
+  chart.innerHTML = points.map(p => {
+    const bH = Math.round((p.bank/maxVal)*chartH);
+    const cH = Math.round((p.cc/maxVal)*chartH);
+    const iH = Math.round((p.inf/maxVal)*chartH);
+    const totH = bH + cH + iH;
     return `<div class="proj-bar-wrap">
       <div style="display:flex;flex-direction:column;align-items:stretch;height:${totH}px;width:100%;border-radius:3px 3px 0 0;overflow:hidden;position:relative">
         <div class="proj-bar" style="background:var(--red);height:${bH}px;border-radius:0;position:relative">
@@ -1225,21 +1257,19 @@ function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house, parth) 
 window.addEventListener('load', () => {
   // Show defaults immediately so overview isn't blank
   document.getElementById('ov-inc').textContent  = INR(CFG.inc);
-  document.getElementById('ov-emi').textContent  = INR(131955);
-  document.getElementById('ov-free').textContent = INR(CFG.inc - 131955);
+  document.getElementById('ov-emi').textContent  = '—';
+  document.getElementById('ov-free').textContent = '—';
   document.getElementById('cf-inc').textContent  = INR(CFG.inc);
-  document.getElementById('cf-emi').textContent  = '−'+INR(131955);
+  document.getElementById('cf-emi').textContent  = '—';
   document.getElementById('cf-hh').textContent   = '−'+INR(CFG.hh);
-  document.getElementById('cf-parth').textContent = '−'+INR(CFG.pr || 13000);
-  document.getElementById('cf-avail').textContent= INR(CFG.inc-131955-CFG.hh-(CFG.pr||13000));
+  document.getElementById('cf-parth').textContent = '−'+INR(CFG.pr || 0);
+  document.getElementById('cf-avail').textContent= '—';
   document.getElementById('ov-sav-note').textContent = 'Target: '+INR(CFG.ef);
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
   rSettings();
-  buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh, CFG.pr || 13000);
 
-  if (!API.includes('PASTE_YOUR_')) doSync();
+  if (API) doSync();
   else {
-    // Show setup hint
     const b = document.createElement('div');
     b.className = 'banner';
     b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
