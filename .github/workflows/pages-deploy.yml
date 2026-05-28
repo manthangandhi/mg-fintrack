@@ -1,0 +1,43 @@
+name: Deploy site to GitHub Pages (with Apps Script URL injection)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare site directory
+        run: |
+          rm -rf site || true
+          mkdir site
+          # copy site files (exclude .git and workflows)
+          rsync -av --exclude='.git' --exclude='.github' ./ site/
+          # inject Apps Script URL from secret into the built site (not committed)
+          if [ -n "${{ secrets.APPS_SCRIPT_URL }}" ]; then
+            echo "${{ secrets.APPS_SCRIPT_URL }}" > site/apps-script-url.txt
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: site
+
+  deploy:
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1

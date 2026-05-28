@@ -449,7 +449,7 @@ tbody tr:hover td{background:var(--sf2)}
   <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
     <b style="color:var(--tx)">Settings sync</b><br>
     All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
-    <b style="color:var(--tx)">Apps Script URL</b> is kept only for this browser session and will reset on reload. Use the Settings tab to paste your current web app URL.
+    <b style="color:var(--tx)">Apps Script URL</b> is kept only for this browser session and will reset on reload. If you want the URL to persist when hosting on GitHub Pages, create a file named <code>apps-script-url.txt</code> at the site root and paste the URL there; the app will auto-load it when served from GitHub Pages.
   </div>
 </div>
 
@@ -623,6 +623,22 @@ function saveApiUrl() {
   setApiUrl(url);
   toast('Apps Script URL set for this session ✓');
   doSync();
+}
+
+// Try loading Apps Script URL from a repo-hosted file (served by GitHub Pages)
+async function loadApiFromRepo() {
+  try {
+    const r = await fetch('apps-script-url.txt');
+    if (!r.ok) return;
+    const txt = (await r.text()).trim();
+    if (txt && !txt.includes('PASTE_YOUR')) {
+      setApiUrl(txt);
+      // auto-sync when loaded from repo
+      doSync();
+    }
+  } catch(e) {
+    // ignore — file may not exist on non-GitHub hosts
+  }
 }
 
 // ── TOAST ────────────────────────────────────────
@@ -1266,6 +1282,8 @@ window.addEventListener('load', () => {
     b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
     document.getElementById('page-overview').prepend(b);
   }
+  // Attempt to read Apps Script URL from repo file when hosted on GitHub Pages
+  loadApiFromRepo();
 });
 </script>
 </body>
