@@ -9,7 +9,7 @@
 :root[data-theme="light"]{--bg:#f4f3ef;--sf:#fff;--sf2:#eeedea;--bd:rgba(0,0,0,0.07);--bd2:rgba(0,0,0,0.14);--tx:#1a1a1a;--tx2:#666;--tx3:#bbb;--ac:#4a7a00;--red:#c0392b;--or:#a05500;--bl:#0055aa;--gr:#186e36;--pu:#6a2faa}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
-nav{display:flex;align-items:center;gap:4px;padding:10px 16px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--bg);z-index:100;flex-wrap:wrap}
+nav{display:flex;align-items:center;gap:4px;padding:10px 16px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--bg);z-index:100;flex-wrap:wrap;position:relative}
 .logo{font-size:12px;font-weight:700;letter-spacing:.06em;margin-right:6px;white-space:nowrap}
 .logo em{color:var(--ac);font-style:normal}
 .tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
@@ -58,6 +58,18 @@ tbody tr:hover td{background:var(--sf2)}
 .card-t{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
 .big{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
 .card-note{font-size:10px;color:var(--tx3);margin-top:4px}
+.menu-btn{display:none;border:1px solid var(--bd2);border-radius:6px;background:none;color:var(--tx2);font-size:16px;width:36px;height:36px;cursor:pointer;align-items:center;justify-content:center;display:flex}
+@media(max-width:600px){
+  .tabs{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--sf);border:1px solid var(--bd);border-radius:0 0 10px 10px;padding:6px 0;box-shadow:0 14px 24px rgba(0,0,0,.15)}
+  nav.open .tabs{display:flex}
+  .menu-btn{display:flex}
+  .tabs .tab{padding:10px 14px;text-align:left;width:100%;border-radius:0;}
+  .tabs .tab.on{background:var(--sf2);}
+}
+.banner{background:rgba(255,255,255,.08);border:1px solid var(--bd);border-radius:7px;padding:10px 12px;color:var(--tx2);font-size:12px;line-height:1.4}
+.banner.warn{border-color:rgba(255,91,91,.24);color:var(--red)}
+.banner.info{border-color:rgba(185,126,255,.24);color:var(--pu)}
+.banner.good{border-color:rgba(110,232,154,.24);color:var(--gr)}
 
 /* DEBT BREAKDOWN BARS */
 .drow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px}
@@ -147,6 +159,7 @@ tbody tr:hover td{background:var(--sf2)}
     <button class="tab"    onclick="go(this,'settings')">Settings</button>
     <button class="tab"    onclick="go(this,'setup')">Setup</button>
   </div>
+  <button class="ibtn menu-btn" id="menuBtn" onclick="toggleMobileMenu()" title="Open menu">☰</button>
   <div class="nav-r">
     <button class="ibtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">☀</button>
     <button class="ibtn" id="sbtn" onclick="doSync()" title="Sync">↻</button>
@@ -163,6 +176,31 @@ tbody tr:hover td{background:var(--sf2)}
     <div class="stat"><div class="sl">Net take-home</div><div class="sv" id="ov-inc" style="color:var(--ac)">—</div><div class="ss">TR salary</div></div>
     <div class="stat"><div class="sl">Free cash</div><div class="sv" id="ov-free" style="color:var(--gr)">—</div><div class="ss">after all EMIs</div></div>
     <div class="stat"><div class="sl">Net worth</div><div class="sv" id="ov-nw" style="color:var(--pu)">—</div><div class="ss">assets − liabilities</div></div>
+  </div>
+  <div class="ss" id="ov-sync" style="margin-bottom:14px">Last sync: never</div>
+  <div class="banner" id="ov-alert" style="display:none;margin-bottom:14px"></div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-t">Cash health</div>
+      <div class="big" id="ov-health" style="color:var(--gr)">—</div>
+      <div class="card-note" id="ov-health-note">Balance vs income</div>
+    </div>
+    <div class="card">
+      <div class="card-t">Collect</div>
+      <div class="big" id="ov-recv" style="color:var(--ac)">—</div>
+      <div class="card-note" id="ov-recv-note">Top receivable</div>
+    </div>
+    <div class="card">
+      <div class="card-t">Pay</div>
+      <div class="big" id="ov-pay" style="color:var(--red)">—</div>
+      <div class="card-note" id="ov-pay-note">Top payable</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;padding:16px">
+    <div class="card-t">Top action</div>
+    <div class="big" id="ov-action" style="color:var(--or)">—</div>
+    <div class="card-note" id="ov-action-note">Focus for this month</div>
   </div>
 
   <!-- Row 1: AMEX + Savings + Net worth breakdown -->
@@ -205,7 +243,6 @@ tbody tr:hover td{background:var(--sf2)}
         <div class="cf-row"><span class="lbl">TR take-home</span><span id="cf-inc" style="color:var(--gr)">—</span></div>
         <div class="cf-row"><span class="lbl">Bank EMIs</span><span id="cf-emi" style="color:var(--red)">—</span></div>
         <div class="cf-row"><span class="lbl">Household est.</span><span id="cf-hh" style="color:var(--or)">—</span></div>
-        <div class="cf-row"><span class="lbl">Parth Shah</span><span style="color:var(--or)">−₹13,000</span></div>
         <div class="cf-row"><span class="lbl">Available for AMEX/debts</span><span id="cf-avail" style="color:var(--ac)">—</span></div>
       </div>
     </div>
@@ -312,7 +349,17 @@ tbody tr:hover td{background:var(--sf2)}
     <div class="stat"><div class="sl">Highest priority</div><div class="sv" id="inf-top" style="color:var(--or);font-size:13px">—</div></div>
   </div>
   <div class="sec">
-    <div class="sh"><div class="sti">Outstanding per person</div></div>
+    <div class="sh">
+      <div class="sti">Outstanding per person</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input class="fi" id="if-name" type="text" placeholder="Filter name" style="width:150px" oninput="rInformal()" />
+        <select class="fs" id="if-type" onchange="rInformal()">
+          <option value="">All</option>
+          <option value="receivable">Receivable</option>
+          <option value="payable">Payable</option>
+        </select>
+      </div>
+    </div>
     <div class="tw"><table><thead><tr><th>Person</th><th>Total received</th><th>Total paid back</th><th>Outstanding</th><th>Priority</th></tr></thead>
     <tbody id="infs-tbody"><tr class="erow"><td colspan="5">Sync to load from Transactions sheet.</td></tr></tbody></table></div>
   </div>
@@ -377,6 +424,7 @@ tbody tr:hover td{background:var(--sf2)}
       <div><div class="srow-l">Household monthly estimate</div><div class="srow-sub">Current: <b id="s-hh-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
     </div>
+    <!-- Parth Shah repayment setting removed: informal debts are tracked via Transactions only -->
     <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
@@ -386,18 +434,22 @@ tbody tr:hover td{background:var(--sf2)}
       <div class="srow-r"><input class="fi" id="s-assets" type="number" style="width:120px" placeholder="500000"/><button class="sbtn" onclick="saveSetting('assets',+document.getElementById('s-assets').value||0,'Assets updated')">Save</button></div>
     </div>
     <div class="srow">
-      <div><div class="srow-l">Theme</div><div class="srow-sub">Dark / light mode</div></div>
+      <div><div class="srow-l">Apps Script URL</div><div class="srow-sub">Paste your Google Apps Script web app URL here.</div></div>
+      <div class="srow-r"><input class="fi" id="s-api" type="text" style="width:280px" placeholder="https://script.google.com/.../exec" /><button class="sbtn" onclick="saveApiUrl()">Save</button></div>
+    </div>
+    <div class="srow">
+      <div></div>
       <div class="srow-r"><button class="sbtn" onclick="toggleTheme()">Toggle ☀ / ☾</button></div>
     </div>
     <div class="srow">
-      <div><div class="srow-l">Clear local cache</div><div class="srow-sub">Wipes device-only storage — Sheet data stays safe</div></div>
-      <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Clear</button></div>
+      <div><div class="srow-l">Refresh sheet settings</div><div class="srow-sub">Reloads the page and re-fetches Config from the sheet.</div></div>
+      <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Reload</button></div>
     </div>
   </div>
   <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
     <b style="color:var(--tx)">Settings sync</b><br>
     All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
-    <b style="color:var(--tx)">Apps Script URL</b> is hardcoded in this file — edit line 1 of the &lt;script&gt; section to change it.
+    <b style="color:var(--tx)">Apps Script URL</b> is kept only for this browser session and will reset on reload. If you want the URL to persist when hosting on GitHub Pages, create a file named <code>apps-script-url.txt</code> at the site root and paste the URL there; the app will auto-load it when served from GitHub Pages.
   </div>
 </div>
 
@@ -449,17 +501,16 @@ function doGet(e){
 }
 function doPost(e){return doGet(e);}
 function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}</pre>
-    Replace <code>PASTE_YOUR_SHEET_ID_HERE</code> with the ID from your Sheet URL (between <code>/d/</code> and <code>/edit</code>).
+    Replace the <code>SHEET_ID</code> constant with your own Sheet ID from the URL (between <code>/d/</code> and <code>/edit</code>).
   </div></div>
 
   <div class="step"><div class="sn">STEP 04</div><div class="st">Deploy as Web App</div><div class="sb">
     <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy → Authorize → Copy URL</code>
   </div></div>
 
-  <div class="step"><div class="sn">STEP 05</div><div class="st">Hardcode your URL into this file — one time only</div><div class="sb">
-    Open <code>index.html</code> in any text editor. Find line 1 of the &lt;script&gt; section:<br><br>
-    <code>const API = 'PASTE_YOUR_URL_HERE';</code><br><br>
-    Replace <code>PASTE_YOUR_URL_HERE</code> with your Apps Script URL. Save. Push to GitHub. <b>Done — every device uses the same file, same URL, no setup per device.</b>
+  <div class="step"><div class="sn">STEP 05</div><div class="st">Save your Apps Script URL in Settings</div><div class="sb">
+    Open the <b>Settings</b> tab and paste your Apps Script web app URL into the Apps Script URL field.<br><br>
+    Save it there. This value is kept for the current browser session only and is not persisted across devices.
   </div></div>
 
   <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
@@ -539,22 +590,56 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 
 <script>
 // ══════════════════════════════════════════════════
-// STEP 05: Paste your Apps Script URL below
+// STEP 05: Paste your Apps Script URL below or save it in Settings
 // ══════════════════════════════════════════════════
-const API = 'https://script.google.com/macros/s/AKfycbzjOIwdYeaYY3uZMwtZ0g3JRli7eei50T7QwH5EzH172tsurFTTY4UO4PstibAn-jjC/exec';
-// ══════════════════════════════════════════════════
-
-const SK = 'mgft5';
-let C = JSON.parse(localStorage.getItem(SK) || '{}');
-// C.theme only stored locally — everything else comes from Config sheet
+let API = ''; // no persistent browser storage for Apps Script URL
 let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
 let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 
-const save  = () => localStorage.setItem(SK, JSON.stringify(C));
 const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
-const td    = () => new Date().toISOString().split('T')[0];
-const curMonth = () => { const n=new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0'); };
+const localDateString = (d = new Date()) => {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().split('T')[0];
+};
+const td    = () => localDateString();
+const curMonth = () => {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return `${local.getFullYear()}-${String(local.getMonth()+1).padStart(2,'0')}`;
+};
+const parseDateLocal = s => {
+  if (!s) return null;
+  const [y,m,d] = String(s).split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+function setApiUrl(url) {
+  API = url ? url.trim() : '';
+  rSettings();
+}
+function saveApiUrl() {
+  const url = document.getElementById('s-api').value.trim();
+  if (!url) { toast('Enter Apps Script URL'); return; }
+  setApiUrl(url);
+  toast('Apps Script URL set for this session ✓');
+  doSync();
+}
+
+// Try loading Apps Script URL from a repo-hosted file (served by GitHub Pages)
+async function loadApiFromRepo() {
+  try {
+    const r = await fetch('apps-script-url.txt');
+    if (!r.ok) return;
+    const txt = (await r.text()).trim();
+    if (txt && !txt.includes('PASTE_YOUR')) {
+      setApiUrl(txt);
+      // auto-sync when loaded from repo
+      doSync();
+    }
+  } catch(e) {
+    // ignore — file may not exist on non-GitHub hosts
+  }
+}
 
 // ── TOAST ────────────────────────────────────────
 function toast(m) {
@@ -567,20 +652,25 @@ function toast(m) {
 function toggleTheme() {
   const h = document.documentElement;
   const nt = h.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  h.setAttribute('data-theme', nt); C.theme = nt; save();
+  h.setAttribute('data-theme', nt);
   document.getElementById('tbtn').textContent = nt === 'dark' ? '☀' : '☾';
-}
-if (C.theme) {
-  document.documentElement.setAttribute('data-theme', C.theme);
-  document.getElementById('tbtn').textContent = C.theme === 'dark' ? '☀' : '☾';
 }
 
 // ── NAV ──────────────────────────────────────────
+function toggleMobileMenu() {
+  const nav = document.querySelector('nav');
+  nav.classList.toggle('open');
+}
+function closeMobileMenu() {
+  const nav = document.querySelector('nav');
+  nav.classList.remove('open');
+}
 function go(el, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
   document.getElementById('page-'+id).classList.add('on');
   el.classList.add('on');
+  closeMobileMenu();
   const map = { loans:rLoans, cc:rCC, informal:rInformal, budget:rBudget, savings:rSavings, settings:rSettings };
   if (map[id]) map[id]();
 }
@@ -607,7 +697,7 @@ document.querySelectorAll('.overlay').forEach(o =>
 // ── API ──────────────────────────────────────────
 async function apicall(params) {
   if (!API || API.includes('PASTE_YOUR')) {
-    toast('API URL not set — edit index.html and paste your Apps Script URL');
+    toast('API URL not set — save it in Settings or edit index.html');
     return null;
   }
   try {
@@ -618,7 +708,7 @@ async function apicall(params) {
 
 // ── SYNC ─────────────────────────────────────────
 async function doSync() {
-  if (API.includes('PASTE_YOUR')) { toast('Paste your Apps Script URL into index.html first (Setup Step 05)'); return; }
+  if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first (Setup Step 05)'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
   const tabs = ['Config','Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
@@ -633,6 +723,7 @@ async function doSync() {
     });
   }
   btn.textContent = '↻';
+  lastSyncAt = new Date().toLocaleString('en-IN', { hour12:false });
   rOverview(); rLoans(); rCC(); rInformal(); rBudget(); rSavings(); rSettings();
   toast('Synced ✓');
 }
@@ -653,10 +744,11 @@ function rSettings() {
     const el = document.getElementById('s-'+k);
     if (el) el.value = CFG[k] || '';
   });
+  const apiEl = document.getElementById('s-api');
+  if (apiEl) apiEl.value = API || '';
 }
 function clearCache() {
-  if (!confirm('Clear device-only cache? Config will reload from Sheet on next sync.')) return;
-  localStorage.removeItem(SK); C = {}; location.reload();
+  location.reload();
 }
 
 // ── LOANS ─────────────────────────────────────────
@@ -665,7 +757,7 @@ function getLoans() {
   const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
   return rows.map(r => {
     const name=r[0], type=r[1], emi=+r[2]||0, rate=+r[3]||0, tenure=+r[5]||0;
-    const start = r[4] ? new Date(r[4]) : null;
+    const start = r[4] ? parseDateLocal(r[4]) : null;
     let elapsed = 0;
     if (start) { const n=new Date(); elapsed=Math.max(0,(n.getFullYear()-start.getFullYear())*12+(n.getMonth()-start.getMonth())); }
     const remaining = Math.max(0, tenure - elapsed);
@@ -732,6 +824,13 @@ async function logPay() {
 function getCardMaster() {
   return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:+r[1]||3.5,notes:r[2]||''}));
 }
+function fillCardSels() {
+  const names = getCardMaster().map(c=>c.name);
+  ['bl-card','cp-card'].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
+  });
+}
 function getCards() {
   const masters = getCardMaster();
   const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0);
@@ -743,17 +842,10 @@ function getCards() {
     const lastAmt   = lastBill ? +lastBill[2] : 0;
     const lastDate  = lastBill ? lastBill[0]  : '—';
     const dueDate   = lastBill ? lastBill[3]  : '—';
-    const lastTs    = lastBill ? new Date(lastBill[0]).getTime() : 0;
+    const lastTs    = lastBill ? (parseDateLocal(lastBill[0])||new Date(0)).getTime() : 0;
     const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+(+p[2]||0),0);
     const outstanding = Math.max(0, lastAmt - paid);
     return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
-  });
-}
-function fillCardSels() {
-  const names = getCardMaster().map(c=>c.name);
-  ['bl-card','cp-card'].forEach(id => {
-    const s = document.getElementById(id);
-    if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
   });
 }
 function rCC() {
@@ -809,30 +901,61 @@ async function logCCPay() {
 
 // ── INFORMAL ──────────────────────────────────────
 function rInformal() {
-  const rows=(D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
-  const ltb=document.getElementById('infl-tbody');
-  ltb.innerHTML=rows.length
-    ? [...rows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
-    : '<tr class="erow"><td colspan="5">No transactions.</td></tr>';
+  const filterName = (document.getElementById('if-name')?.value || '').trim().toLowerCase();
+  const filterType = document.getElementById('if-type')?.value;
+  const rows = (D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
+  const ltb = document.getElementById('infl-tbody');
+  const logRows = rows.filter(r => {
+    const name = (r[2]||'').trim();
+    if (!name) return false;
+    if (filterName && !name.toLowerCase().includes(filterName)) return false;
+    if (filterType === 'receivable' && r[1] !== 'Received') return false;
+    if (filterType === 'payable' && r[1] !== 'Paid') return false;
+    return true;
+  });
+  ltb.innerHTML = logRows.length
+    ? [...logRows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
+    : '<tr class="erow"><td colspan="5">No transactions match filter.</td></tr>';
 
-  const people={};
-  rows.forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]={rcv:0,paid:0}; if(r[1]==='Received') people[n].rcv+=+r[3]||0; if(r[1]==='Paid') people[n].paid+=+r[4]||0; });
-  const entries=Object.entries(people);
-  let totalOwed=0, topP='', topA=0;
-  const stb=document.getElementById('infs-tbody');
-  stb.innerHTML=entries.length ? entries.map(([name,d])=>{
-    const out=d.rcv-d.paid;
-    if(out>0){totalOwed+=out; if(out>topA){topA=out;topP=name;}}
-    const [bc,bl]=out>100000?['br','High']:out>40000?['bo','Medium']:out<=0?['bg','Settled']:['bb','Low'];
-    const outStyle=out>0?'color:var(--or);font-weight:600':'color:var(--gr)';
-    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.rcv)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${out>0?INR(out):'settled'}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
+  const people = {};
+  rows.forEach(r=>{
+    const n = (r[2]||'').trim();
+    if (!n || n === 'Total') return;
+    if (!people[n]) people[n] = { received:0, paid:0 };
+    if (r[1] === 'Received') people[n].received += +r[3] || 0;
+    else if (r[1] === 'Paid') people[n].paid += +r[4] || 0;
+  });
+  const entries = Object.entries(people).filter(([name,d]) => {
+    const balance = d.paid - d.received;
+    if (filterName && !name.toLowerCase().includes(filterName)) return false;
+    if (filterType === 'receivable' && balance <= 0) return false;
+    if (filterType === 'payable' && balance >= 0) return false;
+    return true;
+  });
+  let totalOwed = 0, topP = '', topA = 0, topBalance = 0;
+  const stb = document.getElementById('infs-tbody');
+  stb.innerHTML = entries.length ? entries.map(([name,d])=>{
+    const balance = d.paid - d.received;
+    const abs = Math.abs(balance);
+    if (balance > 0) totalOwed += balance;
+    if (abs > topA) { topA = abs; topP = name; topBalance = balance; }
+    let bc='bb', bl='Low';
+    if (balance > 100000) [bc,bl]=['br','High'];
+    else if (balance > 40000) [bc,bl]=['bo','Medium'];
+    else if (balance > 0) [bc,bl]=['bb','Collect'];
+    else if (balance < 0) [bc,bl]=['bg','Pay'];
+    else [bc,bl]=['bg','Settled'];
+    const outText = balance > 0 ? INR(abs) : balance < 0 ? 'You owe ' + INR(abs) : 'Settled';
+    const outStyle = balance > 0 ? 'color:var(--or);font-weight:600' : balance < 0 ? 'color:var(--bl);font-weight:600' : 'color:var(--gr)';
+    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.received)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
   }).join('') : '<tr class="erow"><td colspan="5">No data.</td></tr>';
 
   document.getElementById('inf-total').textContent=INR(totalOwed);
-  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.rcv-d.paid>0).length;
-  document.getElementById('inf-top').textContent=topP?topP+' · '+INR(topA):'—';
-  document.getElementById('it-dl').innerHTML=entries.map(([n])=>`<option value="${n}">`).join('');
+  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.paid-d.received>0).length;
+  document.getElementById('inf-top').textContent=topP ? `${topP} · ${topBalance>0? 'Collect ' + INR(topA) : 'Pay ' + INR(topA)}` : '—';
+  document.getElementById('it-dl').innerHTML=Object.entries(people).map(([n])=>`<option value="${n}">`).join('');
 }
+
 async function logInfTx() {
   const dir=document.getElementById('it-dir').value, name=document.getElementById('it-person').value.trim(), date=document.getElementById('it-date').value, amt=document.getElementById('it-amt').value, rem=document.getElementById('it-rem').value;
   if(!name||!amt){toast('Person and amount required');return;}
@@ -843,16 +966,19 @@ async function logInfTx() {
 
 // ── BUDGET ────────────────────────────────────────
 function rBudget() {
-  const inc=CFG.inc, loans=getLoans(), totEmi=loans.reduce((s,l)=>s+l.emi,0), house=CFG.hh, parth=13000, left=inc-totEmi-house-parth;
-  document.getElementById('b-inc').textContent=INR(inc);
-  document.getElementById('b-emi').textContent=INR(totEmi);
-  document.getElementById('b-hh').textContent=INR(house);
-  document.getElementById('b-left').textContent=INR(Math.max(0,left));
-  const tb=document.getElementById('b-tbody');
+  const inc = CFG.inc;
+  const loans = getLoans();
+  const totEmi = loans.reduce((s,l)=>s+l.emi,0);
+  const house = CFG.hh;
+  const left = inc - totEmi - house;
+  document.getElementById('b-inc').textContent = INR(inc);
+  document.getElementById('b-emi').textContent = INR(totEmi);
+  document.getElementById('b-hh').textContent = INR(house);
+  document.getElementById('b-left').textContent = INR(Math.max(0,left));
+  const tb = document.getElementById('b-tbody');
   tb.innerHTML=[
     ...loans.map(l=>`<tr><td>${l.name}</td><td class="mono" style="color:var(--red)">${INR(l.emi)}</td><td><span class="badge br">Fixed EMI</span></td><td class="dim">${l.type==='Home Loan'?'10th':'7th'} of month</td></tr>`),
     `<tr><td>Household + fuel + misc</td><td class="mono" style="color:var(--or)">${INR(house)}</td><td><span class="badge bo">Variable</span></td><td class="dim">Estimate</td></tr>`,
-    `<tr><td>Parth Shah repayment</td><td class="mono">₹13,000</td><td><span class="badge bb">Ongoing</span></td><td class="dim">Till cleared</td></tr>`,
     `<tr style="border-top:1px solid var(--bd2)"><td style="font-weight:600">Buffer (AMEX + informal + jar)</td><td class="mono" style="color:var(--ac);font-weight:600">${INR(Math.max(0,left))}</td><td></td><td></td></tr>`
   ].join('');
   const irows=(D['Income']||[]).slice(1).filter(r=>r[0]);
@@ -901,21 +1027,105 @@ function rOverview() {
   const inc      = CFG.inc;
   const house    = CFG.hh;
 
-  // Informal total from Transactions
-  const people={};
-  (D['Transactions']||[]).slice(1).forEach(r=>{ const n=r[2]; if(!n||n==='Total') return; if(!people[n]) people[n]=0; if(r[1]==='Received') people[n]+=+r[3]||0; if(r[1]==='Paid') people[n]-=+r[4]||0; });
-  let infTot=0; Object.values(people).forEach(v=>{ if(v>0) infTot+=v; });
+  const totals = {};
+  (D['Transactions']||[]).slice(1).forEach(r=>{
+    const n=(r[2]||'').trim();
+    if(!n||n==='Total') return;
+    if(!totals[n]) totals[n]=0;
+    if(r[1]==='Received') totals[n] -= +r[3]||0;
+    else if(r[1]==='Paid') totals[n] += +r[4]||0;
+  });
+  let infPayable=0, infReceivable=0, topCollect='', topPay='', collectCount=0, payCount=0;
+  Object.entries(totals).forEach(([name,v])=>{
+    if (v > 0) {
+      infReceivable += v;
+      collectCount += 1;
+      if (!topCollect || v > totals[topCollect]) topCollect = name;
+    } else if (v < 0) {
+      infPayable += Math.abs(v);
+      payCount += 1;
+      if (!topPay || Math.abs(v) > Math.abs(totals[topPay])) topPay = name;
+    }
+  });
 
-  const totalDebt=loanTot+ccTot+infTot;
-  const free=inc-totEmi;
+  const totalDebt = loanTot + ccTot + infPayable;
+  const free = inc - totEmi;
 
   // Savings running total
   let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=+r[1]||0);
 
   // Net worth
-  const assets = CFG.assets + savRun; // other assets + savings jar
+  const assets = CFG.assets + savRun + infReceivable; // other assets + savings jar + receivables
   const liab   = totalDebt;
   const nw     = assets - liab;
+
+  const buffer = free - house;
+  const debtRatio = totalDebt / Math.max(inc,1);
+  const bufferRatio = buffer / Math.max(inc,1);
+  const healthScore = Math.max(0, Math.min(100, Math.round(70 - debtRatio * 20 + bufferRatio * 15)));
+  const healthLabel = healthScore >= 80 ? 'Strong balance' : healthScore >= 60 ? 'Stable cash flow' : healthScore >= 40 ? 'Watch your outflow' : 'Weak: act now';
+  const bestCollect = topCollect ? `Collect ${INR(infReceivable)} from ${topCollect}` : '';
+  const bestPay = topPay ? `Pay ${INR(infPayable)} to ${topPay}` : '';
+  let actionText = 'Stay disciplined: track inflow and debt.';
+  let actionNote = 'Sync regularly for accurate insights.';
+  let alertText = '';
+  let alertClass = '';
+
+  if (buffer < 0) {
+    actionText = `Reduce monthly spend by ₹${Math.abs(buffer).toLocaleString('en-IN')}`;
+    actionNote = 'Your fixed-outflow buffer is negative; improve cash flow first.';
+    alertText = `Negative cash buffer: ₹${Math.abs(buffer).toLocaleString('en-IN')} short. Pause discretionary spending.`;
+    alertClass = 'warn';
+  } else if (debtRatio > 2.2) {
+    actionText = 'High debt load — lean into repayments.';
+    actionNote = 'Your debt is more than twice your income; reduce new spending.';
+    alertText = `High debt ratio: ${Math.round(debtRatio * 100)}% of income. Prioritize clearing debt.`;
+    alertClass = 'warn';
+  } else if (infReceivable > 0 && infPayable > 0) {
+    actionText = bestCollect || bestPay;
+    actionNote = 'Balance collection and repayment for better cash flow.';
+    alertText = `You have ${collectCount} receivable${collectCount===1?'':'s'} and ${payCount} payable${payCount===1?'':'s'} outstanding.`;
+    alertClass = 'info';
+  } else if (infReceivable > 0) {
+    actionText = bestCollect || `Collect ${INR(infReceivable)}`;
+    actionNote = 'Collect receivables to improve your cash buffer.';
+    alertText = `You are owed by ${collectCount} person${collectCount===1?'':'s'}; follow up for cash flow.`;
+    alertClass = 'info';
+  } else if (infPayable > 0) {
+    actionText = bestPay || `Pay ${INR(infPayable)}`;
+    actionNote = 'Use available cash to clear informal payables quickly.';
+    alertText = `You owe ${payCount} person${payCount===1?'':'s'}; prioritize the largest amount.`;
+    alertClass = 'info';
+  } else if (ccTot > 0) {
+    actionText = `Pay ${INR(ccTot)} card outstanding`;
+    actionNote = 'Reduce high-cost credit card balances first.';
+    alertText = 'Your card balances are the largest remaining liability; focus here.';
+    alertClass = 'info';
+  } else if (!loanTot && !ccTot && !infPayable) {
+    actionText = 'No debts tracked yet.';
+    actionNote = 'Add loans, cards, or transactions to activate the dashboard.';
+    alertText = 'This dashboard is ready. Start by syncing sheet data or adding your first record.';
+    alertClass = 'good';
+  }
+
+  document.getElementById('ov-health').textContent = `${healthScore}%`;
+  document.getElementById('ov-health-note').textContent = healthLabel;
+  document.getElementById('ov-recv').textContent = INR(infReceivable);
+  document.getElementById('ov-recv-note').textContent = infReceivable > 0 ? `Top collect: ${topCollect} · ${collectCount} item${collectCount===1?'':'s'}` : 'No receivables';
+  document.getElementById('ov-pay').textContent = INR(infPayable);
+  document.getElementById('ov-pay-note').textContent = infPayable > 0 ? `Top pay: ${topPay} · ${payCount} item${payCount===1?'':'s'}` : 'No payables';
+  document.getElementById('ov-action').textContent = actionText;
+  document.getElementById('ov-action-note').textContent = actionNote;
+  document.getElementById('ov-sync').textContent = lastSyncAt ? `Last sync: ${lastSyncAt}` : 'Last sync: never';
+
+  const ovAlert = document.getElementById('ov-alert');
+  if (alertText) {
+    ovAlert.textContent = alertText;
+    ovAlert.className = `banner ${alertClass}`;
+    ovAlert.style.display = 'block';
+  } else {
+    ovAlert.style.display = 'none';
+  }
 
   // Top stats
   document.getElementById('ov-debt').textContent = INR(totalDebt);
@@ -928,26 +1138,27 @@ function rOverview() {
   document.getElementById('ov-liab').textContent   = INR(liab);
 
   // AMEX card
-  const amex=cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
+  const amex = cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
   const amexBal = amex ? amex.outstanding : ccTot;
-  document.getElementById('ov-amex').textContent=INR(amexBal);
-  document.getElementById('ov-amex-p').style.width=Math.min(100,(amexBal/403424)*100)+'%';
+  const amexBase = Math.max(ccTot, amexBal, 1);
+  document.getElementById('ov-amex').textContent = INR(amexBal);
+  document.getElementById('ov-amex-p').style.width = Math.min(100, (amexBal/amexBase)*100)+'%';
 
   // Debt breakdown bars
   document.getElementById('dv-bank').textContent=INR(loanTot);
   document.getElementById('dv-cc').textContent=INR(ccTot);
-  document.getElementById('dv-inf').textContent=INR(infTot);
+  document.getElementById('dv-inf').textContent=INR(infPayable);
   if(totalDebt>0) {
     document.getElementById('db-bank').style.width=Math.max(2,loanTot/totalDebt*100)+'%';
     document.getElementById('db-cc').style.width=Math.max(2,ccTot/totalDebt*100)+'%';
-    document.getElementById('db-inf').style.width=Math.max(2,infTot/totalDebt*100)+'%';
+    document.getElementById('db-inf').style.width=Math.max(2,infPayable/totalDebt*100)+'%';
   }
 
   // Cashflow
   document.getElementById('cf-inc').textContent   = INR(inc);
   document.getElementById('cf-emi').textContent   = '−'+INR(totEmi);
   document.getElementById('cf-hh').textContent    = '−'+INR(house);
-  document.getElementById('cf-avail').textContent = INR(Math.max(0,free-house-13000));
+  document.getElementById('cf-avail').textContent = INR(Math.max(0, free - house));
 
   // EMI Calendar
   const now = new Date();
@@ -985,7 +1196,7 @@ function rOverview() {
     : '<div style="color:var(--tx3);font-size:12px;font-style:italic">No loans added yet.</div>';
 
   // Payoff projection — 12 months
-  buildProjection(loanTot, ccTot, infTot, totEmi, inc, house);
+  buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house);
 
   // Recent activity
   const loanNames=new Set(loans.map(l=>l.name));
@@ -1003,32 +1214,36 @@ function rOverview() {
 }
 
 // ── PROJECTION CHART ──────────────────────────────
-function buildProjection(loanTot, ccTot, infTot, totEmi, inc, house) {
-  const months=['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
-  // CC Smart EMI reductions per month (from known schedule)
-  const ccEmiReductions = [0,0,21221,9647,11342,0,0,0,0,0,0,0]; // Jul,Aug,Sep EMIs end
-  // Monthly free cash to pay off CC & informal
-  let bank=loanTot, cc=ccTot, inf=infTot;
-  let freeEmi=totEmi;
-  const points=[];
-  for(let i=0;i<12;i++){
-    freeEmi -= ccEmiReductions[i]||0; // as CC EMIs end, freed money
-    const buffer=Math.max(0,inc-freeEmi-house-13000);
-    // Priority: AMEX first, then informal
-    const amexPay=Math.min(cc, i<2?Math.min(buffer,30000):i<5?Math.min(buffer,50000):buffer*0.7);
-    cc=Math.max(0,cc-amexPay);
-    if(cc<=0){const rem=buffer-amexPay; inf=Math.max(0,inf-rem*0.5);}
-    bank=Math.max(0,bank-freeEmi*0.6); // approximate principal reduction
-    points.push({label:months[i], bank, cc, inf, total:bank+cc+inf});
+function buildProjection(loanTot, ccTot, infPayable, totEmi, inc, house) {
+  const months=[];
+  const now=new Date();
+  for (let i=0;i<12;i++) {
+    const d=new Date(now.getFullYear(), now.getMonth()+i, 1);
+    months.push(d.toLocaleDateString('en-IN',{month:'short'}));
   }
-  const maxVal=points[0].total||1;
-  const chartH=110;
-  const chart=document.getElementById('ov-proj-chart');
-  chart.innerHTML=points.map(p=>{
-    const bH=Math.round((p.bank/maxVal)*chartH);
-    const cH=Math.round((p.cc/maxVal)*chartH);
-    const iH=Math.round((p.inf/maxVal)*chartH);
-    const totH=bH+cH+iH;
+  const paymentBudget = Math.max(0, inc - house - totEmi);
+  let bank=loanTot, cc=ccTot, inf=infPayable;
+  const points=[];
+  for (let i=0;i<12;i++) {
+    let available = paymentBudget;
+    const cardPay = Math.min(cc, available);
+    cc = Math.max(0, cc - cardPay);
+    available -= cardPay;
+    const informalPay = Math.min(inf, available);
+    inf = Math.max(0, inf - informalPay);
+    available -= informalPay;
+    const bankPay = Math.min(bank, available);
+    bank = Math.max(0, bank - bankPay);
+    points.push({label:months[i], bank, cc, inf, total: bank + cc + inf});
+  }
+  const maxVal = points.reduce((m,p) => Math.max(m, p.total), 0) || 1;
+  const chartH = 110;
+  const chart = document.getElementById('ov-proj-chart');
+  chart.innerHTML = points.map(p => {
+    const bH = Math.round((p.bank/maxVal)*chartH);
+    const cH = Math.round((p.cc/maxVal)*chartH);
+    const iH = Math.round((p.inf/maxVal)*chartH);
+    const totH = bH + cH + iH;
     return `<div class="proj-bar-wrap">
       <div style="display:flex;flex-direction:column;align-items:stretch;height:${totH}px;width:100%;border-radius:3px 3px 0 0;overflow:hidden;position:relative">
         <div class="proj-bar" style="background:var(--red);height:${bH}px;border-radius:0;position:relative">
@@ -1050,24 +1265,25 @@ function buildProjection(loanTot, ccTot, infTot, totEmi, inc, house) {
 window.addEventListener('load', () => {
   // Show defaults immediately so overview isn't blank
   document.getElementById('ov-inc').textContent  = INR(CFG.inc);
-  document.getElementById('ov-emi').textContent  = INR(131955);
-  document.getElementById('ov-free').textContent = INR(CFG.inc - 131955);
+  document.getElementById('ov-emi').textContent  = '—';
+  document.getElementById('ov-free').textContent = '—';
   document.getElementById('cf-inc').textContent  = INR(CFG.inc);
-  document.getElementById('cf-emi').textContent  = '−'+INR(131955);
+  document.getElementById('cf-emi').textContent  = '—';
   document.getElementById('cf-hh').textContent   = '−'+INR(CFG.hh);
-  document.getElementById('cf-avail').textContent= INR(CFG.inc-131955-CFG.hh-13000);
+  document.getElementById('cf-avail').textContent= '—';
   document.getElementById('ov-sav-note').textContent = 'Target: '+INR(CFG.ef);
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
-  buildProjection(5899922, 403424, 804636, 131955, CFG.inc, CFG.hh);
+  rSettings();
 
-  if (!API.includes('PASTE_YOUR_')) doSync();
+  if (API) doSync();
   else {
-    // Show setup hint
     const b = document.createElement('div');
     b.className = 'banner';
-    b.innerHTML = '⚠ Apps Script URL not set. Open <b>index.html</b>, find <code>PASTE_YOUR_APPS_SCRIPT_URL_HERE</code> and replace it with your URL. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
+    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
     document.getElementById('page-overview').prepend(b);
   }
+  // Attempt to read Apps Script URL from repo file when hosted on GitHub Pages
+  loadApiFromRepo();
 });
 </script>
 </body>
