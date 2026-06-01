@@ -425,6 +425,10 @@ tbody tr:hover td{background:var(--sf2)}
       <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
     </div>
     <div class="srow">
+      <div><div class="srow-l">Apps Script URL</div><div class="srow-sub">Paste your Google Apps Script web app URL here.</div></div>
+      <div class="srow-r"><input class="fi" id="s-api" type="text" style="width:280px" placeholder="https://script.google.com/.../exec" /><button class="sbtn" onclick="saveApiUrl()">Save</button></div>
+    </div>
+    <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
     </div>
@@ -432,7 +436,6 @@ tbody tr:hover td{background:var(--sf2)}
       <div><div class="srow-l">Other assets (car value, savings, gold est.)</div><div class="srow-sub">Current: <b id="s-assets-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-assets" type="number" style="width:120px" placeholder="500000"/><button class="sbtn" onclick="saveSetting('assets',+document.getElementById('s-assets').value||0,'Assets updated')">Save</button></div>
     </div>
-    <!-- Apps Script URL is injected at build-time (GH Actions) or loaded from site/apps-script-url.txt -->
     <div class="srow">
       <div></div>
       <div class="srow-r"><button class="sbtn" onclick="toggleTheme()">Toggle ☀ / ☾</button></div>
@@ -445,7 +448,7 @@ tbody tr:hover td{background:var(--sf2)}
   <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
     <b style="color:var(--tx)">Settings sync</b><br>
     All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
-    <b style="color:var(--tx)">Apps Script URL</b> is not stored in the repo. Prefer setting the repository secret `APPS_SCRIPT_URL` (CI will inject `apps-script-url.txt` during Pages deploy). Alternatively, add a file named <code>apps-script-url.txt</code> at the site root with the URL to make it available on GitHub Pages.
+    <b style="color:var(--tx)">Apps Script URL</b> is kept only for this browser session and will reset on reload. If you want the URL to persist when hosting on GitHub Pages, create a file named <code>apps-script-url.txt</code> at the site root and paste the URL there; the app will auto-load it when served from GitHub Pages.
   </div>
 </div>
 
@@ -504,9 +507,9 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
     <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy → Authorize → Copy URL</code>
   </div></div>
 
-  <div class="step"><div class="sn">STEP 05</div><div class="st">Provide Apps Script URL securely</div><div class="sb">
-    Prefer: Set the `APPS_SCRIPT_URL` repository secret in GitHub and trigger a Pages deploy — the workflow will write the URL into <code>apps-script-url.txt</code> at build time.<br><br>
-    Alternative: For quick local testing, add <code>apps-script-url.txt</code> at the site root containing the web app URL.
+  <div class="step"><div class="sn">STEP 05</div><div class="st">Save your Apps Script URL in Settings</div><div class="sb">
+    Open the <b>Settings</b> tab and paste your Apps Script web app URL into the Apps Script URL field.<br><br>
+    Save it there. This value is kept for the current browser session only and is not persisted across devices.
   </div></div>
 
   <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
@@ -585,16 +588,23 @@ function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 </div></div>
 
 <script>
-// ═════════════════════════════════════════════════=
-// STEP 05: Provide Apps Script URL via repo secret or apps-script-url.txt
-// Prefer setting `APPS_SCRIPT_URL` secret (CI injects apps-script-url.txt)
-// ═════════════════════════════════════════════════=
+// ══════════════════════════════════════════════════
+// STEP 05: Paste your Apps Script URL below or save it in Settings
+// ══════════════════════════════════════════════════
 let API = ''; // no persistent browser storage for Apps Script URL
 let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
 let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
+const NUMCFG = new Set(['ef', 'inc', 'hh', 'prop', 'assets']);
 
-const INR   = n  => (n == null || n === '') ? '—' : '₹' + Math.round(+n).toLocaleString('en-IN');
+const num = v => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+};
+const INR   = n  => {
+  const v = Number(n);
+  return Number.isFinite(v) ? '₹' + Math.round(v).toLocaleString('en-IN') : '—';
+};
 const localDateString = (d = new Date()) => {
   const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
   return local.toISOString().split('T')[0];
@@ -614,7 +624,13 @@ function setApiUrl(url) {
   API = url ? url.trim() : '';
   rSettings();
 }
-// Note: manual Settings-based API entry removed. Use repository secret `APPS_SCRIPT_URL` or add apps-script-url.txt to site root for GitHub Pages.
+function saveApiUrl() {
+  const url = document.getElementById('s-api').value.trim();
+  if (!url) { toast('Enter Apps Script URL'); return; }
+  setApiUrl(url);
+  toast('Apps Script URL set for this session ✓');
+  doSync();
+}
 
 // Try loading Apps Script URL from a repo-hosted file (served by GitHub Pages)
 async function loadApiFromRepo() {
@@ -688,7 +704,7 @@ document.querySelectorAll('.overlay').forEach(o =>
 // ── API ──────────────────────────────────────────
 async function apicall(params) {
   if (!API || API.includes('PASTE_YOUR')) {
-    toast('API URL not set — set APPS_SCRIPT_URL secret or add apps-script-url.txt');
+    toast('API URL not set — save it in Settings or edit index.html');
     return null;
   }
   try {
@@ -699,7 +715,7 @@ async function apicall(params) {
 
 // ── SYNC ─────────────────────────────────────────
 async function doSync() {
-  if (!API || API.includes('PASTE_YOUR')) { toast('Set APPS_SCRIPT_URL secret or add apps-script-url.txt (See Setup Step 05)'); return; }
+  if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first (Setup Step 05)'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
   const tabs = ['Config','Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
@@ -710,7 +726,7 @@ async function doSync() {
   // Load config from sheet — overrides defaults
   if (D['Config']) {
     D['Config'].slice(1).forEach(row => {
-      if (row[0] && row[1] !== '') CFG[row[0]] = isNaN(+row[1]) ? row[1] : +row[1];
+      if (row[0] && row[1] !== '') CFG[row[0]] = NUMCFG.has(row[0]) ? num(row[1]) : row[1];
     });
   }
   btn.textContent = '↻';
@@ -733,9 +749,10 @@ function rSettings() {
   });
   ['ef','inc','hh','prop','assets'].forEach(k => {
     const el = document.getElementById('s-'+k);
-    if (el) el.value = CFG[k] || '';
+    if (el) el.value = CFG[k] ?? '';
   });
-  // Apps Script URL is loaded from repo or repo secret; no persistent Settings field.
+  const apiEl = document.getElementById('s-api');
+  if (apiEl) apiEl.value = API || '';
 }
 function clearCache() {
   location.reload();
@@ -746,7 +763,7 @@ function getLoans() {
   const rows = (D['Loans']||[]).slice(1).filter(r => r[0]);
   const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
   return rows.map(r => {
-    const name=r[0], type=r[1], emi=+r[2]||0, rate=+r[3]||0, tenure=+r[5]||0;
+    const name=r[0], type=r[1], emi=num(r[2]), rate=num(r[3]), tenure=num(r[5]);
     const start = r[4] ? parseDateLocal(r[4]) : null;
     let elapsed = 0;
     if (start) { const n=new Date(); elapsed=Math.max(0,(n.getFullYear()-start.getFullYear())*12+(n.getMonth()-start.getMonth())); }
@@ -775,9 +792,9 @@ function rLoans() {
       </tr>`).join('')
     : '<tr class="erow"><td colspan="7">No loans yet. Click "+ add loan".</td></tr>';
 
-  const tot=loans.reduce((s,l)=>s+l.outstanding,0);
-  const totEmi=loans.reduce((s,l)=>s+l.emi,0);
-  const totInt=loans.reduce((s,l)=>s+(l.emi*l.remaining-l.outstanding),0);
+  const tot=loans.reduce((s,l)=>s+num(l.outstanding),0);
+  const totEmi=loans.reduce((s,l)=>s+num(l.emi),0);
+  const totInt=loans.reduce((s,l)=>s+(num(l.emi)*num(l.remaining)-num(l.outstanding)),0);
   document.getElementById('l-total').textContent = INR(tot);
   document.getElementById('l-emi').textContent   = INR(totEmi);
   document.getElementById('l-count').textContent  = loans.length;
@@ -812,7 +829,7 @@ async function logPay() {
 
 // ── CARDS ─────────────────────────────────────────
 function getCardMaster() {
-  return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:+r[1]||3.5,notes:r[2]||''}));
+  return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:num(r[1])||3.5,notes:r[2]||''}));
 }
 function fillCardSels() {
   const names = getCardMaster().map(c=>c.name);
@@ -823,17 +840,17 @@ function fillCardSels() {
 }
 function getCards() {
   const masters = getCardMaster();
-  const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0);
+  const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&num(r[2])>0);
   const pmts    = (D['Payments']||[]).slice(1).filter(r=>r[0]);
   const loanNames = new Set(getLoans().map(l=>l.name));
   return masters.map(m => {
     const myBills   = bills.filter(b=>b[1]===m.name);
     const lastBill  = myBills.length ? myBills[myBills.length-1] : null;
-    const lastAmt   = lastBill ? +lastBill[2] : 0;
+    const lastAmt   = lastBill ? num(lastBill[2]) : 0;
     const lastDate  = lastBill ? lastBill[0]  : '—';
     const dueDate   = lastBill ? lastBill[3]  : '—';
     const lastTs    = lastBill ? (parseDateLocal(lastBill[0])||new Date(0)).getTime() : 0;
-    const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+(+p[2]||0),0);
+    const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+num(p[2]),0);
     const outstanding = Math.max(0, lastAmt - paid);
     return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
   });
@@ -852,8 +869,8 @@ function rCC() {
       <td class="mono" style="color:var(--gr)">${INR(c.paid)}</td>
       <td class="mono" style="color:var(--red);font-weight:600">${INR(c.outstanding)}</td>
     </tr>`).join('');
-    const tot=cards.reduce((s,c)=>s+c.outstanding,0);
-    const int=cards.reduce((s,c)=>s+(c.outstanding*c.rate/100),0);
+    const tot=cards.reduce((s,c)=>s+num(c.outstanding),0);
+    const int=cards.reduce((s,c)=>s+(num(c.outstanding)*num(c.rate)/100),0);
     const soon=cards.filter(c=>c.dueDate&&c.dueDate!=='—').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate))[0];
     document.getElementById('cc-total').textContent=INR(tot);
     document.getElementById('cc-int').textContent=INR(int);
@@ -862,8 +879,8 @@ function rCC() {
   }
   const loanNames=new Set(getLoans().map(l=>l.name));
   const all=[
-    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&+r[2]>0).map(r=>({date:r[0],card:r[1],type:'Bill',amt:+r[2],notes:r[4]||''})),
-    ...(D['Payments']||[]).slice(1).filter(r=>r[0]&&r[1]&&!loanNames.has(r[1])).map(r=>({date:r[0],card:r[1],type:'Payment',amt:+r[2],notes:r[3]||''}))
+    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&num(r[2])>0).map(r=>({date:r[0],card:r[1],type:'Bill',amt:num(r[2]),notes:r[4]||''})),
+    ...(D['Payments']||[]).slice(1).filter(r=>r[0]&&r[1]&&!loanNames.has(r[1])).map(r=>({date:r[0],card:r[1],type:'Payment',amt:num(r[2]),notes:r[3]||''}))
   ].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const ltb=document.getElementById('ccl-tbody');
   ltb.innerHTML=all.length ? all.map(e=>`<tr><td class="dim">${e.date}</td><td style="font-weight:500">${e.card}</td><td><span class="badge ${e.type==='Bill'?'bo':'bg'}">${e.type}</span></td><td class="mono" style="color:${e.type==='Bill'?'var(--or)':'var(--gr)'}">${INR(e.amt)}</td><td class="dim">${e.notes}</td></tr>`).join('') : '<tr class="erow"><td colspan="5">No entries yet.</td></tr>';
@@ -912,8 +929,8 @@ function rInformal() {
     const n = (r[2]||'').trim();
     if (!n || n === 'Total') return;
     if (!people[n]) people[n] = { received:0, paid:0 };
-    if (r[1] === 'Received') people[n].received += +r[3] || 0;
-    else if (r[1] === 'Paid') people[n].paid += +r[4] || 0;
+    if (r[1] === 'Received') people[n].received += num(r[3]);
+    else if (r[1] === 'Paid') people[n].paid += num(r[4]);
   });
   const entries = Object.entries(people).filter(([name,d]) => {
     const balance = d.paid - d.received;
@@ -956,10 +973,10 @@ async function logInfTx() {
 
 // ── BUDGET ────────────────────────────────────────
 function rBudget() {
-  const inc = CFG.inc;
+  const inc = num(CFG.inc);
   const loans = getLoans();
-  const totEmi = loans.reduce((s,l)=>s+l.emi,0);
-  const house = CFG.hh;
+  const totEmi = loans.reduce((s,l)=>s+num(l.emi),0);
+  const house = num(CFG.hh);
   const left = inc - totEmi - house;
   document.getElementById('b-inc').textContent = INR(inc);
   document.getElementById('b-emi').textContent = INR(totEmi);
@@ -987,8 +1004,8 @@ function rSavings() {
   const rows=(D['Savings']||[]).slice(1).filter(r=>r[0]);
   let run=0;
   const tb=document.getElementById('sv-tbody');
-  tb.innerHTML=rows.length ? rows.map(r=>{run+=+r[1]||0;return`<tr><td class="dim">${r[0]}</td><td class="mono" style="color:var(--gr)">${INR(r[1])}</td><td class="mono" style="color:var(--ac)">${INR(run)}</td><td class="dim">${r[2]||''}</td></tr>`;}).join('') : '<tr class="erow"><td colspan="4">Start filling the jar!</td></tr>';
-  const target=CFG.ef, pct=Math.min(100,(run/target)*100);
+  tb.innerHTML=rows.length ? rows.map(r=>{run+=num(r[1]);return`<tr><td class="dim">${r[0]}</td><td class="mono" style="color:var(--gr)">${INR(r[1])}</td><td class="mono" style="color:var(--ac)">${INR(run)}</td><td class="dim">${r[2]||''}</td></tr>`;}).join('') : '<tr class="erow"><td colspan="4">Start filling the jar!</td></tr>';
+  const target=num(CFG.ef), pct=target > 0 ? Math.min(100,(run/target)*100) : 0;
   document.getElementById('sv-total').textContent=INR(run);
   document.getElementById('sv-target').textContent=INR(target);
   document.getElementById('sv-pct').textContent=pct.toFixed(1)+'%';
@@ -1011,19 +1028,19 @@ async function logSav() {
 function rOverview() {
   const loans    = getLoans();
   const cards    = getCards();
-  const loanTot  = loans.reduce((s,l)=>s+l.outstanding,0);
-  const totEmi   = loans.reduce((s,l)=>s+l.emi,0);
-  const ccTot    = cards.reduce((s,c)=>s+c.outstanding,0);
-  const inc      = CFG.inc;
-  const house    = CFG.hh;
+  const loanTot  = loans.reduce((s,l)=>s+num(l.outstanding),0);
+  const totEmi   = loans.reduce((s,l)=>s+num(l.emi),0);
+  const ccTot    = cards.reduce((s,c)=>s+num(c.outstanding),0);
+  const inc      = num(CFG.inc);
+  const house    = num(CFG.hh);
 
   const totals = {};
   (D['Transactions']||[]).slice(1).forEach(r=>{
     const n=(r[2]||'').trim();
     if(!n||n==='Total') return;
     if(!totals[n]) totals[n]=0;
-    if(r[1]==='Received') totals[n] -= +r[3]||0;
-    else if(r[1]==='Paid') totals[n] += +r[4]||0;
+    if(r[1]==='Received') totals[n] -= num(r[3]);
+    else if(r[1]==='Paid') totals[n] += num(r[4]);
   });
   let infPayable=0, infReceivable=0, topCollect='', topPay='', collectCount=0, payCount=0;
   Object.entries(totals).forEach(([name,v])=>{
@@ -1042,10 +1059,10 @@ function rOverview() {
   const free = inc - totEmi;
 
   // Savings running total
-  let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=+r[1]||0);
+  let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=num(r[1]));
 
   // Net worth
-  const assets = CFG.assets + savRun + infReceivable; // other assets + savings jar + receivables
+  const assets = num(CFG.assets) + savRun + infReceivable; // other assets + savings jar + receivables
   const liab   = totalDebt;
   const nw     = assets - liab;
 
@@ -1191,10 +1208,10 @@ function rOverview() {
   // Recent activity
   const loanNames=new Set(loans.map(l=>l.name));
   const activity=[
-    ...(D['Payments']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:r[1],amt:+r[2],note:r[3]||'',col:'var(--red)'})),
-    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&+r[2]>0).map(r=>({date:r[0],what:r[1]+' statement',amt:+r[2],note:'Due: '+r[3],col:'var(--or)'})),
-    ...(D['Savings']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:'Savings jar',amt:+r[1],note:r[2]||'',col:'var(--ac)'})),
-    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r=>({date:r[0],what:r[2]+' ('+r[1]+')',amt:+(r[1]==='Received'?r[3]:r[4])||0,note:r[5]||'',col:r[1]==='Paid'?'var(--red)':'var(--gr)'}))
+    ...(D['Payments']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:r[1],amt:num(r[2]),note:r[3]||'',col:'var(--red)'})),
+    ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&num(r[2])>0).map(r=>({date:r[0],what:r[1]+' statement',amt:num(r[2]),note:'Due: '+r[3],col:'var(--or)'})),
+    ...(D['Savings']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:'Savings jar',amt:num(r[1]),note:r[2]||'',col:'var(--ac)'})),
+    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r=>({date:r[0],what:r[2]+' ('+r[1]+')',amt:num(r[1]==='Received'?r[3]:r[4]),note:r[5]||'',col:r[1]==='Paid'?'var(--red)':'var(--gr)'}))
   ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
 
   const atb=document.getElementById('ov-activity');
@@ -1269,7 +1286,7 @@ window.addEventListener('load', () => {
   else {
     const b = document.createElement('div');
     b.className = 'banner';
-    b.innerHTML = '⚠ Apps Script URL not set. Set the repository secret `APPS_SCRIPT_URL` (CI injects apps-script-url.txt) or add apps-script-url.txt to the site root. <a onclick="go(document.querySelectorAll(\'.tab\')[7],'setup')">Setup guide →</a>';
+    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
     document.getElementById('page-overview').prepend(b);
   }
   // Attempt to read Apps Script URL from repo file when hosted on GitHub Pages
