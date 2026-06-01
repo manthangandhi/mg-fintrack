@@ -631,6 +631,10 @@ function loadApiFromStorage() {
   } catch(e) {}
   return false;
 }
+function removeStartupBanner() {
+  const b = document.getElementById('startup-api-banner');
+  if (b) b.remove();
+}
 function setApiUrl(url, persist=true) {
   API = url ? url.trim() : '';
   if (persist) {
@@ -639,6 +643,7 @@ function setApiUrl(url, persist=true) {
       else localStorage.removeItem(API_STORAGE_KEY);
     } catch(e) {}
   }
+  if (API) removeStartupBanner();
   rSettings();
 }
 function saveApiUrl() {
@@ -1303,8 +1308,9 @@ window.addEventListener('load', () => {
   if (fromStorage || API) doSync();
   else {
     const b = document.createElement('div');
+    b.id = 'startup-api-banner';
     b.className = 'banner';
-    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
+    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field.';
     document.getElementById('page-overview').prepend(b);
   }
   // Attempt to read Apps Script URL from repo file when hosted on GitHub Pages
