@@ -5,96 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FinTrack — MG</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-:root[data-theme="dark"]{--bg:#091018;--bg2:#0f1620;--sf:rgba(18,25,35,.90);--sf2:rgba(24,33,45,.96);--bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.16);--tx:#f3f4f6;--tx2:#a8b1be;--tx3:#748091;--ac:#b8d96e;--red:#ff7470;--or:#d7ad67;--bl:#75baf1;--gr:#7dcda0;--pu:#b697ff;--shadow:0 18px 46px rgba(0,0,0,.36);--shadow2:0 10px 24px rgba(0,0,0,.24)}
-:root[data-theme="light"]{--bg:#f4f2ed;--bg2:#eae6de;--sf:rgba(255,255,255,.86);--sf2:rgba(247,244,239,.96);--bd:rgba(12,18,28,0.08);--bd2:rgba(12,18,28,0.14);--tx:#111827;--tx2:#5f6875;--tx3:#8a93a0;--ac:#355f18;--red:#ba3328;--or:#a86500;--bl:#0059b8;--gr:#166e3c;--pu:#6d35a8;--shadow:0 14px 40px rgba(25,35,48,.12);--shadow2:0 8px 20px rgba(25,35,48,.08)}
+:root[data-theme="dark"]{--bg:#111;--sf:#1a1a1a;--sf2:#222;--bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);--tx:#f0ede8;--tx2:#777;--tx3:#444;--ac:#c8f557;--red:#ff5b5b;--or:#ffb454;--bl:#5bc8ff;--gr:#6ee89a;--pu:#b97eff}
+:root[data-theme="light"]{--bg:#f4f3ef;--sf:#fff;--sf2:#eeedea;--bd:rgba(0,0,0,0.07);--bd2:rgba(0,0,0,0.14);--tx:#1a1a1a;--tx2:#666;--tx3:#bbb;--ac:#4a7a00;--red:#c0392b;--or:#a05500;--bl:#0055aa;--gr:#186e36;--pu:#6a2faa}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;background:
-  radial-gradient(circle at top left, rgba(184,217,110,.10), transparent 28%),
-  radial-gradient(circle at top right, rgba(117,186,241,.09), transparent 24%),
-  linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);
-  color:var(--tx);font-size:14px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-nav{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:color-mix(in srgb, var(--bg) 92%, transparent);z-index:100;flex-wrap:wrap;position:relative;box-shadow:0 1px 0 rgba(255,255,255,.03)}
-.logo{font-size:13px;font-weight:800;letter-spacing:.08em;margin-right:6px;white-space:nowrap;text-transform:uppercase}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5;min-height:100vh}
+nav{display:flex;align-items:center;gap:4px;padding:10px 16px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:var(--bg);z-index:100;flex-wrap:wrap;position:relative}
+.logo{font-size:12px;font-weight:700;letter-spacing:.06em;margin-right:6px;white-space:nowrap}
 .logo em{color:var(--ac);font-style:normal}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;flex:1}
-.tab{background:transparent;border:1px solid transparent;color:var(--tx2);font-size:12px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .18s ease;white-space:nowrap;font-family:inherit;font-weight:600}
-.tab:hover{color:var(--tx);background:rgba(255,255,255,.05);border-color:var(--bd)}
-.tab.on{background:rgba(200,245,87,.13);color:var(--tx);border-color:rgba(200,245,87,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
-.nav-r{display:flex;gap:8px;margin-left:auto}
-.ibtn{background:var(--sf);border:1px solid var(--bd2);color:var(--tx2);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .18s ease;flex-shrink:0;box-shadow:var(--shadow2);backdrop-filter:blur(10px)}
-.ibtn:hover{color:var(--tx);border-color:var(--ac);transform:translateY(-1px)}
-.page{display:none;padding:18px 18px 30px;max-width:1180px;margin:0 auto}
+.tabs{display:flex;gap:2px;flex-wrap:wrap;flex:1}
+.tab{background:none;border:none;color:var(--tx2);font-size:12px;padding:5px 9px;border-radius:4px;cursor:pointer;transition:all .1s;white-space:nowrap;font-family:inherit}
+.tab:hover{color:var(--tx);background:var(--sf2)}
+.tab.on{background:var(--sf2);color:var(--tx);font-weight:500}
+.nav-r{display:flex;gap:5px;margin-left:auto}
+.ibtn{background:none;border:1px solid var(--bd2);color:var(--tx2);width:27px;height:27px;border-radius:4px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .1s;flex-shrink:0}
+.ibtn:hover{color:var(--tx);border-color:var(--tx2)}
+.page{display:none;padding:16px;max-width:960px;margin:0 auto}
 .page.on{display:block}
-.hero{display:grid;grid-template-columns:1.35fr .95fr;gap:14px;background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 42%), var(--sf);border:1px solid var(--bd);border-radius:8px;padding:18px;margin:10px 0 14px;box-shadow:var(--shadow2);overflow:hidden;position:relative}
-.hero:after{content:'';position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg, rgba(184,217,110,.92), rgba(117,186,241,.72), rgba(182,151,255,.74));pointer-events:none}
-.hero-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx2);font-weight:800;margin-bottom:10px}
-.hero h1{font-size:26px;line-height:1.08;letter-spacing:-.03em;margin-bottom:10px;max-width:14ch}
-.hero p{color:var(--tx2);max-width:56ch;font-size:13px}
-.hero-side{display:flex;align-items:stretch}
-.hero-panel{width:100%;background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 30%), var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
-.hero-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.hero-mini{padding:12px;border-radius:6px;background:linear-gradient(180deg, rgba(255,255,255,.02), transparent 26%), var(--sf);border:1px solid var(--bd)}
-.hero-mini .lbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.hero-mini .val{font-size:22px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
-.hero-mini .sub{font-size:11px;color:var(--tx3);margin-top:4px}
-.cmd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 14px}
-.cmd{background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 35%), var(--sf);border:1px solid var(--bd);border-radius:6px;padding:14px;box-shadow:var(--shadow2);position:relative;overflow:hidden}
-.cmd:before{content:'';position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg, rgba(184,217,110,.85), rgba(117,186,241,.65));opacity:.7}
-.cmd-lbl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:8px}
-.cmd-val{font-size:20px;line-height:1.12;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.cmd-sub{font-size:11px;color:var(--tx3);margin-top:5px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:0 0 18px}
-.stat{background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 28%), var(--sf);border:1px solid var(--bd);border-radius:6px;padding:14px 14px 13px;box-shadow:var(--shadow2);position:relative;overflow:hidden}
-.stat:before{content:'';position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg, rgba(184,217,110,.82), rgba(117,186,241,.54), rgba(182,151,255,.48));opacity:.72}
-.sl{font-size:10px;color:var(--tx2);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
-.sv{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.08;letter-spacing:-.02em}
-.ss{font-size:10px;color:var(--tx3);margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:18px}
+.stat{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:13px}
+.sl{font-size:10px;color:var(--tx2);margin-bottom:5px;letter-spacing:.03em}
+.sv{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+.ss{font-size:10px;color:var(--tx3);margin-top:2px}
 .sec{margin-bottom:22px}
-.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap}
-.sti{font-size:10px;font-weight:800;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase}
-.btns{display:flex;gap:6px;flex-wrap:wrap}
-.sbtn{background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 40%), var(--sf);border:1px solid var(--bd2);color:var(--tx2);font-size:11px;padding:7px 11px;border-radius:6px;cursor:pointer;font-family:inherit;transition:all .18s ease;white-space:nowrap;box-shadow:var(--shadow2)}
-.sbtn:hover{color:var(--tx);border-color:var(--ac);transform:translateY(-1px)}
-.tw{overflow-x:auto;border-radius:6px;border:1px solid var(--bd);background:var(--sf);box-shadow:var(--shadow2)}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:8px;flex-wrap:wrap}
+.sti{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.07em;text-transform:uppercase}
+.btns{display:flex;gap:4px;flex-wrap:wrap}
+.sbtn{background:none;border:1px solid var(--bd2);color:var(--tx2);font-size:11px;padding:3px 9px;border-radius:4px;cursor:pointer;font-family:inherit;transition:all .1s;white-space:nowrap}
+.sbtn:hover{color:var(--ac);border-color:var(--ac)}
+.tw{overflow-x:auto;border-radius:7px;border:1px solid var(--bd)}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{font-size:10px;font-weight:800;color:var(--tx2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--bd);letter-spacing:.09em;text-transform:uppercase;background:rgba(255,255,255,.02);white-space:nowrap}
-td{padding:11px 12px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:middle}
+th{font-size:10px;font-weight:600;color:var(--tx2);text-align:left;padding:7px 10px;border-bottom:1px solid var(--bd);letter-spacing:.04em;text-transform:uppercase;background:var(--sf);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--tx);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:rgba(255,255,255,.03)}
+tbody tr:hover td{background:var(--sf2)}
 .mono{font-variant-numeric:tabular-nums;font-size:11px}
 .dim{color:var(--tx2)}
 .erow td{color:var(--tx3);text-align:center;padding:24px;font-style:italic;font-size:12px}
-.badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:4px;font-weight:700;white-space:nowrap;letter-spacing:.02em}
+.badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:20px;font-weight:500;white-space:nowrap}
 .br{background:rgba(255,91,91,.12);color:var(--red)}
 .bo{background:rgba(255,180,84,.12);color:var(--or)}
 .bg{background:rgba(110,232,154,.12);color:var(--gr)}
 .bb{background:rgba(91,200,255,.12);color:var(--bl)}
 .bp{background:rgba(185,126,255,.12);color:var(--pu)}
-.pbar{height:4px;background:var(--bd2);border-radius:2px;overflow:hidden;margin-top:8px}
+.pbar{height:3px;background:var(--bd2);border-radius:2px;overflow:hidden;margin-top:5px}
 .pfill{height:100%;border-radius:2px;transition:width .6s}
 
 /* OVERVIEW GRID */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
-@media(max-width:840px){.hero{grid-template-columns:1fr}.hero h1{max-width:none}.hero-side{order:-1}}
-@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}.hero{padding:16px}.hero h1{font-size:22px}}
-.card{background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 35%), var(--sf);border:1px solid var(--bd);border-radius:6px;padding:16px;box-shadow:var(--shadow2);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;position:relative;overflow:hidden}
-.card:before{content:'';position:absolute;left:0;top:0;height:3px;width:100%;background:linear-gradient(90deg, rgba(184,217,110,.45), rgba(117,186,241,.28), rgba(182,151,255,.22));opacity:.55}
-.card:hover{transform:translateY(-1px);border-color:rgba(200,245,87,.24);box-shadow:var(--shadow)}
-.card-t{font-size:10px;font-weight:800;color:var(--tx2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
-.big{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05;letter-spacing:-.02em}
-.card-note{font-size:10px;color:var(--tx3);margin-top:6px}
-.menu-btn{display:none;border:1px solid var(--bd2);border-radius:6px;background:var(--sf);color:var(--tx2);font-size:16px;width:36px;height:36px;cursor:pointer;align-items:center;justify-content:center}
-@media(max-width:920px){
-  .tabs{display:none;position:absolute;top:100%;left:12px;right:12px;flex-direction:column;gap:0;background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:8px;box-shadow:var(--shadow)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.card-t{font-size:10px;font-weight:600;color:var(--tx2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.big{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.card-note{font-size:10px;color:var(--tx3);margin-top:4px}
+.menu-btn{display:none;border:1px solid var(--bd2);border-radius:6px;background:none;color:var(--tx2);font-size:16px;width:36px;height:36px;cursor:pointer;align-items:center;justify-content:center;display:flex}
+@media(max-width:600px){
+  .tabs{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--sf);border:1px solid var(--bd);border-radius:0 0 10px 10px;padding:6px 0;box-shadow:0 14px 24px rgba(0,0,0,.15)}
   nav.open .tabs{display:flex}
   .menu-btn{display:flex}
-  .tabs .tab{padding:11px 14px;text-align:left;width:100%;border-radius:12px;}
-  .tabs .tab.on{background:rgba(200,245,87,.12);}
+  .tabs .tab{padding:10px 14px;text-align:left;width:100%;border-radius:0;}
+  .tabs .tab.on{background:var(--sf2);}
 }
-.banner{background:linear-gradient(180deg, rgba(255,255,255,.05), transparent 32%), rgba(255,255,255,.06);border:1px solid var(--bd);border-radius:6px;padding:10px 12px;color:var(--tx2);font-size:12px;line-height:1.4;margin:0 0 14px;position:relative}
+.banner{background:rgba(255,255,255,.08);border:1px solid var(--bd);border-radius:7px;padding:10px 12px;color:var(--tx2);font-size:12px;line-height:1.4}
 .banner.warn{border-color:rgba(255,91,91,.24);color:var(--red)}
 .banner.info{border-color:rgba(185,126,255,.24);color:var(--pu)}
 .banner.good{border-color:rgba(110,232,154,.24);color:var(--gr)}
@@ -114,7 +86,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 
 /* CALENDAR */
 .cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
-.cal-item{background:var(--sf2);border-radius:4px;padding:10px 12px;border-left:3px solid var(--bd2)}
+.cal-item{background:var(--sf2);border-radius:6px;padding:10px 12px;border-left:3px solid var(--bd2)}
 .cal-item.due-soon{border-left-color:var(--red)}
 .cal-item.due-week{border-left-color:var(--or)}
 .cal-item.due-month{border-left-color:var(--bl)}
@@ -127,31 +99,39 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 .proj-wrap{overflow-x:auto}
 .proj-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 4px}
 .proj-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:36px}
-.proj-bar{width:100%;border-radius:2px 2px 0 0;transition:height .5s;cursor:default;position:relative}
+.proj-bar{width:100%;border-radius:3px 3px 0 0;transition:height .5s;cursor:default;position:relative}
 .proj-bar:hover .proj-tip{display:block}
-.proj-tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--sf2);border:1px solid var(--bd2);border-radius:3px;padding:4px 8px;font-size:10px;white-space:nowrap;z-index:10;margin-bottom:4px}
+.proj-tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--sf2);border:1px solid var(--bd2);border-radius:4px;padding:4px 8px;font-size:10px;white-space:nowrap;z-index:10;margin-bottom:4px}
 .proj-label{font-size:9px;color:var(--tx2);text-align:center;white-space:nowrap}
+
+/* MILESTONES */
+.ms{padding:8px 0;border-bottom:1px solid var(--bd);display:flex;gap:10px}
+.ms:last-child{border-bottom:none}
+.mdot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.mdate{font-size:12px;font-weight:500;margin-bottom:1px}
+.mdesc{font-size:11px;color:var(--tx2)}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .15s}
 .overlay.on{opacity:1;pointer-events:all}
-.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:8px;padding:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:10px;padding:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
 .mtitle{font-size:13px;font-weight:600;margin-bottom:16px}
 .fg{margin-bottom:11px}
 .fl{font-size:10px;color:var(--tx2);margin-bottom:4px;display:block;letter-spacing:.03em;text-transform:uppercase}
-.fi,.fs{width:100%;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-family:inherit;font-size:13px;padding:7px 9px;border-radius:4px;outline:none;transition:border-color .1s}
+.fi,.fs{width:100%;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-family:inherit;font-size:13px;padding:7px 9px;border-radius:5px;outline:none;transition:border-color .1s}
 .fi:focus,.fs:focus{border-color:var(--ac)}
 .fs option{background:var(--sf2)}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ma{display:flex;gap:7px;margin-top:16px}
-.bpri{background:var(--ac);color:#111;border:none;padding:8px 16px;border-radius:4px;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit}
+.bpri{background:var(--ac);color:#111;border:none;padding:8px 16px;border-radius:5px;font-weight:600;font-size:12px;cursor:pointer;font-family:inherit}
 .bpri:hover{opacity:.88}
-.bgho{background:none;border:1px solid var(--bd2);color:var(--tx2);padding:8px 12px;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit}
+.bgho{background:none;border:1px solid var(--bd2);color:var(--tx2);padding:8px 12px;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit}
 .bgho:hover{color:var(--tx)}
-.toast{position:fixed;bottom:18px;right:18px;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-size:12px;padding:9px 14px;border-radius:4px;z-index:300;transform:translateY(50px);opacity:0;transition:all .25s;pointer-events:none}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--sf2);border:1px solid var(--bd2);color:var(--tx);font-size:12px;padding:9px 14px;border-radius:6px;z-index:300;transform:translateY(50px);opacity:0;transition:all .25s;pointer-events:none}
 .toast.on{transform:translateY(0);opacity:1}
 
-/* SETTINGS */
+/* SETUP/SETTINGS */
+.step{background:var(--sf);border:1px solid var(--bd);border-radius:7px;padding:16px;margin-bottom:10px}
 .sn{font-size:10px;font-weight:600;color:var(--ac);letter-spacing:.08em;margin-bottom:4px}
 .st{font-size:14px;font-weight:600;margin-bottom:6px}
 .sb{font-size:12px;color:var(--tx2);line-height:1.9}
@@ -177,6 +157,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
     <button class="tab"    onclick="go(this,'budget')">Budget</button>
     <button class="tab"    onclick="go(this,'savings')">Savings</button>
     <button class="tab"    onclick="go(this,'settings')">Settings</button>
+    <button class="tab"    onclick="go(this,'setup')">Setup</button>
   </div>
   <button class="ibtn menu-btn" id="menuBtn" onclick="toggleMobileMenu()" title="Open menu">☰</button>
   <div class="nav-r">
@@ -190,69 +171,14 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 <div class="page on" id="page-overview">
 
   <div class="stats">
-    <div class="stat">
-      <div class="sl">Total debt</div><div class="sv" id="ov-debt" style="color:var(--red)">—</div><div class="ss">all categories</div>
-    </div>
-    <div class="stat">
-      <div class="sl">Monthly EMIs</div><div class="sv" id="ov-emi" style="color:var(--or)">—</div><div class="ss">fixed outflow</div>
-    </div>
-    <div class="stat">
-      <div class="sl">Net take-home</div><div class="sv" id="ov-inc" style="color:var(--ac)">—</div><div class="ss">TR salary</div>
-    </div>
-    <div class="stat">
-      <div class="sl">Free cash</div><div class="sv" id="ov-free" style="color:var(--gr)">—</div><div class="ss">after all EMIs</div>
-    </div>
-    <div class="stat">
-      <div class="sl">Net worth</div><div class="sv" id="ov-nw" style="color:var(--pu)">—</div><div class="ss">assets − liabilities</div>
-    </div>
+    <div class="stat"><div class="sl">Total debt</div><div class="sv" id="ov-debt" style="color:var(--red)">—</div><div class="ss">all categories</div></div>
+    <div class="stat"><div class="sl">Monthly EMIs</div><div class="sv" id="ov-emi" style="color:var(--or)">—</div><div class="ss">fixed outflow</div></div>
+    <div class="stat"><div class="sl">Net take-home</div><div class="sv" id="ov-inc" style="color:var(--ac)">—</div><div class="ss">TR salary</div></div>
+    <div class="stat"><div class="sl">Free cash</div><div class="sv" id="ov-free" style="color:var(--gr)">—</div><div class="ss">after all EMIs</div></div>
+    <div class="stat"><div class="sl">Net worth</div><div class="sv" id="ov-nw" style="color:var(--pu)">—</div><div class="ss">assets − liabilities</div></div>
   </div>
   <div class="ss" id="ov-sync" style="margin-bottom:14px">Last sync: never</div>
-  <div class="banner" id="ov-alert" style="display:none"></div>
-  <div class="hero">
-    <div>
-      <div class="hero-kicker">Money dashboard</div>
-      <h1>Cash, debt, and runway in one working board.</h1>
-      <p>See what came in, what must go out, what is due next, and where the pressure is building before it becomes a problem.</p>
-    </div>
-    <div class="hero-side">
-      <div class="hero-panel">
-        <div class="hero-meta">
-          <div class="hero-mini">
-            <div class="lbl">Top action</div>
-            <div class="val" id="hero-action">—</div>
-            <div class="sub">What matters next</div>
-          </div>
-          <div class="hero-mini">
-            <div class="lbl">Cash health</div>
-            <div class="val" id="hero-health">—</div>
-            <div class="sub" id="hero-health-note">Balance vs income</div>
-          </div>
-        </div>
-        <div class="hero-mini">
-          <div class="lbl">Last sync</div>
-          <div class="val" id="hero-sync" style="font-size:18px">—</div>
-          <div class="sub">Google Sheet refreshed</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="cmd-grid">
-    <div class="cmd">
-      <div class="cmd-lbl">Priority move</div>
-      <div class="cmd-val" id="cmd-action">—</div>
-      <div class="cmd-sub" id="cmd-action-note">What deserves attention now</div>
-    </div>
-    <div class="cmd">
-      <div class="cmd-lbl">Debt pressure</div>
-      <div class="cmd-val" id="cmd-debt" style="color:var(--red)">—</div>
-      <div class="cmd-sub">All tracked liabilities</div>
-    </div>
-    <div class="cmd">
-      <div class="cmd-lbl">Runway</div>
-      <div class="cmd-val" id="cmd-free" style="color:var(--gr)">—</div>
-      <div class="cmd-sub">Cash left after EMIs</div>
-    </div>
-  </div>
+  <div class="banner" id="ov-alert" style="display:none;margin-bottom:14px"></div>
   <div class="g3">
     <div class="card">
       <div class="card-t">Cash health</div>
@@ -269,6 +195,12 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
       <div class="big" id="ov-pay" style="color:var(--red)">—</div>
       <div class="card-note" id="ov-pay-note">Top payable</div>
     </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;padding:16px">
+    <div class="card-t">Top action</div>
+    <div class="big" id="ov-action" style="color:var(--or)">—</div>
+    <div class="card-note" id="ov-action-note">Focus for this month</div>
   </div>
 
   <!-- Row 1: AMEX + Savings + Net worth breakdown -->
@@ -341,7 +273,20 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
     </div>
   </div>
 
-  <!-- Row 5: Recent activity -->
+  <!-- Row 5: Milestones -->
+  <div class="sec">
+    <div class="sh"><div class="sti">Milestones</div></div>
+    <div id="ov-milestones">
+      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Jul 2026</div><div class="mdesc">CC Smart EMI #1 ends → +₹21,221/mo freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--or)"></div><div><div class="mdate">Aug 2026</div><div class="mdesc">CC Smart EMI #2 ends → +₹9,647/mo freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--gr)"></div><div><div class="mdate">Sep 2026</div><div class="mdesc">All CC Smart EMIs done → +₹42,210/mo permanently freed</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--ac)"></div><div><div class="mdate">Nov 2026</div><div class="mdesc">AMEX cleared (target) — ~₹14k/mo interest gone</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--bl)"></div><div><div class="mdate">Dec 2026</div><div class="mdesc">Start clearing informal debts — Arpit ₹2.25L, Dhawal ₹80k</div></div></div>
+      <div class="ms"><div class="mdot" style="background:var(--pu)"></div><div><div class="mdate">Feb 2030</div><div class="mdesc">HDFC Personal Loan fully paid</div></div></div>
+    </div>
+  </div>
+
+  <!-- Row 6: Recent activity -->
   <div class="sec">
     <div class="sh"><div class="sti">Recent activity</div></div>
     <div class="tw"><table><thead><tr><th>Date</th><th>What</th><th>Amount</th><th>Note</th></tr></thead>
@@ -479,7 +424,10 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
       <div><div class="srow-l">Household monthly estimate</div><div class="srow-sub">Current: <b id="s-hh-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-hh" type="number" style="width:120px" placeholder="40000"/><button class="sbtn" onclick="saveSetting('hh',+document.getElementById('s-hh').value||40000,'Household updated')">Save</button></div>
     </div>
-    <!-- Parth Shah repayment setting removed: informal debts are tracked via Transactions only -->
+    <div class="srow">
+      <div><div class="srow-l">Apps Script URL</div><div class="srow-sub">Paste your Google Apps Script web app URL here.</div></div>
+      <div class="srow-r"><input class="fi" id="s-api" type="text" style="width:280px" placeholder="https://script.google.com/.../exec" /><button class="sbtn" onclick="saveApiUrl()">Save</button></div>
+    </div>
     <div class="srow">
       <div><div class="srow-l">Home loan property value (est.)</div><div class="srow-sub">Used for net worth · Current: <b id="s-prop-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-prop" type="number" style="width:120px" placeholder="6000000"/><button class="sbtn" onclick="saveSetting('prop',+document.getElementById('s-prop').value||6000000,'Property value updated')">Save</button></div>
@@ -487,10 +435,6 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
     <div class="srow">
       <div><div class="srow-l">Other assets (car value, savings, gold est.)</div><div class="srow-sub">Current: <b id="s-assets-d">—</b></div></div>
       <div class="srow-r"><input class="fi" id="s-assets" type="number" style="width:120px" placeholder="500000"/><button class="sbtn" onclick="saveSetting('assets',+document.getElementById('s-assets').value||0,'Assets updated')">Save</button></div>
-    </div>
-    <div class="srow">
-      <div><div class="srow-l">Apps Script URL</div><div class="srow-sub">Paste your Google Apps Script web app URL here.</div></div>
-      <div class="srow-r"><input class="fi" id="s-api" type="text" style="width:280px" placeholder="https://script.google.com/.../exec" /><button class="sbtn" onclick="saveApiUrl()">Save</button></div>
     </div>
     <div class="srow">
       <div></div>
@@ -506,6 +450,75 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
     All settings above are saved to the <code>Config</code> tab in your Google Sheet. They load automatically on every device when you sync — no re-entry needed.<br><br>
     <b style="color:var(--tx)">Apps Script URL</b> is kept only for this browser session and will reset on reload. If you want the URL to persist when hosting on GitHub Pages, create a file named <code>apps-script-url.txt</code> at the site root and paste the URL there; the app will auto-load it when served from GitHub Pages.
   </div>
+</div>
+
+<!-- ═══════════════════ SETUP ═══════════════════ -->
+<div class="page" id="page-setup">
+  <div class="step"><div class="sn">STEP 01</div><div class="st">Add new tabs to your existing Google Sheet</div><div class="sb">
+    Keep your existing <code>Transactions</code> tab. Add these new tabs:<br><br>
+    <code>Config</code> · <code>Cards</code> · <code>Loans</code> · <code>CCBills</code> · <code>Payments</code> · <code>Income</code> · <code>Savings</code>
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 02</div><div class="st">Add header rows to each new tab</div><div class="sb">
+    <b>Config:</b> <code>Key | Value</code> (then add rows: ef | 200000, inc | 251683, hh | 40000, prop | 6000000, assets | 0)<br>
+    <b>Cards:</b> <code>Name | Rate | Notes</code><br>
+    <b>Loans:</b> <code>Name | Type | EMI | Rate | StartDate | Installments | Notes</code><br>
+    <b>CCBills:</b> <code>Date | CardName | BillAmount | DueDate | Notes</code><br>
+    <b>Payments:</b> <code>Date | LoanOrCard | Amount | Notes</code><br>
+    <b>Income:</b> <code>Month | Amount | Source | Notes</code><br>
+    <b>Savings:</b> <code>Date | Amount | Notes</code>
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 03</div><div class="st">Add Apps Script</div><div class="sb">
+    <code>Extensions → Apps Script</code>. Delete existing code. Paste this:
+<pre>const SHEET_ID = '1DG2qyVWI-6aoNhJ9QCxS-tJ7SM5IhO8cNcuQ5hGahE0';
+function doGet(e){
+  const p=e.parameter;
+  const ss=SpreadsheetApp.openById(SHEET_ID);
+  if(p.action==='read'){
+    const sh=ss.getSheetByName(p.tab);
+    if(!sh) return j({error:'Tab not found: '+p.tab});
+    return j({data:sh.getDataRange().getValues()});
+  }
+  if(p.action==='append'){
+    const sh=ss.getSheetByName(p.tab);
+    if(!sh) return j({error:'Tab not found: '+p.tab});
+    sh.appendRow(JSON.parse(p.row));
+    return j({ok:true});
+  }
+  if(p.action==='upsertConfig'){
+    const sh=ss.getSheetByName('Config');
+    const key=p.key, val=p.value;
+    const data=sh.getDataRange().getValues();
+    for(let i=1;i<data.length;i++){
+      if(data[i][0]===key){ sh.getRange(i+1,2).setValue(val); return j({ok:true}); }
+    }
+    sh.appendRow([key,val]);
+    return j({ok:true});
+  }
+  return j({error:'unknown'});
+}
+function doPost(e){return doGet(e);}
+function j(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}</pre>
+    Replace the <code>SHEET_ID</code> constant with your own Sheet ID from the URL (between <code>/d/</code> and <code>/edit</code>).
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 04</div><div class="st">Deploy as Web App</div><div class="sb">
+    <code>Deploy → New deployment → Web app → Execute as: Me → Access: Anyone → Deploy → Authorize → Copy URL</code>
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 05</div><div class="st">Save your Apps Script URL in Settings</div><div class="sb">
+    Open the <b>Settings</b> tab and paste your Apps Script web app URL into the Apps Script URL field.<br><br>
+    Save it there. This value is kept for the current browser session only and is not persisted across devices.
+  </div></div>
+
+  <div class="step"><div class="sn">STEP 06</div><div class="st">Host on GitHub Pages (free — must be public repo)</div><div class="sb">
+    1. New GitHub repo e.g. <code>mg-fintrack</code> → set <b>Public</b><br>
+    2. Upload <code>index.html</code><br>
+    3. <code>Settings → Pages → Source: main branch → / (root) → Save</code><br>
+    4. Wait ~2 min → URL: <code>https://yourusername.github.io/mg-fintrack/</code><br>
+    5. Bookmark on every device. Settings sync from Sheet automatically.
+  </div></div>
 </div>
 
 <!-- ═══════════════════ MODALS ═══════════════════ -->
@@ -702,7 +715,7 @@ async function apicall(params) {
 
 // ── SYNC ─────────────────────────────────────────
 async function doSync() {
-  if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first'); return; }
+  if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first (Setup Step 05)'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
   const tabs = ['Config','Transactions','Cards','Loans','CCBills','Payments','Income','Savings'];
@@ -1108,23 +1121,9 @@ function rOverview() {
   document.getElementById('ov-recv-note').textContent = infReceivable > 0 ? `Top collect: ${topCollect} · ${collectCount} item${collectCount===1?'':'s'}` : 'No receivables';
   document.getElementById('ov-pay').textContent = INR(infPayable);
   document.getElementById('ov-pay-note').textContent = infPayable > 0 ? `Top pay: ${topPay} · ${payCount} item${payCount===1?'':'s'}` : 'No payables';
+  document.getElementById('ov-action').textContent = actionText;
+  document.getElementById('ov-action-note').textContent = actionNote;
   document.getElementById('ov-sync').textContent = lastSyncAt ? `Last sync: ${lastSyncAt}` : 'Last sync: never';
-  const cmdAction = document.getElementById('cmd-action');
-  if (cmdAction) cmdAction.textContent = actionText;
-  const cmdActionNote = document.getElementById('cmd-action-note');
-  if (cmdActionNote) cmdActionNote.textContent = actionNote;
-  const cmdDebt = document.getElementById('cmd-debt');
-  if (cmdDebt) cmdDebt.textContent = INR(totalDebt);
-  const cmdFree = document.getElementById('cmd-free');
-  if (cmdFree) cmdFree.textContent = INR(free);
-  const heroAction = document.getElementById('hero-action');
-  if (heroAction) heroAction.textContent = actionText;
-  const heroHealth = document.getElementById('hero-health');
-  if (heroHealth) heroHealth.textContent = `${healthScore}%`;
-  const heroHealthNote = document.getElementById('hero-health-note');
-  if (heroHealthNote) heroHealthNote.textContent = healthLabel;
-  const heroSync = document.getElementById('hero-sync');
-  if (heroSync) heroSync.textContent = lastSyncAt ? lastSyncAt : 'Never';
 
   const ovAlert = document.getElementById('ov-alert');
   if (alertText) {
@@ -1144,6 +1143,7 @@ function rOverview() {
   document.getElementById('ov-nw2').textContent  = INR(nw);
   document.getElementById('ov-assets').textContent = INR(assets);
   document.getElementById('ov-liab').textContent   = INR(liab);
+
   // AMEX card
   const amex = cards.find(c=>c.name.toLowerCase().includes('amex')||c.name.toLowerCase().includes('american'));
   const amexBal = amex ? amex.outstanding : ccTot;
@@ -1286,7 +1286,7 @@ window.addEventListener('load', () => {
   else {
     const b = document.createElement('div');
     b.className = 'banner';
-    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field.';
+    b.innerHTML = '⚠ Apps Script URL not set. Open the <b>Settings</b> tab and paste your Apps Script URL into the Apps Script URL field. <a onclick="go(document.querySelectorAll(\'.tab\')[7],\'setup\')">Setup guide →</a>';
     document.getElementById('page-overview').prepend(b);
   }
   // Attempt to read Apps Script URL from repo file when hosted on GitHub Pages
