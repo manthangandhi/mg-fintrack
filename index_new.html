@@ -596,6 +596,7 @@ let D = {}; // sheet data cache
 // Runtime config — loaded from Config sheet on sync
 let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 const NUMCFG = new Set(['ef', 'inc', 'hh', 'prop', 'assets']);
+const API_STORAGE_KEY = 'fintrack_apps_script_url';
 
 const num = v => {
   const n = Number(v);
@@ -620,15 +621,31 @@ const parseDateLocal = s => {
   const [y,m,d] = String(s).split('-').map(Number);
   return new Date(y, m - 1, d);
 };
-function setApiUrl(url) {
+function loadApiFromStorage() {
+  try {
+    const txt = localStorage.getItem(API_STORAGE_KEY)?.trim();
+    if (txt && !txt.includes('PASTE_YOUR')) {
+      API = txt;
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+function setApiUrl(url, persist=true) {
   API = url ? url.trim() : '';
+  if (persist) {
+    try {
+      if (API) localStorage.setItem(API_STORAGE_KEY, API);
+      else localStorage.removeItem(API_STORAGE_KEY);
+    } catch(e) {}
+  }
   rSettings();
 }
 function saveApiUrl() {
   const url = document.getElementById('s-api').value.trim();
   if (!url) { toast('Enter Apps Script URL'); return; }
-  setApiUrl(url);
-  toast('Apps Script URL set for this session ✓');
+  setApiUrl(url, true);
+  toast('Apps Script URL saved in this browser ✓');
   doSync();
 }
 
@@ -639,7 +656,7 @@ async function loadApiFromRepo() {
     if (!r.ok) return;
     const txt = (await r.text()).trim();
     if (txt && !txt.includes('PASTE_YOUR')) {
-      setApiUrl(txt);
+      setApiUrl(txt, true);
       // auto-sync when loaded from repo
       doSync();
     }
@@ -1282,7 +1299,8 @@ window.addEventListener('load', () => {
   document.getElementById('sv-target').textContent   = INR(CFG.ef);
   rSettings();
 
-  if (API) doSync();
+  const fromStorage = loadApiFromStorage();
+  if (fromStorage || API) doSync();
   else {
     const b = document.createElement('div');
     b.className = 'banner';
