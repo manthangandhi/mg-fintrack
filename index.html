@@ -400,7 +400,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
   <div class="stats">
     <div class="stat"><div class="sl">Total owed</div><div class="sv" id="inf-total" style="color:var(--red)">—</div><div class="ss">excl. Hemil (parked)</div></div>
     <div class="stat"><div class="sl">Active creditors</div><div class="sv" id="inf-count">—</div></div>
-    <div class="stat"><div class="sl">Hemil (parked)</div><div class="sv" style="color:var(--bl)">₹1,00,000</div><div class="ss">return on demand</div></div>
+    <div class="stat"><div class="sl">Hemil (parked)</div><div class="sv" id="inf-hemil" style="color:var(--bl)">—</div><div class="ss" id="inf-hemil-note">return on demand</div></div>
     <div class="stat"><div class="sl">Highest priority</div><div class="sv" id="inf-top" style="color:var(--or);font-size:13px">—</div></div>
   </div>
   <div class="sec">
@@ -574,6 +574,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
   <div class="ma"><button class="bpri" onclick="logSav()">Save</button><button class="bgho" onclick="closeM('m-sav')">Cancel</button></div>
 </div></div>
 
+<script src="js/fintrack-math.js"></script>
 <script>
 // ══════════════════════════════════════════════════
 // STEP 05: Paste your Apps Script URL below or save it in Settings
@@ -584,11 +585,9 @@ let D = {}; // sheet data cache
 let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 const NUMCFG = new Set(['ef', 'inc', 'hh', 'prop', 'assets']);
 const API_STORAGE_KEY = 'fintrack_apps_script_url';
+const M = globalThis.FinTrackMath || {};
 
-const num = v => {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
-};
+const num = v => M.parseAmount ? M.parseAmount(v) : (Number.isFinite(Number(v)) ? Number(v) : 0);
 const INR   = n  => {
   const v = Number(n);
   return Number.isFinite(v) ? '₹' + Math.round(v).toLocaleString('en-IN') : '—';
@@ -604,6 +603,7 @@ const curMonth = () => {
   return `${local.getFullYear()}-${String(local.getMonth()+1).padStart(2,'0')}`;
 };
 const parseDateLocal = s => {
+  if (M.parseFlexibleDate) return M.parseFlexibleDate(s);
   if (!s) return null;
   const [y,m,d] = String(s).split('-').map(Number);
   return new Date(y, m - 1, d);
@@ -717,13 +717,14 @@ async function apicall(params) {
     return null;
   }
   try {
-    const r = await fetch(API + '?' + new URLSearchParams(params));
+    const r = await fetch(API + '?' + new URLSearchParams({ ...params, _: String(Date.now()) }));
     return await r.json();
   } catch(e) { toast('Connection error — check your URL'); return null; }
 }
 
 // ── SYNC ─────────────────────────────────────────
 async function doSync() {
+  if (!M.summarizeInformal) { toast('Balance engine missing — js/fintrack-math.js did not load'); return; }
   if (!API || API.includes('PASTE_YOUR')) { toast('Enter your Apps Script URL in Settings first'); return; }
   const btn = document.getElementById('sbtn');
   btn.textContent = '…';
@@ -851,16 +852,16 @@ function getCards() {
   const masters = getCardMaster();
   const bills   = (D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&num(r[2])>0);
   const pmts    = (D['Payments']||[]).slice(1).filter(r=>r[0]);
-  const loanNames = new Set(getLoans().map(l=>l.name));
+  const loanNames = getLoans().map(l=>l.name);
+  const eq = M.namesEqual || ((a,b)=>a===b);
   return masters.map(m => {
-    const myBills   = bills.filter(b=>b[1]===m.name);
+    const myBills   = bills.filter(b=>eq(b[1], m.name));
     const lastBill  = myBills.length ? myBills[myBills.length-1] : null;
     const lastAmt   = lastBill ? num(lastBill[2]) : 0;
     const lastDate  = lastBill ? lastBill[0]  : '—';
     const dueDate   = lastBill ? lastBill[3]  : '—';
-    const lastTs    = lastBill ? (parseDateLocal(lastBill[0])||new Date(0)).getTime() : 0;
-    const paid = pmts.filter(p=>p[1]===m.name&&!loanNames.has(p[1])&&new Date(p[0]).getTime()>=lastTs).reduce((s,p)=>s+num(p[2]),0);
-    const outstanding = Math.max(0, lastAmt - paid);
+    const outstanding = M.cardOutstanding ? M.cardOutstanding(m, bills, pmts, loanNames) : Math.max(0, lastAmt);
+    const paid = lastBill ? Math.max(0, lastAmt - outstanding) : 0;
     return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
   });
 }
@@ -886,10 +887,11 @@ function rCC() {
     document.getElementById('cc-due').textContent=soon?soon.dueDate:'—';
     document.getElementById('cc-count').textContent=cards.length;
   }
-  const loanNames=new Set(getLoans().map(l=>l.name));
+  const loanNames=getLoans().map(l=>l.name);
+  const isLoanPmt = name => loanNames.some(l => M.namesEqual ? M.namesEqual(l, name) : l === name);
   const all=[
     ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&r[1]&&num(r[2])>0).map(r=>({date:r[0],card:r[1],type:'Bill',amt:num(r[2]),notes:r[4]||''})),
-    ...(D['Payments']||[]).slice(1).filter(r=>r[0]&&r[1]&&!loanNames.has(r[1])).map(r=>({date:r[0],card:r[1],type:'Payment',amt:num(r[2]),notes:r[3]||''}))
+    ...(D['Payments']||[]).slice(1).filter(r=>r[0]&&r[1]&&!isLoanPmt(r[1])).map(r=>({date:r[0],card:r[1],type:'Payment',amt:num(r[2]),notes:r[3]||''}))
   ].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const ltb=document.getElementById('ccl-tbody');
   ltb.innerHTML=all.length ? all.map(e=>`<tr><td class="dim">${e.date}</td><td style="font-weight:500">${e.card}</td><td><span class="badge ${e.type==='Bill'?'bo':'bg'}">${e.type}</span></td><td class="mono" style="color:${e.type==='Bill'?'var(--or)':'var(--gr)'}">${INR(e.amt)}</td><td class="dim">${e.notes}</td></tr>`).join('') : '<tr class="erow"><td colspan="5">No entries yet.</td></tr>';
@@ -919,63 +921,74 @@ async function logCCPay() {
 function rInformal() {
   const filterName = (document.getElementById('if-name')?.value || '').trim().toLowerCase();
   const filterType = document.getElementById('if-type')?.value;
-  const rows = (D['Transactions']||[]).slice(1).filter(r=>r[0]||r[2]);
+  const raw = D['Transactions'] || [];
+  const rows = raw.slice(1).filter(r=>r[0]||r[2]);
+  const dirOf = r => (M.normalizeDir ? M.normalizeDir(r[1]) : r[1]);
+  const amtOf = r => (M.txAmount ? M.txAmount(r) : num(r[1]==='Received'?r[3]:r[4]));
   const ltb = document.getElementById('infl-tbody');
   const logRows = rows.filter(r => {
     const name = (r[2]||'').trim();
     if (!name) return false;
     if (filterName && !name.toLowerCase().includes(filterName)) return false;
-    if (filterType === 'receivable' && r[1] !== 'Received') return false;
-    if (filterType === 'payable' && r[1] !== 'Paid') return false;
+    const dir = dirOf(r);
+    if (filterType === 'receivable' && dir !== 'Received') return false;
+    if (filterType === 'payable' && dir !== 'Paid') return false;
     return true;
   });
   ltb.innerHTML = logRows.length
-    ? [...logRows].reverse().map(r=>`<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${r[1]==='Paid'?'br':'bg'}">${r[1]||''}</span></td><td class="mono" style="color:${r[1]==='Received'?'var(--gr)':'var(--red)'}">${r[1]==='Received'?INR(r[3]):INR(r[4])}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`).join('')
+    ? [...logRows].reverse().map(r=>{
+        const dir = dirOf(r);
+        return `<tr><td class="dim">${r[0]||''}</td><td style="font-weight:500">${r[2]||''}</td><td><span class="badge ${dir==='Paid'?'br':'bg'}">${dir||r[1]||''}</span></td><td class="mono" style="color:${dir==='Received'?'var(--gr)':'var(--red)'}">${INR(amtOf(r))}</td><td class="dim" style="font-size:11px">${r[5]||''}</td></tr>`;
+      }).join('')
     : '<tr class="erow"><td colspan="5">No transactions match filter.</td></tr>';
 
-  const people = {};
-  rows.forEach(r=>{
-    const n = (r[2]||'').trim();
-    if (!n || n === 'Total') return;
-    if (!people[n]) people[n] = { received:0, paid:0 };
-    if (r[1] === 'Received') people[n].received += num(r[3]);
-    else if (r[1] === 'Paid') people[n].paid += num(r[4]);
-  });
-  const entries = Object.entries(people).filter(([name,d]) => {
-    const balance = d.paid - d.received;
-    if (filterName && !name.toLowerCase().includes(filterName)) return false;
-    if (filterType === 'receivable' && balance <= 0) return false;
-    if (filterType === 'payable' && balance >= 0) return false;
+  const sum = M.summarizeInformal ? M.summarizeInformal(raw) : { people:[], payable:0, payCount:0, topPay:null, topCollect:null, hemil:null };
+  const people = sum.people || [];
+  const entries = people.filter(p => {
+    if (filterName && !p.name.toLowerCase().includes(filterName)) return false;
+    if (filterType === 'receivable' && p.theyOwe <= 0) return false;
+    if (filterType === 'payable' && p.youOwe <= 0) return false;
     return true;
-  });
-  let totalOwed = 0, topP = '', topA = 0, topBalance = 0;
+  }).slice().sort((a,b) => (b.youOwe - a.youOwe) || (b.theyOwe - a.theyOwe));
   const stb = document.getElementById('infs-tbody');
-  stb.innerHTML = entries.length ? entries.map(([name,d])=>{
-    const balance = d.paid - d.received;
-    const abs = Math.abs(balance);
-    if (balance > 0) totalOwed += balance;
-    if (abs > topA) { topA = abs; topP = name; topBalance = balance; }
+  stb.innerHTML = entries.length ? entries.map(p=>{
     let bc='bb', bl='Low';
-    if (balance > 100000) [bc,bl]=['br','High'];
-    else if (balance > 40000) [bc,bl]=['bo','Medium'];
-    else if (balance > 0) [bc,bl]=['bb','Collect'];
-    else if (balance < 0) [bc,bl]=['bg','Pay'];
-    else [bc,bl]=['bg','Settled'];
-    const outText = balance > 0 ? INR(abs) : balance < 0 ? 'You owe ' + INR(abs) : 'Settled';
-    const outStyle = balance > 0 ? 'color:var(--or);font-weight:600' : balance < 0 ? 'color:var(--bl);font-weight:600' : 'color:var(--gr)';
-    return `<tr><td style="font-weight:500">${name}</td><td class="mono" style="color:var(--gr)">${INR(d.received)}</td><td class="mono" style="color:var(--red)">${INR(d.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
+    if (p.settled) [bc,bl]=['bg','Settled'];
+    else if (p.youOwe > 0) [bc,bl]=['bg','Pay'];
+    else if (p.theyOwe > 100000) [bc,bl]=['br','High'];
+    else if (p.theyOwe > 40000) [bc,bl]=['bo','Medium'];
+    else if (p.theyOwe > 0) [bc,bl]=['bb','Collect'];
+    const outText = p.youOwe > 0 ? 'You owe ' + INR(p.youOwe) : p.theyOwe > 0 ? INR(p.theyOwe) : 'Settled';
+    const outStyle = p.youOwe > 0 ? 'color:var(--bl);font-weight:600' : p.theyOwe > 0 ? 'color:var(--or);font-weight:600' : 'color:var(--gr)';
+    return `<tr><td style="font-weight:500">${p.name}${p.parked?' <span class="badge bp">parked</span>':''}</td><td class="mono" style="color:var(--gr)">${INR(p.received)}</td><td class="mono" style="color:var(--red)">${INR(p.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
   }).join('') : '<tr class="erow"><td colspan="5">No data.</td></tr>';
 
-  document.getElementById('inf-total').textContent=INR(totalOwed);
-  document.getElementById('inf-count').textContent=entries.filter(([,d])=>d.paid-d.received>0).length;
-  document.getElementById('inf-top').textContent=topP ? `${topP} · ${topBalance>0? 'Collect ' + INR(topA) : 'Pay ' + INR(topA)}` : '—';
-  document.getElementById('it-dl').innerHTML=Object.entries(people).map(([n])=>`<option value="${n}">`).join('');
+  document.getElementById('inf-total').textContent=INR(sum.payable);
+  document.getElementById('inf-count').textContent=sum.payCount;
+  const top = sum.topPay || sum.topCollect;
+  document.getElementById('inf-top').textContent = top
+    ? `${top.name} · ${sum.topPay && top===sum.topPay ? 'Pay ' : 'Collect '}${INR(top.amount)}`
+    : '—';
+  const hemilEl = document.getElementById('inf-hemil');
+  const hemilNote = document.getElementById('inf-hemil-note');
+  if (hemilEl) {
+    if (sum.hemil) {
+      hemilEl.textContent = sum.hemil.settled ? 'Settled' : INR(sum.hemil.youOwe || sum.hemil.theyOwe);
+      hemilEl.style.color = sum.hemil.settled ? 'var(--gr)' : 'var(--bl)';
+      if (hemilNote) hemilNote.textContent = sum.hemil.settled ? 'fully returned' : 'return on demand';
+    } else {
+      hemilEl.textContent = '—';
+      if (hemilNote) hemilNote.textContent = 'no Hemil rows in sheet';
+    }
+  }
+  document.getElementById('it-dl').innerHTML=people.map(p=>`<option value="${p.name}">`).join('');
 }
 
 async function logInfTx() {
   const dir=document.getElementById('it-dir').value, name=document.getElementById('it-person').value.trim(), date=document.getElementById('it-date').value, amt=document.getElementById('it-amt').value, rem=document.getElementById('it-rem').value;
   if(!name||!amt){toast('Person and amount required');return;}
-  const row=dir==='Received'?[date,'Received',name,amt,'',rem]:[date,'Paid',name,'',amt,rem];
+  // Write the amount into both money columns so sheet-entered and app-entered rows settle the same way.
+  const row=dir==='Received'?[date,'Received',name,amt,'',rem]:[date,'Paid',name,amt,amt,rem];
   const r=await apicall({action:'append',tab:'Transactions',row:JSON.stringify(row)});
   if(r&&r.ok){toast('Transaction logged ✓');closeM('m-inftx');doSync();}
 }
@@ -1043,26 +1056,15 @@ function rOverview() {
   const inc      = num(CFG.inc);
   const house    = num(CFG.hh);
 
-  const totals = {};
-  (D['Transactions']||[]).slice(1).forEach(r=>{
-    const n=(r[2]||'').trim();
-    if(!n||n==='Total') return;
-    if(!totals[n]) totals[n]=0;
-    if(r[1]==='Received') totals[n] -= num(r[3]);
-    else if(r[1]==='Paid') totals[n] += num(r[4]);
-  });
-  let infPayable=0, infReceivable=0, topCollect='', topPay='', collectCount=0, payCount=0;
-  Object.entries(totals).forEach(([name,v])=>{
-    if (v > 0) {
-      infReceivable += v;
-      collectCount += 1;
-      if (!topCollect || v > totals[topCollect]) topCollect = name;
-    } else if (v < 0) {
-      infPayable += Math.abs(v);
-      payCount += 1;
-      if (!topPay || Math.abs(v) > Math.abs(totals[topPay])) topPay = name;
-    }
-  });
+  const inf = M.summarizeInformal ? M.summarizeInformal(D['Transactions']||[]) : { payable:0, receivable:0, payCount:0, collectCount:0, topPay:null, topCollect:null };
+  const infPayable = inf.payable;
+  const infReceivable = inf.receivable;
+  const collectCount = inf.collectCount;
+  const payCount = inf.payCount;
+  const topCollect = inf.topCollect ? inf.topCollect.name : '';
+  const topPay = inf.topPay ? inf.topPay.name : '';
+  const topCollectAmt = inf.topCollect ? inf.topCollect.amount : 0;
+  const topPayAmt = inf.topPay ? inf.topPay.amount : 0;
 
   const totalDebt = loanTot + ccTot + infPayable;
   const free = inc - totEmi;
@@ -1071,7 +1073,7 @@ function rOverview() {
   let savRun=0; (D['Savings']||[]).slice(1).forEach(r=>savRun+=num(r[1]));
 
   // Net worth
-  const assets = num(CFG.assets) + savRun + infReceivable; // other assets + savings jar + receivables
+  const assets = num(CFG.assets) + num(CFG.prop) + savRun + infReceivable;
   const liab   = totalDebt;
   const nw     = assets - liab;
 
@@ -1080,8 +1082,8 @@ function rOverview() {
   const bufferRatio = buffer / Math.max(inc,1);
   const healthScore = Math.max(0, Math.min(100, Math.round(70 - debtRatio * 20 + bufferRatio * 15)));
   const healthLabel = healthScore >= 80 ? 'Strong balance' : healthScore >= 60 ? 'Stable cash flow' : healthScore >= 40 ? 'Watch your outflow' : 'Weak: act now';
-  const bestCollect = topCollect ? `Collect ${INR(infReceivable)} from ${topCollect}` : '';
-  const bestPay = topPay ? `Pay ${INR(infPayable)} to ${topPay}` : '';
+  const bestCollect = topCollect ? `Collect ${INR(topCollectAmt)} from ${topCollect}` : '';
+  const bestPay = topPay ? `Pay ${INR(topPayAmt)} to ${topPay}` : '';
   let actionText = 'Stay disciplined: track inflow and debt.';
   let actionNote = 'Sync regularly for accurate insights.';
   let alertText = '';
@@ -1233,7 +1235,7 @@ function rOverview() {
     ...(D['Payments']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:r[1],amt:num(r[2]),note:r[3]||'',col:'var(--red)'})),
     ...(D['CCBills']||[]).slice(1).filter(r=>r[0]&&num(r[2])>0).map(r=>({date:r[0],what:r[1]+' statement',amt:num(r[2]),note:'Due: '+r[3],col:'var(--or)'})),
     ...(D['Savings']||[]).slice(1).filter(r=>r[0]).map(r=>({date:r[0],what:'Savings jar',amt:num(r[1]),note:r[2]||'',col:'var(--ac)'})),
-    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r=>({date:r[0],what:r[2]+' ('+r[1]+')',amt:num(r[1]==='Received'?r[3]:r[4]),note:r[5]||'',col:r[1]==='Paid'?'var(--red)':'var(--gr)'}))
+    ...(D['Transactions']||[]).slice(1).filter(r=>r[0]&&r[2]).map(r=>({date:r[0],what:r[2]+' ('+(M.normalizeDir?M.normalizeDir(r[1]):r[1])+')',amt:M.txAmount?M.txAmount(r):num(r[1]==='Received'?r[3]:r[4]),note:r[5]||'',col:(M.normalizeDir?M.normalizeDir(r[1]):r[1])==='Paid'?'var(--red)':'var(--gr)'}))
   ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
 
   const atb=document.getElementById('ov-activity');
