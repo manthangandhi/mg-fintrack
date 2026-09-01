@@ -36,10 +36,6 @@ function isHeaderRow(row) {
   return a === 'date' || b === 'direction' || b === 'type';
 }
 
-function isParkedName(name) {
-  return /^hemil\b/i.test(String(name || '').trim());
-}
-
 function txAmount(row) {
   if (!row) return 0;
   const dir = normalizeDir(row[1]);
@@ -68,12 +64,7 @@ function computePersonBalances(rows) {
     if (!amt || (dir !== 'Paid' && dir !== 'Received')) continue;
     const key = personKey(rawName);
     if (!people[key]) {
-      people[key] = {
-        name: rawName,
-        received: 0,
-        paid: 0,
-        parked: isParkedName(rawName),
-      };
+      people[key] = { name: rawName, received: 0, paid: 0 };
     }
     if (dir === 'Received') people[key].received += amt;
     else people[key].paid += amt;
@@ -101,12 +92,7 @@ function summarizeInformal(rows) {
   let collectCount = 0;
   let topPay = null;
   let topCollect = null;
-  let hemil = null;
   people.forEach(p => {
-    if (p.parked) {
-      hemil = p;
-      return;
-    }
     if (p.theyOwe > 0) {
       receivable += p.theyOwe;
       collectCount += 1;
@@ -129,7 +115,6 @@ function summarizeInformal(rows) {
     collectCount,
     topPay,
     topCollect,
-    hemil,
   };
 }
 

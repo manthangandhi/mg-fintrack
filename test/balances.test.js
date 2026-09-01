@@ -89,21 +89,30 @@ function person(rows, name) {
   assert.strictEqual(people[0].settled, true);
 }
 
-// 7. Hemil is parked: excluded from "you have to pay" totals, amount is live
+// 7. Borrowed money (including Hemil) counts in what you have to pay back
 {
-  const rows = [
+  const unpaid = [
     header(),
-    ['2025-01-01', 'Received', 'Hemil', 100000, '', 'parked'],
+    ['2025-01-01', 'Received', 'Hemil', 100000, '', 'borrowed'],
+    ['2026-01-10', 'Received', 'Amit', 5000, '', ''],
+  ];
+  const unpaidSum = summarizeInformal(unpaid);
+  assert.strictEqual(unpaidSum.payable, 105000);
+  assert.strictEqual(unpaidSum.payCount, 2);
+  assert.strictEqual(unpaidSum.topPay.name, 'Hemil');
+  assert.strictEqual(unpaidSum.topPay.amount, 100000);
+
+  const repaid = [
+    header(),
+    ['2025-01-01', 'Received', 'Hemil', 100000, '', 'borrowed'],
     ['2026-01-10', 'Received', 'Amit', 5000, '', ''],
     ['2026-06-01', 'Paid', 'Hemil', 100000, '', 'returned'],
   ];
-  const sum = summarizeInformal(rows);
-  assert.strictEqual(sum.payable, 5000, 'only Amit should remain payable');
-  assert.strictEqual(sum.payCount, 1);
-  assert.strictEqual(sum.topPay.name, 'Amit');
-  assert.strictEqual(sum.topPay.amount, 5000);
-  assert.strictEqual(sum.hemil.youOwe, 0);
-  assert.strictEqual(sum.hemil.settled, true);
+  const repaidSum = summarizeInformal(repaid);
+  assert.strictEqual(repaidSum.payable, 5000);
+  assert.strictEqual(repaidSum.payCount, 1);
+  assert.strictEqual(repaidSum.topPay.name, 'Amit');
+  assert.ok(!repaidSum.people.find(p => p.name === 'Hemil').youOwe);
 }
 
 // 8. Action text must use the top person's amount, not the total of everyone

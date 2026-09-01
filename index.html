@@ -398,9 +398,9 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 <!-- ═══════════════════ INFORMAL ═══════════════════ -->
 <div class="page" id="page-informal">
   <div class="stats">
-    <div class="stat"><div class="sl">Total owed</div><div class="sv" id="inf-total" style="color:var(--red)">—</div><div class="ss">excl. Hemil (parked)</div></div>
-    <div class="stat"><div class="sl">Active creditors</div><div class="sv" id="inf-count">—</div></div>
-    <div class="stat"><div class="sl">Hemil (parked)</div><div class="sv" id="inf-hemil" style="color:var(--bl)">—</div><div class="ss" id="inf-hemil-note">return on demand</div></div>
+    <div class="stat"><div class="sl">Total you owe</div><div class="sv" id="inf-total" style="color:var(--red)">—</div><div class="ss">all informal payables</div></div>
+    <div class="stat"><div class="sl">People to pay</div><div class="sv" id="inf-count">—</div></div>
+    <div class="stat"><div class="sl">To collect</div><div class="sv" id="inf-recv" style="color:var(--ac)">—</div><div class="ss" id="inf-recv-note">money others owe you</div></div>
     <div class="stat"><div class="sl">Highest priority</div><div class="sv" id="inf-top" style="color:var(--or);font-size:13px">—</div></div>
   </div>
   <div class="sec">
@@ -1131,7 +1131,7 @@ function rInformal() {
       }).join('')
     : '<tr class="erow"><td colspan="5">No transactions match filter.</td></tr>';
 
-  const sum = M.summarizeInformal ? M.summarizeInformal(raw) : { people:[], payable:0, payCount:0, topPay:null, topCollect:null, hemil:null };
+  const sum = M.summarizeInformal ? M.summarizeInformal(raw) : { people:[], payable:0, receivable:0, payCount:0, collectCount:0, topPay:null, topCollect:null };
   const people = sum.people || [];
   const entries = people.filter(p => {
     if (filterName && !p.name.toLowerCase().includes(filterName)) return false;
@@ -1143,33 +1143,27 @@ function rInformal() {
   stb.innerHTML = entries.length ? entries.map(p=>{
     let bc='bb', bl='Low';
     if (p.settled) [bc,bl]=['bg','Settled'];
+    else if (p.youOwe > 100000) [bc,bl]=['br','High'];
+    else if (p.youOwe > 40000) [bc,bl]=['bo','Pay'];
     else if (p.youOwe > 0) [bc,bl]=['bg','Pay'];
     else if (p.theyOwe > 100000) [bc,bl]=['br','High'];
     else if (p.theyOwe > 40000) [bc,bl]=['bo','Medium'];
     else if (p.theyOwe > 0) [bc,bl]=['bb','Collect'];
     const outText = p.youOwe > 0 ? 'You owe ' + INR(p.youOwe) : p.theyOwe > 0 ? INR(p.theyOwe) : 'Settled';
-    const outStyle = p.youOwe > 0 ? 'color:var(--bl);font-weight:600' : p.theyOwe > 0 ? 'color:var(--or);font-weight:600' : 'color:var(--gr)';
-    return `<tr><td style="font-weight:500">${p.name}${p.parked?' <span class="badge bp">parked</span>':''}</td><td class="mono" style="color:var(--gr)">${INR(p.received)}</td><td class="mono" style="color:var(--red)">${INR(p.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
+    const outStyle = p.youOwe > 0 ? 'color:var(--red);font-weight:600' : p.theyOwe > 0 ? 'color:var(--or);font-weight:600' : 'color:var(--gr)';
+    return `<tr><td style="font-weight:500">${p.name}</td><td class="mono" style="color:var(--gr)">${INR(p.received)}</td><td class="mono" style="color:var(--red)">${INR(p.paid)}</td><td class="mono" style="${outStyle}">${outText}</td><td><span class="badge ${bc}">${bl}</span></td></tr>`;
   }).join('') : '<tr class="erow"><td colspan="5">No data.</td></tr>';
 
   document.getElementById('inf-total').textContent=INR(sum.payable);
   document.getElementById('inf-count').textContent=sum.payCount;
+  const recvEl = document.getElementById('inf-recv');
+  if (recvEl) recvEl.textContent = INR(sum.receivable);
+  const recvNote = document.getElementById('inf-recv-note');
+  if (recvNote) recvNote.textContent = sum.collectCount ? `${sum.collectCount} person${sum.collectCount===1?'':'s'}` : 'nobody owes you';
   const top = sum.topPay || sum.topCollect;
   document.getElementById('inf-top').textContent = top
     ? `${top.name} · ${sum.topPay && top===sum.topPay ? 'Pay ' : 'Collect '}${INR(top.amount)}`
     : '—';
-  const hemilEl = document.getElementById('inf-hemil');
-  const hemilNote = document.getElementById('inf-hemil-note');
-  if (hemilEl) {
-    if (sum.hemil) {
-      hemilEl.textContent = sum.hemil.settled ? 'Settled' : INR(sum.hemil.youOwe || sum.hemil.theyOwe);
-      hemilEl.style.color = sum.hemil.settled ? 'var(--gr)' : 'var(--bl)';
-      if (hemilNote) hemilNote.textContent = sum.hemil.settled ? 'fully returned' : 'return on demand';
-    } else {
-      hemilEl.textContent = '—';
-      if (hemilNote) hemilNote.textContent = 'no Hemil rows in sheet';
-    }
-  }
   document.getElementById('it-dl').innerHTML=people.map(p=>`<option value="${p.name}">`).join('');
 }
 
