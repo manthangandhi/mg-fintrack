@@ -362,8 +362,8 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
       <button class="sbtn" onclick="openM('m-addloan')">+ add loan</button>
       <button class="sbtn" onclick="openM('m-logpay')">+ log EMI payment</button>
     </div></div>
-    <div class="tw"><table><thead><tr><th>Name</th><th>Type</th><th>EMI/mo</th><th>Outstanding</th><th>Rate</th><th>Ends</th><th>Remaining</th></tr></thead>
-    <tbody id="l-tbody"><tr class="erow"><td colspan="7">No loans added. Click "+ add loan".</td></tr></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Name</th><th>Type</th><th>EMI/mo</th><th>Outstanding</th><th>Rate</th><th>Ends</th><th>Remaining</th><th></th></tr></thead>
+    <tbody id="l-tbody"><tr class="erow"><td colspan="8">No loans added. Click "+ add loan".</td></tr></tbody></table></div>
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">EMI payment log</div></div>
@@ -382,8 +382,8 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">Cards (master list)</div><button class="sbtn" onclick="openM('m-addcc')">+ add card</button></div>
-    <div class="tw"><table><thead><tr><th>Card name</th><th>Rate/mo</th><th>Last bill</th><th>Due date</th><th>Paid since bill</th><th>Outstanding</th></tr></thead>
-    <tbody id="cc-tbody"><tr class="erow"><td colspan="6">No cards yet. Click "+ add card".</td></tr></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Card name</th><th>Rate/mo</th><th>Last bill</th><th>Due date</th><th>Paid since bill</th><th>Outstanding</th><th></th></tr></thead>
+    <tbody id="cc-tbody"><tr class="erow"><td colspan="7">No cards yet. Click "+ add card".</td></tr></tbody></table></div>
   </div>
   <div class="sec">
     <div class="sh"><div class="sti">Bills & payments log</div><div class="btns">
@@ -500,6 +500,10 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
       <div><div class="srow-l">Refresh sheet settings</div><div class="srow-sub">Reloads the page and re-fetches Config from the sheet.</div></div>
       <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Reload</button></div>
     </div>
+    <div class="srow">
+      <div><div class="srow-l">Update loans &amp; cards in the sheet</div><div class="srow-sub">Copy the latest Apps Script, keep your SHEET_ID, then Deploy → New deployment. Needed for in-place Edit.</div></div>
+      <div class="srow-r"><button class="sbtn" onclick="copyAppsScript()">Copy Apps Script</button></div>
+    </div>
   </div>
   <div style="font-size:12px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px">
     <b style="color:var(--tx)">Settings sync</b><br>
@@ -511,12 +515,12 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 <!-- ═══════════════════ MODALS ═══════════════════ -->
 
 <div class="overlay" id="m-addloan"><div class="modal">
-  <div class="mtitle">Add loan / Smart EMI</div>
+  <div class="mtitle" id="loan-modal-title">Add loan / Smart EMI</div>
   <div class="f2"><div class="fg"><label class="fl">Name</label><input class="fi" id="ln" placeholder="HDFC Personal Loan"/></div><div class="fg"><label class="fl">Type</label><select class="fs" id="lt"><option>Personal Loan</option><option>Auto Loan</option><option>Home Loan</option><option>CC Smart EMI</option><option>Other</option></select></div></div>
   <div class="f2"><div class="fg"><label class="fl">EMI (₹)</label><input class="fi" type="number" id="lemi" placeholder="31808"/></div><div class="fg"><label class="fl">Rate (%/yr)</label><input class="fi" type="number" id="lrate" step="0.01" placeholder="10.9"/></div></div>
   <div class="f2"><div class="fg"><label class="fl">First EMI date</label><input class="fi" type="date" id="lstart"/></div><div class="fg"><label class="fl">Total installments</label><input class="fi" type="number" id="ltenure" placeholder="60"/></div></div>
   <div class="fg"><label class="fl">Notes</label><input class="fi" id="lnotes" placeholder="Agr# 159607347"/></div>
-  <div class="ma"><button class="bpri" onclick="addLoan()">Save loan</button><button class="bgho" onclick="closeM('m-addloan')">Cancel</button></div>
+  <div class="ma"><button class="bpri" id="loan-save-btn" onclick="saveLoan()">Save loan</button><button class="bgho" onclick="closeM('m-addloan')">Cancel</button></div>
 </div></div>
 
 <div class="overlay" id="m-logpay"><div class="modal">
@@ -528,11 +532,11 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
 </div></div>
 
 <div class="overlay" id="m-addcc"><div class="modal">
-  <div class="mtitle">Add credit card</div>
+  <div class="mtitle" id="cc-modal-title">Add credit card</div>
   <div class="fg"><label class="fl">Card name</label><input class="fi" id="ccn" placeholder="AMEX Gold"/></div>
   <div class="f2"><div class="fg"><label class="fl">Monthly interest (%)</label><input class="fi" type="number" id="ccr" placeholder="3.5" step="0.1"/></div><div class="fg"><label class="fl">Notes</label><input class="fi" id="ccno" placeholder="Visa / Amex etc."/></div></div>
-  <div style="font-size:11px;color:var(--tx2);margin-top:2px">After adding, use "+ log monthly bill" each month to record your statement.</div>
-  <div class="ma"><button class="bpri" onclick="addCard()">Add card</button><button class="bgho" onclick="closeM('m-addcc')">Cancel</button></div>
+  <div style="font-size:11px;color:var(--tx2);margin-top:2px">After adding, use "+ log monthly bill" each month to record your statement. Keep the same name if you already have bills logged.</div>
+  <div class="ma"><button class="bpri" id="cc-save-btn" onclick="saveCard()">Add card</button><button class="bgho" onclick="closeM('m-addcc')">Cancel</button></div>
 </div></div>
 
 <div class="overlay" id="m-logbill"><div class="modal">
@@ -586,6 +590,8 @@ let CFG = { ef: 200000, inc: 251683, hh: 40000, prop: 6000000, assets: 0 };
 const NUMCFG = new Set(['ef', 'inc', 'hh', 'prop', 'assets']);
 const API_STORAGE_KEY = 'fintrack_apps_script_url';
 const M = globalThis.FinTrackMath || {};
+let editingLoanName = null;
+let editingCardName = null;
 
 const num = v => M.parseAmount ? M.parseAmount(v) : (Number.isFinite(Number(v)) ? Number(v) : 0);
 const INR   = n  => {
@@ -703,6 +709,20 @@ function openM(id) {
   m.querySelectorAll('.fs').forEach(s => s.selectedIndex = 0);
   if (id === 'm-logpay')  fillLoanSel();
   if (id === 'm-logbill' || id === 'm-logccpay') fillCardSels();
+  if (id === 'm-addloan') {
+    editingLoanName = null;
+    const t = document.getElementById('loan-modal-title');
+    const b = document.getElementById('loan-save-btn');
+    if (t) t.textContent = 'Add loan / Smart EMI';
+    if (b) b.textContent = 'Save loan';
+  }
+  if (id === 'm-addcc') {
+    editingCardName = null;
+    const t = document.getElementById('cc-modal-title');
+    const b = document.getElementById('cc-save-btn');
+    if (t) t.textContent = 'Add credit card';
+    if (b) b.textContent = 'Add card';
+  }
   m.classList.add('on');
 }
 function closeM(id) { document.getElementById(id).classList.remove('on'); }
@@ -720,6 +740,37 @@ async function apicall(params) {
     const r = await fetch(API + '?' + new URLSearchParams({ ...params, _: String(Date.now()) }));
     return await r.json();
   } catch(e) { toast('Connection error — check your URL'); return null; }
+}
+
+function escAttr(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;')
+    .replace(/</g,'&lt;');
+}
+
+async function upsertByName(tab, key, row) {
+  const r = await apicall({ action:'upsertByName', tab, key, row: JSON.stringify(row) });
+  if (r && r.ok) return r;
+  if (r && r.error && /unknown/i.test(String(r.error))) {
+    const appended = await apicall({ action:'append', tab, row: JSON.stringify(row) });
+    if (appended && appended.ok) appended.fallbackAppend = true;
+    return appended;
+  }
+  return r;
+}
+
+async function copyAppsScript() {
+  try {
+    const r = await fetch('apps-script.gs');
+    if (!r.ok) throw new Error('missing');
+    const txt = await r.text();
+    await navigator.clipboard.writeText(txt);
+    toast('Apps Script copied. Keep your SHEET_ID, then Deploy → New deployment.');
+  } catch (e) {
+    toast('Could not copy — open apps-script.gs in the GitHub repo and paste it into Apps Script');
+  }
 }
 
 // ── SYNC ─────────────────────────────────────────
@@ -770,8 +821,9 @@ function clearCache() {
 
 // ── LOANS ─────────────────────────────────────────
 function getLoans() {
-  const rows = (D['Loans']||[]).slice(1).filter(r => r[0]);
+  const rows = M.collapseByName ? M.collapseByName(D['Loans']||[]) : (D['Loans']||[]).slice(1).filter(r => r[0]);
   const pmts = (D['Payments']||[]).slice(1).filter(r => r[0]);
+  if (M.computeLoan) return rows.map(r => M.computeLoan(r, pmts, new Date()));
   return rows.map(r => {
     const name=r[0], type=r[1], emi=num(r[2]), rate=num(r[3]), tenure=num(r[5]);
     const start = r[4] ? parseDateLocal(r[4]) : null;
@@ -780,10 +832,9 @@ function getLoans() {
     const remaining = Math.max(0, tenure - elapsed);
     const endDate = start ? new Date(start.getFullYear(), start.getMonth()+tenure, start.getDate()) : null;
     const endStr = endDate ? endDate.toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '—';
-    // EMI due day — derive from StartDate day
     const dueDay = start ? start.getDate() : 7;
     const outstanding = emi * remaining;
-    return { name, type, emi, rate, tenure, remaining, outstanding, endStr, dueDay };
+    return { name, type, emi, rate, tenure, notes:r[6]||'', remaining, outstanding, endStr, dueDay, startInput: r[4]||'' };
   });
 }
 
@@ -792,15 +843,16 @@ function rLoans() {
   const tb = document.getElementById('l-tbody');
   tb.innerHTML = loans.length
     ? loans.map(l => `<tr>
-        <td style="font-weight:500">${l.name}</td>
-        <td><span class="badge bb">${l.type}</span></td>
+        <td style="font-weight:500">${escAttr(l.name)}</td>
+        <td><span class="badge bb">${escAttr(l.type)}</span></td>
         <td class="mono">${INR(l.emi)}</td>
         <td class="mono" style="color:var(--red)">${INR(l.outstanding)}</td>
         <td class="dim">${l.rate}%</td>
         <td class="dim">${l.endStr}</td>
         <td><span class="badge ${l.remaining<=6?'bg':l.remaining<=12?'bo':'br'}">${l.remaining} left</span></td>
+        <td><button class="sbtn" data-name="${escAttr(l.name)}" onclick="openLoanEditor(this.dataset.name)">Edit</button></td>
       </tr>`).join('')
-    : '<tr class="erow"><td colspan="7">No loans yet. Click "+ add loan".</td></tr>';
+    : '<tr class="erow"><td colspan="8">No loans yet. Click "+ add loan".</td></tr>';
 
   const tot=loans.reduce((s,l)=>s+num(l.outstanding),0);
   const totEmi=loans.reduce((s,l)=>s+num(l.emi),0);
@@ -823,11 +875,39 @@ function fillLoanSel() {
   s.innerHTML = loans.length ? loans.map(l=>`<option value="${l.name}">${l.name}</option>`).join('') : '<option>No loans added</option>';
 }
 
-async function addLoan() {
-  const row = [document.getElementById('ln').value, document.getElementById('lt').value, document.getElementById('lemi').value, document.getElementById('lrate').value, document.getElementById('lstart').value, document.getElementById('ltenure').value, document.getElementById('lnotes').value];
+function openLoanEditor(name) {
+  openM('m-addloan');
+  const loan = getLoans().find(l => M.namesEqual ? M.namesEqual(l.name, name) : l.name === name);
+  if (!loan) { toast('Loan not found'); return; }
+  editingLoanName = loan.name;
+  document.getElementById('loan-modal-title').textContent = 'Update loan';
+  document.getElementById('loan-save-btn').textContent = 'Save changes';
+  document.getElementById('ln').value = loan.name;
+  const typeSel = document.getElementById('lt');
+  const typeVal = loan.type || '';
+  if (typeVal && ![...typeSel.options].some(o => o.value === typeVal)) {
+    const opt = document.createElement('option');
+    opt.value = typeVal; opt.textContent = typeVal;
+    typeSel.appendChild(opt);
+  }
+  typeSel.value = typeVal;
+  document.getElementById('lemi').value = loan.emi || '';
+  document.getElementById('lrate').value = loan.rate || '';
+  document.getElementById('lstart').value = loan.startInput || '';
+  document.getElementById('ltenure').value = loan.tenure || '';
+  document.getElementById('lnotes').value = loan.notes || '';
+}
+
+async function saveLoan() {
+  const row = [document.getElementById('ln').value.trim(), document.getElementById('lt').value, document.getElementById('lemi').value, document.getElementById('lrate').value, document.getElementById('lstart').value, document.getElementById('ltenure').value, document.getElementById('lnotes').value];
   if (!row[0]||!row[2]) { toast('Name and EMI required'); return; }
-  const r = await apicall({action:'append',tab:'Loans',row:JSON.stringify(row)});
-  if (r&&r.ok) { toast('Loan added ✓'); closeM('m-addloan'); doSync(); }
+  const key = editingLoanName || row[0];
+  const r = await upsertByName('Loans', key, row);
+  if (r&&r.ok) {
+    toast(editingLoanName ? (r.fallbackAppend ? 'Loan saved (new row — update Apps Script for in-place edit)' : 'Loan updated ✓') : 'Loan added ✓');
+    closeM('m-addloan');
+    doSync();
+  }
 }
 
 async function logPay() {
@@ -839,7 +919,8 @@ async function logPay() {
 
 // ── CARDS ─────────────────────────────────────────
 function getCardMaster() {
-  return (D['Cards']||[]).slice(1).filter(r=>r[0]).map(r=>({name:r[0],rate:num(r[1])||3.5,notes:r[2]||''}));
+  const rows = M.collapseByName ? M.collapseByName(D['Cards']||[]) : (D['Cards']||[]).slice(1).filter(r=>r[0]);
+  return rows.map(r=>({name:r[0],rate:num(r[1])||3.5,notes:r[2]||''}));
 }
 function fillCardSels() {
   const names = getCardMaster().map(c=>c.name);
@@ -869,15 +950,16 @@ function rCC() {
   const cards = getCards();
   const tb = document.getElementById('cc-tbody');
   if (!cards.length) {
-    tb.innerHTML='<tr class="erow"><td colspan="6">No cards. Click "+ add card".</td></tr>';
+    tb.innerHTML='<tr class="erow"><td colspan="7">No cards. Click "+ add card".</td></tr>';
     ['cc-total','cc-int','cc-due'].forEach(id=>document.getElementById(id).textContent='—');
     document.getElementById('cc-count').textContent='0';
   } else {
     tb.innerHTML = cards.map(c=>`<tr>
-      <td style="font-weight:500">${c.name}</td><td class="dim">${c.rate}%/mo</td>
+      <td style="font-weight:500">${escAttr(c.name)}</td><td class="dim">${c.rate}%/mo</td>
       <td class="mono">${INR(c.lastAmt)}</td><td class="dim" style="color:var(--or)">${c.dueDate}</td>
       <td class="mono" style="color:var(--gr)">${INR(c.paid)}</td>
       <td class="mono" style="color:var(--red);font-weight:600">${INR(c.outstanding)}</td>
+      <td><button class="sbtn" data-name="${escAttr(c.name)}" onclick="openCardEditor(this.dataset.name)">Edit</button></td>
     </tr>`).join('');
     const tot=cards.reduce((s,c)=>s+num(c.outstanding),0);
     const int=cards.reduce((s,c)=>s+(num(c.outstanding)*num(c.rate)/100),0);
@@ -896,11 +978,28 @@ function rCC() {
   const ltb=document.getElementById('ccl-tbody');
   ltb.innerHTML=all.length ? all.map(e=>`<tr><td class="dim">${e.date}</td><td style="font-weight:500">${e.card}</td><td><span class="badge ${e.type==='Bill'?'bo':'bg'}">${e.type}</span></td><td class="mono" style="color:${e.type==='Bill'?'var(--or)':'var(--gr)'}">${INR(e.amt)}</td><td class="dim">${e.notes}</td></tr>`).join('') : '<tr class="erow"><td colspan="5">No entries yet.</td></tr>';
 }
-async function addCard() {
+function openCardEditor(name) {
+  openM('m-addcc');
+  const card = getCardMaster().find(c => M.namesEqual ? M.namesEqual(c.name, name) : c.name === name);
+  if (!card) { toast('Card not found'); return; }
+  editingCardName = card.name;
+  document.getElementById('cc-modal-title').textContent = 'Update card';
+  document.getElementById('cc-save-btn').textContent = 'Save changes';
+  document.getElementById('ccn').value = card.name;
+  document.getElementById('ccr').value = card.rate || '';
+  document.getElementById('ccno').value = card.notes || '';
+}
+
+async function saveCard() {
   const name=document.getElementById('ccn').value.trim(), rate=document.getElementById('ccr').value||'3.5', notes=document.getElementById('ccno').value;
   if (!name) { toast('Card name required'); return; }
-  const r=await apicall({action:'append',tab:'Cards',row:JSON.stringify([name,rate,notes])});
-  if (r&&r.ok) { toast('Card added ✓'); closeM('m-addcc'); doSync(); }
+  const key = editingCardName || name;
+  const r = await upsertByName('Cards', key, [name, rate, notes]);
+  if (r&&r.ok) {
+    toast(editingCardName ? (r.fallbackAppend ? 'Card saved (new row — update Apps Script for in-place edit)' : 'Card updated ✓') : 'Card added ✓');
+    closeM('m-addcc');
+    doSync();
+  }
 }
 async function logBill() {
   const row=[document.getElementById('bl-date').value,document.getElementById('bl-card').value,document.getElementById('bl-amt').value,document.getElementById('bl-due').value,document.getElementById('bl-notes').value];

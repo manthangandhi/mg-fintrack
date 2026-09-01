@@ -147,6 +147,71 @@ function parseFlexibleDate(s) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
+function isMasterHeader(row) {
+  if (!row) return false;
+  const a = String(row[0] || '').trim().toLowerCase();
+  return a === 'name' || a === 'date' || a === 'key' || isHeaderRow(row);
+}
+
+function collapseByName(rows) {
+  const list = Array.isArray(rows) ? rows : [];
+  const start = list.length && isMasterHeader(list[0]) ? 1 : 0;
+  const map = new Map();
+  for (let i = start; i < list.length; i++) {
+    const r = list[i];
+    if (!r) continue;
+    const key = personKey(r[0]);
+    if (!key) continue;
+    map.set(key, r);
+  }
+  return Array.from(map.values());
+}
+
+function toInputDate(s) {
+  const d = parseFlexibleDate(s);
+  if (!d || isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function computeLoan(row, payments, now) {
+  const name = String(row[0] || '').trim();
+  const type = row[1] || '';
+  const emi = parseAmount(row[2]);
+  const rate = parseAmount(row[3]);
+  const tenure = parseAmount(row[5]);
+  const notes = row[6] || '';
+  const start = parseFlexibleDate(row[4]);
+  const asOf = now instanceof Date ? now : new Date();
+  let elapsed = 0;
+  if (start && !isNaN(start.getTime())) {
+    elapsed = Math.max(0, (asOf.getFullYear() - start.getFullYear()) * 12 + (asOf.getMonth() - start.getMonth()));
+  }
+  const payCount = (payments || []).filter(p => namesEqual(p[1], name)).length;
+  const remaining = Math.max(0, tenure - Math.max(elapsed, payCount));
+  const outstanding = rupees(emi * remaining);
+  const endDate = start ? new Date(start.getFullYear(), start.getMonth() + tenure, start.getDate()) : null;
+  const endStr = endDate ? endDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '—';
+  const dueDay = start ? start.getDate() : 7;
+  return {
+    name,
+    type,
+    emi,
+    rate,
+    tenure,
+    notes,
+    remaining,
+    outstanding,
+    endStr,
+    dueDay,
+    startInput: toInputDate(row[4]),
+    payCount,
+    elapsed,
+  };
+}
+
 function cardOutstanding(card, bills, payments, loanNames) {
   const name = card && card.name;
   const myBills = (bills || []).filter(b => namesEqual(b[1], name) && parseAmount(b[2]) > 0);
@@ -174,6 +239,9 @@ const api = {
   summarizeInformal,
   parseFlexibleDate,
   cardOutstanding,
+  collapseByName,
+  computeLoan,
+  toInputDate,
 };
 
 if (typeof module !== 'undefined' && module.exports) {
