@@ -501,7 +501,7 @@ tbody tr:hover td{background:rgba(255,255,255,.03)}
       <div class="srow-r"><button class="sbtn" style="color:var(--red);border-color:var(--red)" onclick="clearCache()">Reload</button></div>
     </div>
     <div class="srow">
-      <div><div class="srow-l">Update loans &amp; cards in the sheet</div><div class="srow-sub">Copy the latest Apps Script, keep your SHEET_ID, then Deploy → New deployment. Needed for in-place Edit.</div></div>
+      <div><div class="srow-l">Update loans &amp; cards in the sheet</div><div class="srow-sub">Copy the latest Apps Script, keep your SHEET_ID, then Deploy → New deployment. Needed for in-place Edit and Delete.</div></div>
       <div class="srow-r"><button class="sbtn" onclick="copyAppsScript()">Copy Apps Script</button></div>
     </div>
   </div>
@@ -761,6 +761,15 @@ async function upsertByName(tab, key, row) {
   return r;
 }
 
+async function deleteByName(tab, key) {
+  const r = await apicall({ action:'deleteByName', tab, key });
+  if (r && r.ok) return r;
+  if (r && r.error && /unknown/i.test(String(r.error))) {
+    return { ok:false, needScript:true };
+  }
+  return r;
+}
+
 async function copyAppsScript() {
   try {
     const r = await fetch('apps-script.gs');
@@ -834,32 +843,50 @@ function getLoans() {
     const endStr = endDate ? endDate.toLocaleDateString('en-IN',{month:'short',year:'numeric'}) : '—';
     const dueDay = start ? start.getDate() : 7;
     const outstanding = emi * remaining;
-    return { name, type, emi, rate, tenure, notes:r[6]||'', remaining, outstanding, endStr, dueDay, startInput: r[4]||'' };
+    return { name, type, emi, rate, tenure, notes:r[6]||'', status:'Active', closed:false, remaining, outstanding, endStr, dueDay, startInput: r[4]||'' };
   });
+}
+
+function getActiveLoans() {
+  return getLoans().filter(l => !l.closed);
+}
+
+function loanSheetRow(loan, status) {
+  return [loan.name, loan.type, loan.emi, loan.rate, loan.startInput, loan.tenure, loan.notes || '', status || loan.status || 'Active'];
 }
 
 function rLoans() {
   const loans = getLoans();
+  const active = loans.filter(l => !l.closed);
   const tb = document.getElementById('l-tbody');
   tb.innerHTML = loans.length
-    ? loans.map(l => `<tr>
+    ? loans.map(l => {
+        const statusBtn = l.closed
+          ? `<button class="sbtn" data-name="${escAttr(l.name)}" onclick="setLoanStatus(this.dataset.name,'Active')">Reopen</button>`
+          : `<button class="sbtn" data-name="${escAttr(l.name)}" onclick="setLoanStatus(this.dataset.name,'Closed')">Close</button>`;
+        return `<tr${l.closed?' style="opacity:.55"':''}>
         <td style="font-weight:500">${escAttr(l.name)}</td>
         <td><span class="badge bb">${escAttr(l.type)}</span></td>
         <td class="mono">${INR(l.emi)}</td>
-        <td class="mono" style="color:var(--red)">${INR(l.outstanding)}</td>
+        <td class="mono" style="color:${l.closed?'var(--gr)':'var(--red)'}">${l.closed?'₹0':INR(l.outstanding)}</td>
         <td class="dim">${l.rate}%</td>
         <td class="dim">${l.endStr}</td>
-        <td><span class="badge ${l.remaining<=6?'bg':l.remaining<=12?'bo':'br'}">${l.remaining} left</span></td>
-        <td><button class="sbtn" data-name="${escAttr(l.name)}" onclick="openLoanEditor(this.dataset.name)">Edit</button></td>
-      </tr>`).join('')
+        <td><span class="badge ${l.closed?'bg':l.remaining<=6?'bg':l.remaining<=12?'bo':'br'}">${l.closed?'Closed':l.remaining+' left'}</span></td>
+        <td style="white-space:nowrap">
+          <button class="sbtn" data-name="${escAttr(l.name)}" onclick="openLoanEditor(this.dataset.name)">Edit</button>
+          ${statusBtn}
+          <button class="sbtn" style="color:var(--red);border-color:var(--red)" data-name="${escAttr(l.name)}" onclick="deleteLoan(this.dataset.name)">Delete</button>
+        </td>
+      </tr>`;
+      }).join('')
     : '<tr class="erow"><td colspan="8">No loans yet. Click "+ add loan".</td></tr>';
 
-  const tot=loans.reduce((s,l)=>s+num(l.outstanding),0);
-  const totEmi=loans.reduce((s,l)=>s+num(l.emi),0);
-  const totInt=loans.reduce((s,l)=>s+(num(l.emi)*num(l.remaining)-num(l.outstanding)),0);
+  const tot=active.reduce((s,l)=>s+num(l.outstanding),0);
+  const totEmi=active.reduce((s,l)=>s+num(l.emi),0);
+  const totInt=active.reduce((s,l)=>s+(num(l.emi)*num(l.remaining)-num(l.outstanding)),0);
   document.getElementById('l-total').textContent = INR(tot);
   document.getElementById('l-emi').textContent   = INR(totEmi);
-  document.getElementById('l-count').textContent  = loans.length;
+  document.getElementById('l-count').textContent  = active.length;
   document.getElementById('l-int').textContent    = INR(Math.max(0,totInt));
 
   const pmts = (D['Payments']||[]).slice(1).filter(r=>r[0]);
@@ -871,7 +898,7 @@ function rLoans() {
 
 function fillLoanSel() {
   const s = document.getElementById('py-loan');
-  const loans = getLoans();
+  const loans = getActiveLoans();
   s.innerHTML = loans.length ? loans.map(l=>`<option value="${l.name}">${l.name}</option>`).join('') : '<option>No loans added</option>';
 }
 
@@ -899,7 +926,10 @@ function openLoanEditor(name) {
 }
 
 async function saveLoan() {
-  const row = [document.getElementById('ln').value.trim(), document.getElementById('lt').value, document.getElementById('lemi').value, document.getElementById('lrate').value, document.getElementById('lstart').value, document.getElementById('ltenure').value, document.getElementById('lnotes').value];
+  const name = document.getElementById('ln').value.trim();
+  const existing = editingLoanName ? getLoans().find(l => M.namesEqual ? M.namesEqual(l.name, editingLoanName) : l.name === editingLoanName) : null;
+  const status = existing && existing.closed ? 'Closed' : 'Active';
+  const row = [name, document.getElementById('lt').value, document.getElementById('lemi').value, document.getElementById('lrate').value, document.getElementById('lstart').value, document.getElementById('ltenure').value, document.getElementById('lnotes').value, status];
   if (!row[0]||!row[2]) { toast('Name and EMI required'); return; }
   const key = editingLoanName || row[0];
   const r = await upsertByName('Loans', key, row);
@@ -907,6 +937,29 @@ async function saveLoan() {
     toast(editingLoanName ? (r.fallbackAppend ? 'Loan saved (new row — update Apps Script for in-place edit)' : 'Loan updated ✓') : 'Loan added ✓');
     closeM('m-addloan');
     doSync();
+  }
+}
+
+async function setLoanStatus(name, status) {
+  const loan = getLoans().find(l => M.namesEqual ? M.namesEqual(l.name, name) : l.name === name);
+  if (!loan) { toast('Loan not found'); return; }
+  const label = status === 'Closed' ? 'Close this loan? It will drop out of EMIs and outstanding. Use this when you refinanced or paid it off.' : 'Reopen this loan and count it as active again?';
+  if (!confirm(label)) return;
+  const r = await upsertByName('Loans', loan.name, loanSheetRow(loan, status));
+  if (r&&r.ok) { toast(status === 'Closed' ? 'Loan closed ✓' : 'Loan reopened ✓'); doSync(); }
+}
+
+async function deleteLoan(name) {
+  const loan = getLoans().find(l => M.namesEqual ? M.namesEqual(l.name, name) : l.name === name);
+  if (!loan) { toast('Loan not found'); return; }
+  if (!confirm('Delete "'+loan.name+'" from the sheet? This cannot be undone. Prefer Close if you only refinanced it.')) return;
+  const r = await deleteByName('Loans', loan.name);
+  if (r && r.ok) { toast('Loan deleted ✓'); doSync(); return; }
+  if (r && r.needScript) {
+    const closed = await upsertByName('Loans', loan.name, loanSheetRow(loan, 'Closed'));
+    if (closed && closed.ok) toast('Marked closed instead — copy Apps Script in Settings to fully delete');
+    doSync();
+    return;
   }
 }
 
@@ -920,10 +973,13 @@ async function logPay() {
 // ── CARDS ─────────────────────────────────────────
 function getCardMaster() {
   const rows = M.collapseByName ? M.collapseByName(D['Cards']||[]) : (D['Cards']||[]).slice(1).filter(r=>r[0]);
-  return rows.map(r=>({name:r[0],rate:num(r[1])||3.5,notes:r[2]||''}));
+  return rows.map(r=>{
+    const status = M.parseStatus ? M.parseStatus(r[3]) : 'Active';
+    return { name:r[0], rate:num(r[1])||3.5, notes:r[2]||'', status, closed: status==='Closed' };
+  });
 }
 function fillCardSels() {
-  const names = getCardMaster().map(c=>c.name);
+  const names = getCardMaster().filter(c=>!c.closed).map(c=>c.name);
   ['bl-card','cp-card'].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.innerHTML = names.length ? names.map(n=>`<option value="${n}">${n}</option>`).join('') : '<option value="">No cards added</option>';
@@ -941,7 +997,7 @@ function getCards() {
     const lastAmt   = lastBill ? num(lastBill[2]) : 0;
     const lastDate  = lastBill ? lastBill[0]  : '—';
     const dueDate   = lastBill ? lastBill[3]  : '—';
-    const outstanding = M.cardOutstanding ? M.cardOutstanding(m, bills, pmts, loanNames) : Math.max(0, lastAmt);
+    const outstanding = m.closed ? 0 : (M.cardOutstanding ? M.cardOutstanding(m, bills, pmts, loanNames) : Math.max(0, lastAmt));
     const paid = lastBill ? Math.max(0, lastAmt - outstanding) : 0;
     return {...m, lastAmt, lastDate, dueDate, paid, outstanding};
   });
@@ -954,20 +1010,30 @@ function rCC() {
     ['cc-total','cc-int','cc-due'].forEach(id=>document.getElementById(id).textContent='—');
     document.getElementById('cc-count').textContent='0';
   } else {
-    tb.innerHTML = cards.map(c=>`<tr>
+    tb.innerHTML = cards.map(c=>{
+      const statusBtn = c.closed
+        ? `<button class="sbtn" data-name="${escAttr(c.name)}" onclick="setCardStatus(this.dataset.name,'Active')">Reopen</button>`
+        : `<button class="sbtn" data-name="${escAttr(c.name)}" onclick="setCardStatus(this.dataset.name,'Closed')">Close</button>`;
+      return `<tr${c.closed?' style="opacity:.55"':''}>
       <td style="font-weight:500">${escAttr(c.name)}</td><td class="dim">${c.rate}%/mo</td>
       <td class="mono">${INR(c.lastAmt)}</td><td class="dim" style="color:var(--or)">${c.dueDate}</td>
       <td class="mono" style="color:var(--gr)">${INR(c.paid)}</td>
-      <td class="mono" style="color:var(--red);font-weight:600">${INR(c.outstanding)}</td>
-      <td><button class="sbtn" data-name="${escAttr(c.name)}" onclick="openCardEditor(this.dataset.name)">Edit</button></td>
-    </tr>`).join('');
-    const tot=cards.reduce((s,c)=>s+num(c.outstanding),0);
-    const int=cards.reduce((s,c)=>s+(num(c.outstanding)*num(c.rate)/100),0);
-    const soon=cards.filter(c=>c.dueDate&&c.dueDate!=='—').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate))[0];
+      <td class="mono" style="color:${c.closed?'var(--gr)':'var(--red)'};font-weight:600">${c.closed?'₹0':INR(c.outstanding)}</td>
+      <td style="white-space:nowrap">
+        <button class="sbtn" data-name="${escAttr(c.name)}" onclick="openCardEditor(this.dataset.name)">Edit</button>
+        ${statusBtn}
+        <button class="sbtn" style="color:var(--red);border-color:var(--red)" data-name="${escAttr(c.name)}" onclick="deleteCard(this.dataset.name)">Delete</button>
+      </td>
+    </tr>`;
+    }).join('');
+    const active=cards.filter(c=>!c.closed);
+    const tot=active.reduce((s,c)=>s+num(c.outstanding),0);
+    const int=active.reduce((s,c)=>s+(num(c.outstanding)*num(c.rate)/100),0);
+    const soon=active.filter(c=>c.dueDate&&c.dueDate!=='—').sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate))[0];
     document.getElementById('cc-total').textContent=INR(tot);
     document.getElementById('cc-int').textContent=INR(int);
     document.getElementById('cc-due').textContent=soon?soon.dueDate:'—';
-    document.getElementById('cc-count').textContent=cards.length;
+    document.getElementById('cc-count').textContent=active.length;
   }
   const loanNames=getLoans().map(l=>l.name);
   const isLoanPmt = name => loanNames.some(l => M.namesEqual ? M.namesEqual(l, name) : l === name);
@@ -993,11 +1059,35 @@ function openCardEditor(name) {
 async function saveCard() {
   const name=document.getElementById('ccn').value.trim(), rate=document.getElementById('ccr').value||'3.5', notes=document.getElementById('ccno').value;
   if (!name) { toast('Card name required'); return; }
+  const existing = editingCardName ? getCardMaster().find(c => M.namesEqual ? M.namesEqual(c.name, editingCardName) : c.name === editingCardName) : null;
+  const status = existing && existing.closed ? 'Closed' : 'Active';
   const key = editingCardName || name;
-  const r = await upsertByName('Cards', key, [name, rate, notes]);
+  const r = await upsertByName('Cards', key, [name, rate, notes, status]);
   if (r&&r.ok) {
     toast(editingCardName ? (r.fallbackAppend ? 'Card saved (new row — update Apps Script for in-place edit)' : 'Card updated ✓') : 'Card added ✓');
     closeM('m-addcc');
+    doSync();
+  }
+}
+
+async function setCardStatus(name, status) {
+  const card = getCardMaster().find(c => M.namesEqual ? M.namesEqual(c.name, name) : c.name === name);
+  if (!card) { toast('Card not found'); return; }
+  const label = status === 'Closed' ? 'Close this card? It will drop out of outstanding totals.' : 'Reopen this card?';
+  if (!confirm(label)) return;
+  const r = await upsertByName('Cards', card.name, [card.name, card.rate, card.notes, status]);
+  if (r&&r.ok) { toast(status === 'Closed' ? 'Card closed ✓' : 'Card reopened ✓'); doSync(); }
+}
+
+async function deleteCard(name) {
+  const card = getCardMaster().find(c => M.namesEqual ? M.namesEqual(c.name, name) : c.name === name);
+  if (!card) { toast('Card not found'); return; }
+  if (!confirm('Delete "'+card.name+'" from the sheet? Prefer Close if you still want the history.')) return;
+  const r = await deleteByName('Cards', card.name);
+  if (r && r.ok) { toast('Card deleted ✓'); doSync(); return; }
+  if (r && r.needScript) {
+    const closed = await upsertByName('Cards', card.name, [card.name, card.rate, card.notes, 'Closed']);
+    if (closed && closed.ok) toast('Marked closed instead — copy Apps Script in Settings to fully delete');
     doSync();
   }
 }
@@ -1095,7 +1185,7 @@ async function logInfTx() {
 // ── BUDGET ────────────────────────────────────────
 function rBudget() {
   const inc = num(CFG.inc);
-  const loans = getLoans();
+  const loans = getActiveLoans();
   const totEmi = loans.reduce((s,l)=>s+num(l.emi),0);
   const house = num(CFG.hh);
   const left = inc - totEmi - house;
@@ -1147,8 +1237,8 @@ async function logSav() {
 
 // ── OVERVIEW ──────────────────────────────────────
 function rOverview() {
-  const loans    = getLoans();
-  const cards    = getCards();
+  const loans    = getActiveLoans();
+  const cards    = getCards().filter(c => !c.closed);
   const loanTot  = loans.reduce((s,l)=>s+num(l.outstanding),0);
   const totEmi   = loans.reduce((s,l)=>s+num(l.emi),0);
   const ccTot    = cards.reduce((s,c)=>s+num(c.outstanding),0);

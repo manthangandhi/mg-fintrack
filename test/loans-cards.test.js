@@ -80,4 +80,21 @@ const now = new Date(2026, 8, 1); // 1 Sep 2026
   assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(toInputDate('2024-01-07T18:30:00.000Z')));
 }
 
+// Closed / refinanced loan must not still show as payable
+{
+  const row = ['Old HDFC', 'Personal Loan', 31808, 10.9, '2024-01-07', 60, 'refinanced', 'Closed'];
+  const loan = computeLoan(row, [], now);
+  assert.strictEqual(loan.closed, true);
+  assert.strictEqual(loan.status, 'Closed');
+  assert.strictEqual(loan.remaining, 0);
+  assert.strictEqual(loan.outstanding, 0);
+}
+
+{
+  const { parseStatus } = require('../js/fintrack-math.js');
+  assert.strictEqual(parseStatus('closed'), 'Closed');
+  assert.strictEqual(parseStatus('Active'), 'Active');
+  assert.strictEqual(parseStatus(''), 'Active');
+}
+
 console.log('ok: loan/card update tests passed');

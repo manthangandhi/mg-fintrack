@@ -35,6 +35,21 @@ function doGet(e){
     sh.appendRow(row);
     return j({ok:true, updated:false});
   }
+  if(p.action==='deleteByName'){
+    const sh=ss.getSheetByName(p.tab);
+    if(!sh) return j({error:'Tab not found: '+p.tab});
+    const key=String(p.key||'').trim().toLowerCase();
+    if(!key) return j({error:'missing key'});
+    const data=sh.getDataRange().getValues();
+    let removed=0;
+    for(let i=data.length-1;i>=1;i--){
+      if(String(data[i][0]||'').trim().toLowerCase()===key){
+        sh.deleteRow(i+1);
+        removed++;
+      }
+    }
+    return j({ok:true, removed:removed});
+  }
   if(p.action==='upsertConfig'){
     const sh=ss.getSheetByName('Config');
     const key=p.key, val=p.value;

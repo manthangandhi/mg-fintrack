@@ -176,6 +176,12 @@ function toInputDate(s) {
   return `${y}-${m}-${day}`;
 }
 
+function parseStatus(v) {
+  const s = String(v == null ? '' : v).trim().toLowerCase();
+  if (s === 'closed' || s === 'close' || s === 'paid off' || s === 'paidoff' || s === 'inactive' || s === 'refinanced') return 'Closed';
+  return 'Active';
+}
+
 function computeLoan(row, payments, now) {
   const name = String(row[0] || '').trim();
   const type = row[1] || '';
@@ -183,6 +189,8 @@ function computeLoan(row, payments, now) {
   const rate = parseAmount(row[3]);
   const tenure = parseAmount(row[5]);
   const notes = row[6] || '';
+  const status = parseStatus(row[7]);
+  const closed = status === 'Closed';
   const start = parseFlexibleDate(row[4]);
   const asOf = now instanceof Date ? now : new Date();
   let elapsed = 0;
@@ -190,8 +198,8 @@ function computeLoan(row, payments, now) {
     elapsed = Math.max(0, (asOf.getFullYear() - start.getFullYear()) * 12 + (asOf.getMonth() - start.getMonth()));
   }
   const payCount = (payments || []).filter(p => namesEqual(p[1], name)).length;
-  const remaining = Math.max(0, tenure - Math.max(elapsed, payCount));
-  const outstanding = rupees(emi * remaining);
+  const remaining = closed ? 0 : Math.max(0, tenure - Math.max(elapsed, payCount));
+  const outstanding = closed ? 0 : rupees(emi * remaining);
   const endDate = start ? new Date(start.getFullYear(), start.getMonth() + tenure, start.getDate()) : null;
   const endStr = endDate ? endDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : '—';
   const dueDay = start ? start.getDate() : 7;
@@ -202,6 +210,8 @@ function computeLoan(row, payments, now) {
     rate,
     tenure,
     notes,
+    status,
+    closed,
     remaining,
     outstanding,
     endStr,
@@ -242,6 +252,7 @@ const api = {
   collapseByName,
   computeLoan,
   toInputDate,
+  parseStatus,
 };
 
 if (typeof module !== 'undefined' && module.exports) {
